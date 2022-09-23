@@ -1,0 +1,114 @@
+ROOTDIR is `/'
+Checking `amd'... not found
+Checking `basename'... not infected
+Checking `biff'... not found
+Checking `chfn'... not infected
+Checking `chsh'... not infected
+Checking `cron'... not infected
+Checking `crontab'... not infected
+Checking `date'... not infected
+Checking `du'... not infected
+Checking `dirname'... not infected
+Checking `echo'... not infected
+Checking `egrep'... not infected
+Checking `env'... not infected
+Checking `find'... not infected
+Checking `fingerd'... not found
+Checking `gpm'... not found
+Checking `grep'... not infected
+Checking `hdparm'... not infected
+Checking `su'... not infected
+Checking `ifconfig'... not infected
+Checking `inetd'... not tested
+Checking `inetdconf'... not found
+Checking `identd'... not found
+Checking `init'... not infected
+Checking `killall'... not infected
+Checking `ldsopreload'... can't exec ./strings-static, not tested
+Checking `login'... not infected
+Checking `ls'... not infected
+Checking `lsof'... not infected
+Checking `mail'... not found
+Checking `mingetty'... not found
+Checking `netstat'... not infected
+Checking `named'... not found
+Checking `passwd'... not infected
+Checking `pidof'... not infected
+Checking `pop2'... not found
+Checking `pop3'... not found
+Checking `ps'... not infected
+Checking `pstree'... not infected
+Checking `rpcinfo'... not found
+Checking `rlogind'... not found
+Checking `rshd'... not found
+Checking `slogin'... not infected
+Checking `sendmail'... not found
+Checking `sshd'... not infected
+Checking `syslogd'... not tested
+Checking `tar'... not infected
+Checking `tcpd'... not infected
+Checking `tcpdump'... not infected
+Checking `top'... not infected
+Checking `telnetd'... not found
+Checking `timed'... not found
+Checking `traceroute'... not found
+Checking `vdir'... not infected
+Checking `w'... not infected
+Checking `write'... not infected
+Checking `aliens'... no suspect files
+Searching for sniffer's logs, it may take a while... nothing found
+Searching for HiDrootkit's default dir... nothing found
+Searching for t0rn's default files and dirs... nothing found
+Searching for t0rn's v8 defaults... nothing found
+Searching for Lion Worm default files and dirs... nothing found
+Searching for RSHA's default files and dir... nothing found
+Searching for RH-Sharpe's default files... nothing found
+Searching for Ambient's rootkit (ark) default files and dirs... nothing found
+Searching for suspicious files and dirs, it may take a while... 
+/lib/modules/4.4.0-62-generic/vdso/.build-id
+/lib/modules/4.4.0-62-generic/vdso/.build-id
+Searching for LPD Worm files and dirs... nothing found
+Searching for Ramen Worm files and dirs... nothing found
+Searching for Maniac files and dirs... nothing found
+Searching for RK17 files and dirs... nothing found
+Searching for Ducoci rootkit... nothing found
+Searching for Adore Worm... nothing found
+Searching for ShitC Worm... nothing found
+Searching for Omega Worm... nothing found
+Searching for Sadmind/IIS Worm... nothing found
+Searching for MonKit... nothing found
+Searching for Showtee... nothing found
+Searching for OpticKit... nothing found
+Searching for T.R.K... nothing found
+Searching for Mithra... nothing found
+Searching for LOC rootkit... nothing found
+Searching for Romanian rootkit... nothing found
+Searching for Suckit rootkit... Warning: /sbin/init INFECTED
+Searching for Volc rootkit... nothing found
+Searching for Gold2 rootkit... nothing found
+Searching for TC2 Worm default files and dirs... nothing found
+Searching for Anonoying rootkit default files and dirs... nothing found
+Searching for ZK rootkit default files and dirs... nothing found
+Searching for ShKit rootkit default files and dirs... nothing found
+Searching for AjaKit rootkit default files and dirs... nothing found
+Searching for zaRwT rootkit default files and dirs... nothing found
+Searching for Madalin rootkit default files... nothing found
+Searching for Fu rootkit default files... nothing found
+Searching for ESRK rootkit default files... nothing found
+Searching for rootedoor... nothing found
+Searching for ENYELKM rootkit default files... nothing found
+Searching for common ssh-scanners default files... nothing found
+Searching for suspect PHP files... nothing found
+Searching for anomalies in shell history files... Warning: `//root/.bash_history' is linked to another file
+Checking `asp'... not infected
+Checking `bindshell'... not infected
+Checking `lkm'... not tested: can't exec 
+Checking `rexedcs'... not found
+Checking `sniffer'... not tested: can't exec ./ifpromisc
+Checking `w55808'... not infected
+Checking `wted'... not tested: can't exec ./chkwtmp
+Checking `scalper'... not infected
+Checking `slapper'... not infected
+Checking `z2'... not tested: can't exec ./chklastlog
+Checking `chkutmp'... not tested: can't exec ./chkutmp
+Checking `OSX_RSPLUG'... not infected

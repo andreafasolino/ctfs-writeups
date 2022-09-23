@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en-US" class="theme-">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> Gitea: Git with a cup of tea</title>
+	<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR2l0ZWE6IEdpdCB3aXRoIGEgY3VwIG9mIHRlYSIsInNob3J0X25hbWUiOiJHaXRlYTogR2l0IHdpdGggYSBjdXAgb2YgdGVhIiwic3RhcnRfdXJsIjoiaHR0cDovL29wZW5zb3VyY2UuaHRiOjMwMDAvIiwiaWNvbnMiOlt7InNyYyI6Imh0dHA6Ly9vcGVuc291cmNlLmh0YjozMDAwL2Fzc2V0cy9pbWcvbG9nby5wbmciLCJ0eXBlIjoiaW1hZ2UvcG5nIiwic2l6ZXMiOiI1MTJ4NTEyIn0seyJzcmMiOiJodHRwOi8vb3BlbnNvdXJjZS5odGI6MzAwMC9hc3NldHMvaW1nL2xvZ28uc3ZnIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwiLCJzaXplcyI6IjUxMng1MTIifV19"/>
+	<meta name="theme-color" content="#6cc644">
+	<meta name="default-theme" content="auto" />
+	<meta name="author" content="Gitea - Git with a cup of tea" />
+	<meta name="description" content="Gitea (Git with a cup of tea) is a painless self-hosted Git service written in Go" />
+	<meta name="keywords" content="go,git,self-hosted,gitea">
+	<meta name="referrer" content="no-referrer" />
+
+	<script>
+		<!--   -->
+		window.config = {
+			appVer: '1.16.6',
+			appSubUrl: '',
+			assetUrlPrefix: '\/assets',
+			runModeIsProd:  true ,
+			customEmojis: {"codeberg":":codeberg:","git":":git:","gitea":":gitea:","github":":github:","gitlab":":gitlab:","gogs":":gogs:"},
+			useServiceWorker:  false ,
+			csrfToken: 'ninWkOBQNqKmPRdEQhu1b6L_6ow6MTY1NTA1NDI1NDY2NjEyNTEyMw',
+			pageData: {},
+			requireTribute:  null ,
+			notificationSettings: {"EventSourceUpdateTime":10000,"MaxTimeout":60000,"MinTimeout":10000,"TimeoutStep":10000}, 
+			enableTimeTracking:  true ,
+			
+			mermaidMaxSourceCharacters:  5000 ,
+			
+			i18n: {
+				copy_success: 'Copied!',
+				copy_error: 'Copy failed',
+				error_occurred: 'An error occurred',
+				network_error: 'Network error',
+			},
+		};
+		
+		window.config.pageData = window.config.pageData || {};
+	</script>
+	<link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
+	<link rel="alternate icon" href="/assets/img/favicon.png" type="image/png">
+	<link rel="stylesheet" href="/assets/css/index.css?v=7e6e145c0ebc112485ff39e380b62835">
+	<noscript>
+		<style>
+			.dropdown:hover > .menu { display: block; }
+			.ui.secondary.menu .dropdown.item > .menu { margin-top: 0; }
+		</style>
+	</noscript>
+
+	<meta property="og:title" content="Gitea: Git with a cup of tea">
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="/assets/img/logo.png" />
+	<meta property="og:url" content="http://opensource.htb:3000/" />
+	<meta property="og:description" content="Gitea (Git with a cup of tea) is a painless self-hosted Git service written in Go">
+
+<meta property="og:site_name" content="Gitea: Git with a cup of tea" />
+
+	<link rel="stylesheet" href="/assets/css/theme-auto.css?v=7e6e145c0ebc112485ff39e380b62835">
+
+
+</head>
+<body>
+	
+
+	<div class="full height">
+		<noscript>This website works better with JavaScript.</noscript>
+
+		
+
+		
+			<div class="ui top secondary stackable main menu following bar light">
+				<div class="ui container" id="navbar">
+	<div class="item brand" style="justify-content: space-between;">
+		<a href="/" data-content="Home">
+			<img class="ui mini image" width="30" height="30" src="/assets/img/logo.svg">
+		</a>
+		<div class="ui basic icon button mobile-only" id="navbar-expand-toggle">
+			<i class="sidebar icon"></i>
+		</div>
+	</div>
+
+	
+		<a class="item " href="/explore/repos">Explore</a>
+	
+
+	
+
+	
+
+
+	
+		<a class="item" target="_blank" rel="noopener noreferrer" href="https://docs.gitea.io">Help</a>
+		<div class="right stackable menu">
+			
+				<a class="item" href="/user/sign_up">
+					<svg viewBox="0 0 16 16" class="svg octicon-person" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10.5 5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zm.061 3.073a4 4 0 1 0-5.123 0 6.004 6.004 0 0 0-3.431 5.142.75.75 0 0 0 1.498.07 4.5 4.5 0 0 1 8.99 0 .75.75 0 1 0 1.498-.07 6.005 6.005 0 0 0-3.432-5.142z"/></svg> Register
+				</a>
+			
+			<a class="item" rel="nofollow" href="/user/login?redirect_to=%2f">
+				<svg viewBox="0 0 16 16" class="svg octicon-sign-in" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M2 2.75C2 1.784 2.784 1 3.75 1h2.5a.75.75 0 0 1 0 1.5h-2.5a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 2 13.25V2.75zm6.56 4.5 1.97-1.97a.75.75 0 1 0-1.06-1.06L6.22 7.47a.75.75 0 0 0 0 1.06l3.25 3.25a.75.75 0 1 0 1.06-1.06L8.56 8.75h5.69a.75.75 0 0 0 0-1.5H8.56z"/></svg> Sign In
+			</a>
+		</div>
+	
+</div>
+
+			</div>
+		
+
+
+
+<div class="page-content home">
+	<div class="ui stackable middle very relaxed page grid">
+		<div class="sixteen wide center aligned centered column">
+			<div>
+				<img class="logo" width="220" height="220" src="/assets/img/logo.svg"/>
+			</div>
+			<div class="hero">
+				<h1 class="ui icon header title">
+					Gitea: Git with a cup of tea
+				</h1>
+				<h2>A painless, self-hosted Git service</h2>
+			</div>
+		</div>
+	</div>
+	<div class="ui stackable middle very relaxed page grid">
+		<div class="eight wide center column">
+			<h1 class="hero ui icon header">
+				<svg viewBox="0 0 16 16" class="svg octicon-flame" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.998 14.5c2.832 0 5-1.98 5-4.5 0-1.463-.68-2.19-1.879-3.383l-.036-.037c-1.013-1.008-2.3-2.29-2.834-4.434-.322.256-.63.579-.864.953-.432.696-.621 1.58-.046 2.73.473.947.67 2.284-.278 3.232-.61.61-1.545.84-2.403.633a2.788 2.788 0 0 1-1.436-.874A3.21 3.21 0 0 0 3 10c0 2.53 2.164 4.5 4.998 4.5zM9.533.753C9.496.34 9.16.009 8.77.146 7.035.75 4.34 3.187 5.997 6.5c.344.689.285 1.218.003 1.5-.419.419-1.54.487-2.04-.832-.173-.454-.659-.762-1.035-.454C2.036 7.44 1.5 8.702 1.5 10c0 3.512 2.998 6 6.498 6s6.5-2.5 6.5-6c0-2.137-1.128-3.26-2.312-4.438-1.19-1.184-2.436-2.425-2.653-4.81z"/></svg> Easy to install
+			</h1>
+			<p class="large">
+				Simply <a target="_blank" rel="noopener noreferrer nofollow" href="https://docs.gitea.io/en-us/install-from-binary/">run the binary</a> for your platform, ship it with <a target="_blank" rel="noopener noreferrer nofollow" href="https://github.com/go-gitea/gitea/tree/master/docker">Docker</a>, or get it <a target="_blank" rel="noopener noreferrer nofollow" href="https://docs.gitea.io/en-us/install-from-package/">packaged</a>.
+			</p>
+		</div>
+		<div class="eight wide center column">
+			<h1 class="hero ui icon header">
+				<svg viewBox="0 0 16 16" class="svg octicon-device-desktop" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M1.75 2.5h12.5a.25.25 0 0 1 .25.25v7.5a.25.25 0 0 1-.25.25H1.75a.25.25 0 0 1-.25-.25v-7.5a.25.25 0 0 1 .25-.25zM14.25 1H1.75A1.75 1.75 0 0 0 0 2.75v7.5C0 11.216.784 12 1.75 12h3.727c-.1 1.041-.52 1.872-1.292 2.757A.75.75 0 0 0 4.75 16h6.5a.75.75 0 0 0 .565-1.243c-.772-.885-1.193-1.716-1.292-2.757h3.727A1.75 1.75 0 0 0 16 10.25v-7.5A1.75 1.75 0 0 0 14.25 1zM9.018 12H6.982a5.72 5.72 0 0 1-.765 2.5h3.566a5.72 5.72 0 0 1-.765-2.5z"/></svg> Cross-platform
+			</h1>
+			<p class="large">
+				Gitea runs anywhere <a target="_blank" rel="noopener noreferrer nofollow" href="http://golang.org/">Go</a> can compile for: Windows, macOS, Linux, ARM, etc. Choose the one you love!
+			</p>
+		</div>
+	</div>
+	<div class="ui stackable middle very relaxed page grid">
+		<div class="eight wide center column">
+			<h1 class="hero ui icon header">
+				<svg viewBox="0 0 16 16" class="svg octicon-rocket" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M14.064 0a8.75 8.75 0 0 0-6.187 2.563l-.459.458c-.314.314-.616.641-.904.979H3.31a1.75 1.75 0 0 0-1.49.833L.11 7.607a.75.75 0 0 0 .418 1.11l3.102.954c.037.051.079.1.124.145l2.429 2.428c.046.046.094.088.145.125l.954 3.102a.75.75 0 0 0 1.11.418l2.774-1.707a1.75 1.75 0 0 0 .833-1.49V9.485c.338-.288.665-.59.979-.904l.458-.459A8.75 8.75 0 0 0 16 1.936V1.75A1.75 1.75 0 0 0 14.25 0h-.186zM10.5 10.625c-.088.06-.177.118-.266.175l-2.35 1.521.548 1.783 1.949-1.2a.25.25 0 0 0 .119-.213v-2.066zM3.678 8.116 5.2 5.766c.058-.09.117-.178.176-.266H3.309a.25.25 0 0 0-.213.119l-1.2 1.95 1.782.547zm5.26-4.493A7.25 7.25 0 0 1 14.063 1.5h.186a.25.25 0 0 1 .25.25v.186a7.25 7.25 0 0 1-2.123 5.127l-.459.458a15.21 15.21 0 0 1-2.499 2.02l-2.317 1.5-2.143-2.143 1.5-2.317a15.25 15.25 0 0 1 2.02-2.5l.458-.458h.002zM12 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-8.44 9.56a1.5 1.5 0 1 0-2.12-2.12c-.734.73-1.047 2.332-1.15 3.003a.23.23 0 0 0 .265.265c.671-.103 2.273-.416 3.005-1.148z"/></svg> Lightweight
+			</h1>
+			<p class="large">
+				Gitea has low minimal requirements and can run on an inexpensive Raspberry Pi. Save your machine energy!
+			</p>
+		</div>
+		<div class="eight wide center column">
+			<h1 class="hero ui icon header">
+				<svg viewBox="0 0 16 16" class="svg octicon-code" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4.72 3.22a.75.75 0 0 1 1.06 1.06L2.06 8l3.72 3.72a.75.75 0 1 1-1.06 1.06L.47 8.53a.75.75 0 0 1 0-1.06l4.25-4.25zm6.56 0a.75.75 0 1 0-1.06 1.06L13.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06l4.25-4.25a.75.75 0 0 0 0-1.06l-4.25-4.25z"/></svg> Open Source
+			</h1>
+			<p class="large">
+				Go get <a target="_blank" rel="noopener noreferrer nofollow" href="https://code.gitea.io/gitea">code.gitea.io/gitea</a>! Join us by <a target="_blank" rel="noopener noreferrer nofollow" href="https://github.com/go-gitea/gitea">contributing</a> to make this project even better. Don&#39;t be shy to be a contributor!
+			</p>
+		</div>
+	</div>
+</div>
+
+
+	
+
+	</div>
+
+	
+
+	<footer>
+	<div class="ui container">
+		<div class="ui left">
+			Powered by Gitea Version: 1.16.6 Page: <strong>5ms</strong> Template: <strong>5ms</strong>
+		</div>
+		<div class="ui right links">
+			
+			<div class="ui language bottom floating slide up dropdown link item">
+				<svg viewBox="0 0 16 16" class="svg octicon-globe" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M1.543 7.25h2.733c.144-2.074.866-3.756 1.58-4.948.12-.197.237-.381.353-.552a6.506 6.506 0 0 0-4.666 5.5zm2.733 1.5H1.543a6.506 6.506 0 0 0 4.666 5.5 11.13 11.13 0 0 1-.352-.552c-.715-1.192-1.437-2.874-1.581-4.948zm1.504 0h4.44a9.637 9.637 0 0 1-1.363 4.177c-.306.51-.612.919-.857 1.215a9.978 9.978 0 0 1-.857-1.215A9.637 9.637 0 0 1 5.78 8.75zm4.44-1.5H5.78a9.637 9.637 0 0 1 1.363-4.177c.306-.51.612-.919.857-1.215.245.296.55.705.857 1.215A9.638 9.638 0 0 1 10.22 7.25zm1.504 1.5c-.144 2.074-.866 3.756-1.58 4.948-.12.197-.237.381-.353.552a6.506 6.506 0 0 0 4.666-5.5h-2.733zm2.733-1.5h-2.733c-.144-2.074-.866-3.756-1.58-4.948a11.738 11.738 0 0 0-.353-.552 6.506 6.506 0 0 1 4.666 5.5zM8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0z"/></svg>
+				<div class="text">English</div>
+				<div class="menu language-menu">
+					
+						<a lang="id-ID" data-url="/?lang=id-ID" class="item ">bahasa Indonesia</a>
+					
+						<a lang="de-DE" data-url="/?lang=de-DE" class="item ">Deutsch</a>
+					
+						<a lang="en-US" data-url="/?lang=en-US" class="item active selected">English</a>
+					
+						<a lang="es-ES" data-url="/?lang=es-ES" class="item ">español</a>
+					
+						<a lang="fr-FR" data-url="/?lang=fr-FR" class="item ">français</a>
+					
+						<a lang="it-IT" data-url="/?lang=it-IT" class="item ">italiano</a>
+					
+						<a lang="lv-LV" data-url="/?lang=lv-LV" class="item ">latviešu</a>
+					
+						<a lang="hu-HU" data-url="/?lang=hu-HU" class="item ">magyar nyelv</a>
+					
+						<a lang="nl-NL" data-url="/?lang=nl-NL" class="item ">Nederlands</a>
+					
+						<a lang="pl-PL" data-url="/?lang=pl-PL" class="item ">polski</a>
+					
+						<a lang="pt-PT" data-url="/?lang=pt-PT" class="item ">Português de Portugal</a>
+					
+						<a lang="pt-BR" data-url="/?lang=pt-BR" class="item ">português do Brasil</a>
+					
+						<a lang="fi-FI" data-url="/?lang=fi-FI" class="item ">suomi</a>
+					
+						<a lang="sv-SE" data-url="/?lang=sv-SE" class="item ">svenska</a>
+					
+						<a lang="tr-TR" data-url="/?lang=tr-TR" class="item ">Türkçe</a>
+					
+						<a lang="cs-CZ" data-url="/?lang=cs-CZ" class="item ">čeština</a>
+					
+						<a lang="el-GR" data-url="/?lang=el-GR" class="item ">ελληνικά</a>
+					
+						<a lang="bg-BG" data-url="/?lang=bg-BG" class="item ">български</a>
+					
+						<a lang="ru-RU" data-url="/?lang=ru-RU" class="item ">русский</a>
+					
+						<a lang="sr-SP" data-url="/?lang=sr-SP" class="item ">српски</a>
+					
+						<a lang="uk-UA" data-url="/?lang=uk-UA" class="item ">Українська</a>
+					
+						<a lang="fa-IR" data-url="/?lang=fa-IR" class="item ">فارسی</a>
+					
+						<a lang="ml-IN" data-url="/?lang=ml-IN" class="item ">മലയാളം</a>
+					
+						<a lang="ja-JP" data-url="/?lang=ja-JP" class="item ">日本語</a>
+					
+						<a lang="zh-CN" data-url="/?lang=zh-CN" class="item ">简体中文</a>
+					
+						<a lang="zh-TW" data-url="/?lang=zh-TW" class="item ">繁體中文（台灣）</a>
+					
+						<a lang="zh-HK" data-url="/?lang=zh-HK" class="item ">繁體中文（香港）</a>
+					
+						<a lang="ko-KR" data-url="/?lang=ko-KR" class="item ">한국어</a>
+					
+				</div>
+			</div>
+			<a href="/assets/js/licenses.txt">Licenses</a>
+			<a href="/api/swagger">API</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://gitea.io">Website</a>
+			
+			<span class="version">Go1.18.1</span>
+		</div>
+	</div>
+</footer>
+
+
+
+
+	<script src="/assets/js/index.js?v=7e6e145c0ebc112485ff39e380b62835"></script>
+
+</body>
+</html>

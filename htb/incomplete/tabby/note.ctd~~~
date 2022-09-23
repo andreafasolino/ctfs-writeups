@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<cherrytree>
+	<node custom_icon_id="0" foreground="" is_bold="False" name="TABBY" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592944690.31" ts_lastsave="1592944697.15" unique_id="1">
+		<rich_text>
+</rich_text>
+		<rich_text scale="h2">10.10.10.194</rich_text>
+		<rich_text>
+</rich_text>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="RICONOSCIMENTO" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592944702.9" ts_lastsave="1593969281.67" unique_id="2">
+			<rich_text>nmap -sC -sV 10.10.10.194
+
+
+
+
+PORT     STATE SERVICE   VERSION
+22/tcp   open  ssh       OpenSSH 8.2p1 Ubuntu 4 (Ubuntu Linux; protocol 2.0)
+80/tcp   open  ssl/http?
+|_http-title: Mega Hosting
+8080/tcp open  http      Apache Tomcat
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: Apache Tomcat
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+
+Sulla porta 80 c'è un server tomcat funzionante (c'è la pagina iniziale di tomcat ) 
+sullaporta 8080 un sito di hosting di servers
+
+
+fuzzing su entrambe le porte</rich_text>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="FUZZING" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1593969281.67" ts_lastsave="1593969281.67" unique_id="3">
+				<rich_text></rich_text>
+			</node>
+		</node>
+	</node>
+</cherrytree>

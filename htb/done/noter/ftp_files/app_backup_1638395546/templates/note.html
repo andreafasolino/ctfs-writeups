@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>{{note.title}}</h1>
+  <small>Written by {{note.author}} on {{note.create_date}}</small>
+  <hr>
+  <div>
+    <style type="text/css">
+      textarea {
+        border: none;
+        outline: none;
+      }
+    </style>
+    <textarea class="body" rows="30" cols="180" readonly>
+
+    {{note.body | safe}}
+  
+    </textarea>
+  </div>
+{% endblock %}

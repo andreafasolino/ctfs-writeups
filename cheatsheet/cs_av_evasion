@@ -1,0 +1,14 @@
+POWERSHELL IN-MEMORY INJECTION:
+    //not remote, local
+    script: in_memory_injection.ps1
+
+
+
+SHELLTER:   
+    //to run on linux use wine (basta startare shellter nel terminale e si collega automaticamente a wine)
+    sudo apt-get install shellter
+    shellter
+    A = automatico mode
+    scegliere un exe legittimo(es installer di winrar)
+    
+

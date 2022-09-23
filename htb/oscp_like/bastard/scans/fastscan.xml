@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Sat Jul  9 10:16:35 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.10.9 -->
+<nmaprun scanner="nmap" args="nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.10.9" start="1657354595" startstr="Sat Jul  9 10:16:35 2022" version="7.92" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Connect Scan" time="1657354595"/>
+<taskprogress task="Connect Scan" time="1657354626" percent="20.48" remaining="121" etc="1657354746"/>
+<taskprogress task="Connect Scan" time="1657354656" percent="56.57" remaining="47" etc="1657354703"/>
+<taskend task="Connect Scan" time="1657354685" extrainfo="65535 total ports"/>
+<host starttime="1657354595" endtime="1657354685"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.10.10.9" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="filtered" count="65532">
+<extrareasons reason="no-response" count="65532" proto="tcp" ports="1-79,81-134,136-49153,49155-65535"/>
+</extraports>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" method="table" conf="3"/></port>
+<port protocol="tcp" portid="135"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="msrpc" method="table" conf="3"/></port>
+<port protocol="tcp" portid="49154"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="unknown" method="table" conf="3"/></port>
+</ports>
+<times srtt="47445" rttvar="1554" to="100000"/>
+</host>
+<runstats><finished time="1657354685" timestr="Sat Jul  9 10:18:05 2022" summary="Nmap done at Sat Jul  9 10:18:05 2022; 1 IP address (1 host up) scanned in 89.86 seconds" elapsed="89.86" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

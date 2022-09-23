@@ -1,0 +1,5 @@
+# Nmap 7.92 scan initiated Sat Jul  9 10:16:35 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.10.9
+# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
+Host: 10.10.10.9 ()	Status: Up
+Host: 10.10.10.9 ()	Ports: 80/open/tcp//http///, 135/open/tcp//msrpc///, 49154/open/tcp//unknown///	Ignored State: filtered (65532)
+# Nmap done at Sat Jul  9 10:18:05 2022 -- 1 IP address (1 host up) scanned in 89.86 seconds

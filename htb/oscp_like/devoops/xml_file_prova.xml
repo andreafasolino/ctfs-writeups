@@ -1,0 +1,7 @@
+<!--?xml version="1.0" ?-->
+<!DOCTYPE replace [<!ENTITY example "Doe"> ]>
+<item>
+<Author>data</Author>
+<Subject>data2</Subject>
+<Content>&example;</Content>
+</item>

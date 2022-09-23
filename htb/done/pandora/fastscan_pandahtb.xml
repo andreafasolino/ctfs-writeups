@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Mon May  2 15:32:45 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan_pandahtb panda.htb -->
+<nmaprun scanner="nmap" args="nmap -vv -p- -T4 -n -Pn -oA fastscan_pandahtb panda.htb" start="1651519965" startstr="Mon May  2 15:32:45 2022" version="7.92" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Connect Scan" time="1651519965"/>
+<taskend task="Connect Scan" time="1651519992" extrainfo="65535 total ports"/>
+<host starttime="1651519965" endtime="1651519992"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.10.11.136" addrtype="ipv4"/>
+<hostnames>
+<hostname name="panda.htb" type="user"/>
+</hostnames>
+<ports><extraports state="closed" count="65533">
+<extrareasons reason="conn-refused" count="65533" proto="tcp" ports="1-21,23-79,81-65535"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" method="table" conf="3"/></port>
+</ports>
+<times srtt="56864" rttvar="3794" to="100000"/>
+</host>
+<runstats><finished time="1651519992" timestr="Mon May  2 15:33:12 2022" summary="Nmap done at Mon May  2 15:33:12 2022; 1 IP address (1 host up) scanned in 26.99 seconds" elapsed="26.99" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

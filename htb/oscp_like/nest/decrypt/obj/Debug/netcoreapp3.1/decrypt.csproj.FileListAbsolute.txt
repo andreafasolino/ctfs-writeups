@@ -1,0 +1,13 @@
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/obj/Debug/netcoreapp3.1/decrypt.csprojAssemblyReference.cache
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/obj/Debug/netcoreapp3.1/decrypt.AssemblyInfoInputs.cache
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/obj/Debug/netcoreapp3.1/decrypt.AssemblyInfo.cs
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/obj/Debug/netcoreapp3.1/decrypt.csproj.CoreCompileInputs.cache
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/bin/Debug/netcoreapp3.1/decrypt
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/bin/Debug/netcoreapp3.1/decrypt.deps.json
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/bin/Debug/netcoreapp3.1/decrypt.runtimeconfig.json
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/bin/Debug/netcoreapp3.1/decrypt.runtimeconfig.dev.json
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/bin/Debug/netcoreapp3.1/decrypt.dll
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/bin/Debug/netcoreapp3.1/decrypt.pdb
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/obj/Debug/netcoreapp3.1/decrypt.dll
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/obj/Debug/netcoreapp3.1/decrypt.pdb
+/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/cascade/decrypt/obj/Debug/netcoreapp3.1/decrypt.genruntimeconfig.cache

@@ -1,0 +1,29 @@
+QUERIES:
+    webcamxp country:"IT"
+    default password country:US
+    default password hostname:chuckeastcom.com
+    default password city:Plano
+    apache country:US           //find apache servers
+    webcamxp city:"San Francisco"
+
+
+
+DEFAULT WEBCAM USERNAMES/PASSWORDS:
+    ACti:   admin/123456    Admin/123456
+    Axis (old): root/pass
+    Axis (new): requires password creation during first login
+    Cisco: requires password creation during first login
+    Grandstream: admin/admin
+    IQinVision: root/system
+    Mobotix:    admin/meinsm
+    Panasonic:  admin/12345
+    Samsung Electronics:    root/root   admin/4321
+    Samsung Techwin (new):  admin/4321  
+    Samsung Techwin (old):  admin/1111111
+    Sony:   admin/admin
+    Toshiba:    root/ikwd
+    TRENDnet:   admin/admin
+    Vivotek:    root/<blank>
+    WebcamXP:    admin/<blank>
+
+

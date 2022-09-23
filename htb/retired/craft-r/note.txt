@@ -1,0 +1,65 @@
+1)come sempre masscan e nmap:
+	masscan -p1-65535  10.10.10.110 --banners --rate 1000 --open -e tun0
+	nmap -p22,443,6022 -sC -sV -sT -Pn -oA nmap/craft 10.10.10.110
+	
+22/tcp  open  ssh     OpenSSH 7.4p1 Debian 10+deb9u5 (protocol 2.0)
+| ssh-hostkey: 
+|_  256 28:3b:26:18:ec:df:b3:36:85:9c:27:54:8d:8c:e1:33 (ED25519)
+443/tcp open  https   nginx/1.15.8
+|_http-server-header: nginx/1.15.8
+| ssl-cert: Subject: commonName=craft.htb/organizationName=Craft/stateOrProvinceName=NY/countryName=US
+| Not valid before: 2019-02-06T02:25:47
+|_Not valid after:  2020-06-20T02:25:47
+|_ssl-date: TLS randomness does not represent time
+| tls-alpn: 
+|_  http/1.1
+| tls-nextprotoneg: 
+|_  http/1.1
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+2) il server a https://10.10.10.110 è vuoto, c'è solo una scritta ma ci sono due link, uni verso le API e e uno verso la pagina github
+quindi salvo gli host trovati in /etc/hosts:
+
+10.10.10.110 api.craft.htb
+10.10.10.110 craft.htb
+10.10.10.110 gogs.craft.htb
+
+In https://api.craft.htb/api/ possiamo vedere le api tra cui una per auth e una per il login ma ovviamente non ho credenziali
+
+
+In https://gogs.craft.htb/Craft/craft-api invece c'è la pagina github delle api
+proprio qua c'è un issue con un token per l'accesso alla craft api:
+
+	curl -H 'X-Craft-API-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoidXNlciIsImV4cCI6MTU0OTM4NTI0Mn0.-wW1aJkLQDOE-GP5pQd3z_BJTe2Uo0jJ_mQ238P5Dqw' -H "Content-Type: application/json" -k -X POST https://api.craft.htb/api/brew/ --data '{"name":"bullshit","brewer":"bullshit", "style": "bullshit", "abv": "15.0")}'
+
+
+Inoltre nello stesso issue viene fatto un commit da parte dell'utente e guardando il codice è possibile vedere che l'input dato dall'utente viene passato direttamente
+a eval, in particolare questo viene fatto sul parametro 'abv':
+
+	if eval('%s > 1' % request.json['abv']):
+	
+questo parametro viene passato nella api brew/
+
+infine in un commit precedente (trovato andando sul profilo dello sviluppatore che ha fatto il commit) c'è uno script di test con delle 
+credenziali hard coded nel codice:
+
+	dinesh:4aUh0A8PbVJxgd
+
+quindi ora abbiamo le credenziali per creare il token che ci permette di eseguire una chiamata alle api, e il parametro su cui farla
+
+3)facendo execute della api auth viene richiesto user e pass, mettendo quelli trovati prima si ottiene il token
+per eseguire l'exploit creo uno script che esegue le richieste ecc. (initial.py)
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,20 @@
+
+
+53        DNS                                             dig,nslookup,...
+
+
+88        KERBEROS
+
+389       LDAP plain text
+
+445       SMB                                             smbclient -L 10.10.10.161
+
+636       LDAP SSL connection
+
+
+3268      LDAP connection to Global Catalog
+3269      LDAP connection to Global Catalog
+
+3389      Remote Desktop Protocol
+
+5985       winrm                                            evil-winrm            //si può accedere con username e pwd di solito

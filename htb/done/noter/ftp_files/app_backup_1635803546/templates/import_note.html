@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>Import Notes</h1>
+  <form action="" method="POST">
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" name="title" class="form-control" value={{request.form.title}}>
+    </div>
+
+    <div class="form-group">
+      <label>URL</label>
+      <input type="text" name="url" class="form-control" value={{request.form.url}}>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Import</button>
+  </form>
+{% endblock %}

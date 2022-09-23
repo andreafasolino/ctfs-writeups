@@ -1,0 +1,39 @@
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://status.catch.htb:8000/
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              php,html
+[+] Expanded:                true
+[+] No status:               true
+[+] Timeout:                 10s
+===============================================================
+2022/06/18 13:19:06 Starting gobuster in directory enumeration mode
+===============================================================
+http://status.catch.htb:8000/.htaccess            [Size: 283]
+http://status.catch.htb:8000/.htpasswd            [Size: 283]
+http://status.catch.htb:8000/.htaccess.html       [Size: 283]
+http://status.catch.htb:8000/.htpasswd.php        [Size: 283]
+http://status.catch.htb:8000/.htaccess.php        [Size: 283]
+http://status.catch.htb:8000/.htpasswd.html       [Size: 283]
+http://status.catch.htb:8000/admin                [Size: 402] [--> http://status.catch.htb:8000/auth/login]
+http://status.catch.htb:8000/cgi-bin/             [Size: 328] [--> http://status.catch.htb:8000/cgi-bin]   
+http://status.catch.htb:8000/dashboard            [Size: 402] [--> http://status.catch.htb:8000/auth/login]
+http://status.catch.htb:8000/dist                 [Size: 326] [--> http://status.catch.htb:8000/dist/]     
+http://status.catch.htb:8000/favicon.ico          [Size: 1034]                                             
+http://status.catch.htb:8000/fonts                [Size: 327] [--> http://status.catch.htb:8000/fonts/]    
+http://status.catch.htb:8000/img                  [Size: 325] [--> http://status.catch.htb:8000/img/]      
+http://status.catch.htb:8000/index.php            [Size: 8971]                                             
+http://status.catch.htb:8000/robots.txt           [Size: 24]                                               
+http://status.catch.htb:8000/server-status        [Size: 283]                                              
+http://status.catch.htb:8000/setup                [Size: 398] [--> http://status.catch.htb:8000/dashboard] 
+http://status.catch.htb:8000/storage              [Size: 283]                                              
+http://status.catch.htb:8000/subscribe            [Size: 3177]                                             
+===============================================================
+2022/06/18 13:34:30 Finished
+===============================================================

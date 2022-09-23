@@ -1,0 +1,88 @@
+# extended LDIF
+#
+# LDAPv3
+# base <DC=cascade,DC=local> with scope subtree
+# filter: (objectClass=Person)
+# requesting: sAMAccountName 
+#
+
+# CascGuest, Users, cascade.local
+dn: CN=CascGuest,CN=Users,DC=cascade,DC=local
+sAMAccountName: CascGuest
+
+# CASC-DC1, Domain Controllers, cascade.local
+dn: CN=CASC-DC1,OU=Domain Controllers,DC=cascade,DC=local
+sAMAccountName: CASC-DC1$
+
+# ArkSvc, Services, Users, UK, cascade.local
+dn: CN=ArkSvc,OU=Services,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: arksvc
+
+# Steve Smith, Users, UK, cascade.local
+dn: CN=Steve Smith,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: s.smith
+
+# Ryan Thompson, Users, UK, cascade.local
+dn: CN=Ryan Thompson,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: r.thompson
+
+# Util, Services, Users, UK, cascade.local
+dn: CN=Util,OU=Services,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: util
+
+# James Wakefield, Users, UK, cascade.local
+dn: CN=James Wakefield,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: j.wakefield
+
+# Stephanie Hickson, Users, UK, cascade.local
+dn: CN=Stephanie Hickson,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: s.hickson
+
+# John Goodhand, Users, UK, cascade.local
+dn: CN=John Goodhand,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: j.goodhand
+
+# Adrian Turnbull, Users, UK, cascade.local
+dn: CN=Adrian Turnbull,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: a.turnbull
+
+# Edward Crowe, Users, UK, cascade.local
+dn: CN=Edward Crowe,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: e.crowe
+
+# Ben Hanson, Users, UK, cascade.local
+dn: CN=Ben Hanson,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: b.hanson
+
+# David Burman, Users, UK, cascade.local
+dn: CN=David Burman,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: d.burman
+
+# BackupSvc, Services, Users, UK, cascade.local
+dn: CN=BackupSvc,OU=Services,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: BackupSvc
+
+# Joseph Allen, Users, UK, cascade.local
+dn: CN=Joseph Allen,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: j.allen
+
+# Ian Croft, Users, UK, cascade.local
+dn: CN=Ian Croft,OU=Users,OU=UK,DC=cascade,DC=local
+sAMAccountName: i.croft
+
+# search reference
+ref: ldap://ForestDnsZones.cascade.local/DC=ForestDnsZones,DC=cascade,DC=local
+
+# search reference
+ref: ldap://DomainDnsZones.cascade.local/DC=DomainDnsZones,DC=cascade,DC=local
+
+# search reference
+ref: ldap://cascade.local/CN=Configuration,DC=cascade,DC=local
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 20
+# numEntries: 16
+# numReferences: 3

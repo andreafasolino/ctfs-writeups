@@ -1,0 +1,29 @@
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://status.catch.htb/
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              html,php
+[+] Expanded:                true
+[+] No status:               true
+[+] Timeout:                 10s
+===============================================================
+2022/06/18 13:19:15 Starting gobuster in directory enumeration mode
+===============================================================
+http://status.catch.htb/.htpasswd            [Size: 281]
+http://status.catch.htb/.htaccess            [Size: 281]
+http://status.catch.htb/.htpasswd.php        [Size: 281]
+http://status.catch.htb/.htaccess.php        [Size: 281]
+http://status.catch.htb/.htpasswd.html       [Size: 281]
+http://status.catch.htb/.htaccess.html       [Size: 281]
+http://status.catch.htb/index.php            [Size: 6163]
+http://status.catch.htb/javascript           [Size: 325] [--> http://status.catch.htb/javascript/]
+http://status.catch.htb/server-status        [Size: 281]                                          
+===============================================================
+2022/06/18 13:24:53 Finished
+===============================================================

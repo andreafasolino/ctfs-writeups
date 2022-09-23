@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Mon Jun  6 05:51:26 2022 as: nmap -sC -sV -p 21,22,5000 -oA servicescan 10.10.11.160 -->
+<nmaprun scanner="nmap" args="nmap -sC -sV -p 21,22,5000 -oA servicescan 10.10.11.160" start="1654509086" startstr="Mon Jun  6 05:51:26 2022" version="7.92" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="3" services="21-22,5000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="10.10.11.160" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1654509086" endtime="1654509096"><status state="up" reason="conn-refused" reason_ttl="0"/>
+<address addr="10.10.11.160" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ftp" product="vsftpd" version="3.0.3" ostype="Unix" method="probed" conf="10"><cpe>cpe:/a:vsftpd:vsftpd:3.0.3</cpe></service></port>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" product="OpenSSH" version="8.2p1 Ubuntu 4ubuntu0.3" extrainfo="Ubuntu Linux; protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.2p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service><script id="ssh-hostkey" output="&#xa;  3072 c6:53:c6:2a:e9:28:90:50:4d:0c:8d:64:88:e0:08:4d (RSA)&#xa;  256 5f:12:58:5f:49:7d:f3:6c:bd:9b:25:49:ba:09:cc:43 (ECDSA)&#xa;  256 f1:6b:00:16:f7:88:ab:00:ce:96:af:a6:7e:b5:a8:39 (ED25519)"><table>
+<elem key="key">AAAAB3NzaC1yc2EAAAADAQABAAABgQC9sErZs2sCkq/262nV1zdXEGf00ExAMp2kLEX6LbjqWR0hxEzCpeSpAhzTJHHo1N584SHFVoclvr/Ex4+hJP04aGGs6vpyGWVAsIHzHWbAjHBYLe/zFejuRDuZH12e2x1Y7jr0aOYRS2D1t+guTAGUFqj5cUALWk4poKmn6Rzszw0S8TuddEUoWi804TJ5jkH6u4l8bSVFsj+vRUKwYAXqBnbrBbEWHe2VH6VIYscGTmGyzi7WpeX+sbF/+Y5kDeKiczLG5OMN1zU+ulEG6W+z3kDV0CejFbOQ3A9Ps+AS4e4M8IrkAVvK0s8MO3WxX7O+T7EBKriY6+P6JyBLOSd1brcwfzJNe9d9NSgn5c0FspU0HxQM3ywnXNxYJWhkwtx43jpxfJBB2z7Szn3IgCI0Z+p/2eVb4Dj4vgqlr4yrQdvASeu4SUGDe8ny2U7xbsY5Bo4CuaCEHGTT2WNAaSUrG9V3Zu+uQumnF9Ap2VajqMnLThVbRZnK6ILgJba+SzM=</elem>
+<elem key="fingerprint">c653c62ae92890504d0c8d6488e0084d</elem>
+<elem key="bits">3072</elem>
+<elem key="type">ssh-rsa</elem>
+</table>
+<table>
+<elem key="key">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKmBOrK+95eONxSI2LauKub0LOAaVIgg6g6iAjDxaMxVgnTyYfEZYZIv37QyMKHdSQj4hV1tF6YJzsTiFRg48uc=</elem>
+<elem key="fingerprint">5f12585f497df36cbd9b2549ba09cc43</elem>
+<elem key="bits">256</elem>
+<elem key="type">ecdsa-sha2-nistp256</elem>
+</table>
+<table>
+<elem key="key">AAAAC3NzaC1lZDI1NTE5AAAAIPXDDWdqYU5p6XE4F5sJyCxfu+jWj0BKyUNT88hJS4jM</elem>
+<elem key="fingerprint">f16b0016f788ab00ce96afa67eb5a839</elem>
+<elem key="bits">256</elem>
+<elem key="type">ssh-ed25519</elem>
+</table>
+</script></port>
+<port protocol="tcp" portid="5000"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Werkzeug httpd" version="2.0.2" extrainfo="Python 3.8.10" method="probed" conf="10"><cpe>cpe:/a:python:python:3.8.10</cpe></service><script id="http-title" output="Noter"><elem key="title">Noter</elem>
+</script><script id="http-server-header" output="Werkzeug/2.0.2 Python/3.8.10"><elem>Werkzeug/2.0.2 Python/3.8.10</elem>
+</script></port>
+</ports>
+<times srtt="43740" rttvar="18470" to="117620"/>
+</host>
+<runstats><finished time="1654509096" timestr="Mon Jun  6 05:51:36 2022" summary="Nmap done at Mon Jun  6 05:51:36 2022; 1 IP address (1 host up) scanned in 10.41 seconds" elapsed="10.41" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

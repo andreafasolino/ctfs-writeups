@@ -1,0 +1,21 @@
+# Nmap 7.92 scan initiated Sun Jun 12 10:12:21 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.11.164
+Increasing send delay for 10.10.11.164 from 5 to 10 due to 11 out of 12 dropped probes since last increase.
+Warning: 10.10.11.164 giving up on port because retransmission cap hit (6).
+Nmap scan report for 10.10.11.164
+Host is up, received user-set (0.045s latency).
+Scanned at 2022-06-12 10:12:21 EDT for 417s
+Not shown: 65525 closed tcp ports (conn-refused)
+PORT      STATE    SERVICE REASON
+22/tcp    open     ssh     syn-ack
+80/tcp    open     http    syn-ack
+447/tcp   filtered ddm-dfm no-response
+3000/tcp  filtered ppp     no-response
+14495/tcp filtered unknown no-response
+29261/tcp filtered unknown no-response
+41844/tcp filtered unknown no-response
+51866/tcp filtered unknown no-response
+58226/tcp filtered unknown no-response
+64719/tcp filtered unknown no-response
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Sun Jun 12 10:19:18 2022 -- 1 IP address (1 host up) scanned in 416.80 seconds

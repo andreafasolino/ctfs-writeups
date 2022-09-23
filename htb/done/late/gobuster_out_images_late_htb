@@ -1,0 +1,19 @@
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://images.late.htb/
+[+] Method:                  GET
+[+] Threads:                 100
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              cgi,html,txt,php
+[+] Timeout:                 10s
+===============================================================
+2022/06/03 10:29:13 Starting gobuster in directory enumeration mode
+===============================================================
+/scanner              (Status: 500) [Size: 290]
+===============================================================
+2022/06/03 10:31:27 Finished
+===============================================================

@@ -1,0 +1,33 @@
+# Nmap 7.92 scan initiated Thu Jun  2 05:39:30 2022 as: nmap -sC -sV -p 88,389,464,593,636,3268,3269,5986,9389,49667,49673,49674,49694 -oA tcp_servicescan -Pn 10.10.11.152
+Nmap scan report for 10.10.11.152
+Host is up (0.049s latency).
+
+PORT      STATE SERVICE           VERSION
+88/tcp    open  kerberos-sec      Microsoft Windows Kerberos (server time: 2022-06-02 17:39:36Z)
+389/tcp   open  ldap              Microsoft Windows Active Directory LDAP (Domain: timelapse.htb0., Site: Default-First-Site-Name)
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http        Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  ldapssl?
+3268/tcp  open  ldap              Microsoft Windows Active Directory LDAP (Domain: timelapse.htb0., Site: Default-First-Site-Name)
+3269/tcp  open  globalcatLDAPssl?
+5986/tcp  open  ssl/http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_ssl-date: 2022-06-02T17:40:30+00:00; +8h00m00s from scanner time.
+| ssl-cert: Subject: commonName=dc01.timelapse.htb
+| Not valid before: 2021-10-25T14:05:29
+|_Not valid after:  2022-10-25T14:25:29
+| tls-alpn: 
+|_  http/1.1
+|_http-title: Not Found
+9389/tcp  open  mc-nmf            .NET Message Framing
+49667/tcp open  msrpc             Microsoft Windows RPC
+49673/tcp open  ncacn_http        Microsoft Windows RPC over HTTP 1.0
+49674/tcp open  msrpc             Microsoft Windows RPC
+49694/tcp open  msrpc             Microsoft Windows RPC
+Service Info: Host: DC01; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: 7h59m59s
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Thu Jun  2 05:40:31 2022 -- 1 IP address (1 host up) scanned in 60.55 seconds

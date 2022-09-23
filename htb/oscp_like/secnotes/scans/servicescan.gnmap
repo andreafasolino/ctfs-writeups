@@ -1,0 +1,4 @@
+# Nmap 7.92 scan initiated Tue Jul  5 19:40:25 2022 as: nmap -sC -sV -Pn -p 84,445,8808 -oA servicescan 10.10.10.97
+Host: 10.10.10.97 ()	Status: Up
+Host: 10.10.10.97 ()	Ports: 84/filtered/tcp//ctf///, 445/open/tcp//microsoft-ds//Windows 10 Enterprise 17134 microsoft-ds (workgroup: HTB)/, 8808/open/tcp//http//Microsoft IIS httpd 10.0/
+# Nmap done at Tue Jul  5 19:41:18 2022 -- 1 IP address (1 host up) scanned in 53.57 seconds

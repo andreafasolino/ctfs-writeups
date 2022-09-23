@@ -1,0 +1,4 @@
+# Nmap 7.80 scan initiated Wed Nov 13 06:47:45 2019 as: nmap -p22,80,9200 -Pn -sC -sV -oA nmap/haystack 10.10.10.115
+Host: 10.10.10.115 ()	Status: Up
+Host: 10.10.10.115 ()	Ports: 22/open/tcp//ssh//OpenSSH 7.4 (protocol 2.0)/, 80/open/tcp//http//nginx 1.12.2/, 9200/open/tcp//http//nginx 1.12.2/
+# Nmap done at Wed Nov 13 06:48:04 2019 -- 1 IP address (1 host up) scanned in 18.51 seconds

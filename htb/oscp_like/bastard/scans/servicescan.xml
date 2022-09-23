@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Sat Jul  9 10:27:26 2022 as: nmap -sC -sV -p80,135,49154 -oA servicescan 10.10.10.9 -->
+<nmaprun scanner="nmap" args="nmap -sC -sV -p80,135,49154 -oA servicescan 10.10.10.9" start="1657355246" startstr="Sat Jul  9 10:27:26 2022" version="7.92" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="3" services="80,135,49154"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="10.10.10.9" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1657355247" endtime="1657355311"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="10.10.10.9" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Microsoft IIS httpd" version="7.5" ostype="Windows" method="probed" conf="10"><cpe>cpe:/a:microsoft:internet_information_server:7.5</cpe><cpe>cpe:/o:microsoft:windows</cpe></service><script id="http-generator" output="Drupal 7 (http://drupal.org)"/><script id="http-robots.txt" output="36 disallowed entries (15 shown)&#xa;/includes/ /misc/ /modules/ /profiles/ /scripts/ &#xa;/themes/ /CHANGELOG.txt /cron.php /INSTALL.mysql.txt &#xa;/INSTALL.pgsql.txt /INSTALL.sqlite.txt /install.php /INSTALL.txt &#xa;/LICENSE.txt /MAINTAINERS.txt"/><script id="http-methods" output="&#xa;  Potentially risky methods: TRACE"><table key="Potentially risky methods">
+<elem>TRACE</elem>
+</table>
+</script><script id="http-title" output="Welcome to 10.10.10.9 | 10.10.10.9"><elem key="title">Welcome to 10.10.10.9 | 10.10.10.9</elem>
+</script><script id="http-server-header" output="Microsoft-IIS/7.5"><elem>Microsoft-IIS/7.5</elem>
+</script></port>
+<port protocol="tcp" portid="135"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="msrpc" product="Microsoft Windows RPC" ostype="Windows" method="probed" conf="10"><cpe>cpe:/o:microsoft:windows</cpe></service></port>
+<port protocol="tcp" portid="49154"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="msrpc" product="Microsoft Windows RPC" ostype="Windows" method="probed" conf="10"><cpe>cpe:/o:microsoft:windows</cpe></service></port>
+</ports>
+<times srtt="97315" rttvar="42404" to="266931"/>
+</host>
+<runstats><finished time="1657355311" timestr="Sat Jul  9 10:28:31 2022" summary="Nmap done at Sat Jul  9 10:28:31 2022; 1 IP address (1 host up) scanned in 64.80 seconds" elapsed="64.80" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

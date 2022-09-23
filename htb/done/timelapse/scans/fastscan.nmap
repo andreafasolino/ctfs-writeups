@@ -1,0 +1,22 @@
+# Nmap 7.92 scan initiated Thu Jun  2 05:32:38 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.11.152
+Nmap scan report for 10.10.11.152
+Host is up, received user-set (0.051s latency).
+Scanned at 2022-06-02 05:32:38 EDT for 212s
+Not shown: 65522 filtered tcp ports (no-response)
+PORT      STATE SERVICE          REASON
+88/tcp    open  kerberos-sec     syn-ack
+389/tcp   open  ldap             syn-ack
+464/tcp   open  kpasswd5         syn-ack
+593/tcp   open  http-rpc-epmap   syn-ack
+636/tcp   open  ldapssl          syn-ack
+3268/tcp  open  globalcatLDAP    syn-ack
+3269/tcp  open  globalcatLDAPssl syn-ack
+5986/tcp  open  wsmans           syn-ack
+9389/tcp  open  adws             syn-ack
+49667/tcp open  unknown          syn-ack
+49673/tcp open  unknown          syn-ack
+49674/tcp open  unknown          syn-ack
+49694/tcp open  unknown          syn-ack
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Thu Jun  2 05:36:10 2022 -- 1 IP address (1 host up) scanned in 211.68 seconds

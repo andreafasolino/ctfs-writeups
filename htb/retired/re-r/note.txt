@@ -1,0 +1,89 @@
+1)come sempre la prima fase è il riconoscimento:
+
+    sudo masscan -p1-65535 --banners --rate 1000 -e tun0 10.10.10.144
+
+Discovered open port 445/tcp on 10.10.10.144                                   
+Discovered open port 80/tcp on 10.10.10.144 
+
+    sudo nmap -p80,445 -Pn -sC -sV 10.10.10.144
+    
+PORT    STATE SERVICE       VERSION
+80/tcp  open  http          Microsoft IIS httpd 10.0
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/10.0
+|_http-title: Visit reblog.htb
+445/tcp open  microsoft-ds?
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: 1h01m19s
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2020-02-08T13:12:35
+|_  start_date: N/A
+
+In base alla versione di IIS che si trova alla porta 80 sembra trattarsi di wondows 10 o windows server 2016 o 2019
+
+2) se si visita http://10.10.10.144/ (quindi il web server sulla porta 80,
+si ottiene un redirect a: 
+
+    http://reblog.htb/
+
+che non risulta raggiungibile, in quanto deve essere aggiunto agli hosts 
+(aggiungo la riga 10.10.10.144  reblog.htb al file /etc/hosts)
+ora posso raggiungere il sito e trovo "RE Blog"
+
+Il sito non sembra essere attaccabile in quanto è statico ma ci sono alcuni articoli interessanti:
+ 
+ 
+ Posts
+
+    Apr 10, 2019    -   ods Phishing Attempts -> i file .ods sono l'equivalente nel pacchetto libre office dei file .xls (excel) 
+    
+    Apr 4, 2019 -   DOSfuscation and Invoke-Obfuscation -> questo articolo analizza come l'azienda potrebbe essere impreparata contro tecniche di DOSfuscation e Invoke-Obfuscation.
+    
+    Mar 31, 2019    -   Analyzing Document Macros with Yara -> Riferimento ad un articolo sull'analissi delle macros dei documenti di libre office usando Yara
+    
+    
+    Mar 20, 2019    - Ghidra Exploit!
+    
+    Mar 15, 2019    -   New RE Tool - Ghidra -> Introduce il tool Ghidra
+    
+    Mar 10, 2019    - Automation and Accounts on Analysis Box -> suggerisce che ci sono script sulla macchina per monitorare la user interactione e il movimento tra utenti
+    
+Inoltre potrebbe essere utilecercare altri virtual hosts visto che ormai sono entrati già in gioco,
+uno ovvio su cui indagare è http://re.htb quindi lo aggiungo alla lista degli host:
+    
+    10.10.10.144	re.htb
+(in questo caso sono andato a caso ma in effetti poi è visisbile una volta ottenuta la prima shell)
+e controllo, si ottiene un sito dove c'è la scritta Please check back soon for re.htb updates.
+
+nel codice sorgente della pagina però troviamo le istruzioni per l'upload di un progetto in Ghidra, potrebbero essere utili successivamente
+
+
+3)ora controlliamo la porta 445 (samba), possiamo farlo con smbmap, che però non restituisce nulla
+    smbmap -H 10.10.10.141
+oppure con smbclient:
+    smbclient -N -L //10.10.10.144
+   
+ottenendo:
+
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	IPC$            IPC       Remote IPC
+	malware_dropbox Disk      
+
+
+come si può vedere c'è il malware dropbox di cui si parla nell'articolo ods Phishing Attempts
+che dovrebbe contenere eventuali file malevoli che non vengono ancora bloccati dagli script in esecuzione sulla macchina
+
+
+
+
+    
+
+    

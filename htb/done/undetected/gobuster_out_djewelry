@@ -1,0 +1,29 @@
+sudo gobuster  dir -u http://djewelry.htb/  -w /usr/share/wordlists/dirb/big.txt -n -e -x .php,.html,.txt,.htm,.js,.xml,.svg,.py,.csv | grep -v 277 
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://djewelry.htb/
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              php,html,htm,xml,csv,txt,js,svg,py
+[+] Expanded:                true
+[+] No status:               true
+[+] Timeout:                 10s
+===============================================================
+2022/06/13 10:49:21 Starting gobuster in directory enumeration mode
+===============================================================
+Progress: 17850 / 204700 (8.72%)                   [ERROR] 2022/06/13 10:51:07 [!] Get "http://djewelry.htb/aclk.htm": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+http://djewelry.htb/css                  [Size: 310] [--> http://djewelry.htb/css/]
+http://djewelry.htb/error404.html        [Size: 5310]                              
+http://djewelry.htb/fonts                [Size: 312] [--> http://djewelry.htb/fonts/]
+http://djewelry.htb/icons                [Size: 312] [--> http://djewelry.htb/icons/]
+http://djewelry.htb/images               [Size: 313] [--> http://djewelry.htb/images/]
+http://djewelry.htb/index.html           [Size: 15283]                                
+http://djewelry.htb/js                   [Size: 309] [--> http://djewelry.htb/js/]    
+Progress: 204690 / 204700 (100.00%)                                                  ===============================================================
+2022/06/13 11:07:16 Finished
+===============================================================

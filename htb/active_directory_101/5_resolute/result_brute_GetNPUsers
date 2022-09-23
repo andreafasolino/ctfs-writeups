@@ -1,0 +1,81 @@
+
+[*] Getting TGT for Administrator
+[-] User Administrator doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for Guest
+[-] Kerberos SessionError: KDC_ERR_CLIENT_REVOKED(Clients credentials have been revoked)
+
+[*] Getting TGT for krbtgt
+[-] Kerberos SessionError: KDC_ERR_CLIENT_REVOKED(Clients credentials have been revoked)
+
+[*] Getting TGT for DefaultAccount
+[-] Kerberos SessionError: KDC_ERR_CLIENT_REVOKED(Clients credentials have been revoked)
+
+[*] Getting TGT for ryan
+[-] User ryan doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for marko
+[-] User marko doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for sunita
+[-] User sunita doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for abigail
+[-] User abigail doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for marcus
+[-] User marcus doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for sally
+[-] User sally doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for fred
+[-] User fred doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for angela
+[-] User angela doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for felicia
+[-] User felicia doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for gustavo
+[-] User gustavo doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for ulf
+[-] User ulf doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for stevie
+[-] User stevie doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for claire
+[-] User claire doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for paulo
+[-] User paulo doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for steve
+[-] User steve doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for annette
+[-] User annette doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for annika
+[-] User annika doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for per
+[-] User per doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for claude
+[-] User claude doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for melanie
+[-] User melanie doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for zach
+[-] User zach doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for simon
+[-] User simon doesn't have UF_DONT_REQUIRE_PREAUTH set
+
+[*] Getting TGT for naoki
+[-] User naoki doesn't have UF_DONT_REQUIRE_PREAUTH set

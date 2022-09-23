@@ -1,0 +1,232 @@
+Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+[*] Retrieving endpoint list from 10.10.10.9
+Protocol: [MS-RSP]: Remote Shutdown Protocol 
+Provider: wininit.exe 
+UUID    : D95AFE70-A6D5-4259-822E-2C84DA1DDB0D v1.0 
+Bindings: 
+          ncacn_ip_tcp:10.10.10.9[49152]
+          ncalrpc:[WindowsShutdown]
+          ncacn_np:\\BASTARD[\PIPE\InitShutdown]
+          ncalrpc:[WMsgKRpc084C60]
+
+Protocol: N/A 
+Provider: winlogon.exe 
+UUID    : 76F226C3-EC14-4325-8A99-6A46348418AF v1.0 
+Bindings: 
+          ncalrpc:[WindowsShutdown]
+          ncacn_np:\\BASTARD[\PIPE\InitShutdown]
+          ncalrpc:[WMsgKRpc084C60]
+          ncalrpc:[WMsgKRpc086911]
+
+Protocol: N/A 
+Provider: sysntfy.dll 
+UUID    : C9AC6DB5-82B7-4E55-AE8A-E464ED7B4277 v1.0 Impl friendly name
+Bindings: 
+          ncalrpc:[LRPC-f390d2adc2760c78c6]
+          ncalrpc:[senssvc]
+          ncalrpc:[OLE9138BAD6FA004FE7940600EA215D]
+          ncalrpc:[IUserProfile2]
+          ncalrpc:[IUserProfile2]
+          ncalrpc:[IUserProfile2]
+
+Protocol: N/A 
+Provider: nrpsrv.dll 
+UUID    : 30ADC50C-5CBC-46CE-9A0E-91914789E23C v1.0 NRP server endpoint
+Bindings: 
+          ncalrpc:[dhcpcsvc]
+          ncalrpc:[dhcpcsvc6]
+          ncacn_ip_tcp:10.10.10.9[49153]
+          ncacn_np:\\BASTARD[\pipe\eventlog]
+          ncalrpc:[eventlog]
+
+Protocol: N/A 
+Provider: dhcpcsvc.dll 
+UUID    : 3C4728C5-F0AB-448B-BDA1-6CE01EB0A6D5 v1.0 DHCP Client LRPC Endpoint
+Bindings: 
+          ncalrpc:[dhcpcsvc]
+          ncalrpc:[dhcpcsvc6]
+          ncacn_ip_tcp:10.10.10.9[49153]
+          ncacn_np:\\BASTARD[\pipe\eventlog]
+          ncalrpc:[eventlog]
+
+Protocol: N/A 
+Provider: dhcpcsvc6.dll 
+UUID    : 3C4728C5-F0AB-448B-BDA1-6CE01EB0A6D6 v1.0 DHCPv6 Client LRPC Endpoint
+Bindings: 
+          ncalrpc:[dhcpcsvc6]
+          ncacn_ip_tcp:10.10.10.9[49153]
+          ncacn_np:\\BASTARD[\pipe\eventlog]
+          ncalrpc:[eventlog]
+
+Protocol: [MS-EVEN6]: EventLog Remoting Protocol 
+Provider: wevtsvc.dll 
+UUID    : F6BEAFF7-1E19-4FBB-9F8F-B89E2018337C v1.0 Event log TCPIP
+Bindings: 
+          ncacn_ip_tcp:10.10.10.9[49153]
+          ncacn_np:\\BASTARD[\pipe\eventlog]
+          ncalrpc:[eventlog]
+
+Protocol: N/A 
+Provider: srvsvc.dll 
+UUID    : 98716D03-89AC-44C7-BB8C-285824E51C4A v1.0 XactSrv service
+Bindings: 
+          ncacn_ip_tcp:10.10.10.9[49154]
+          ncacn_np:\\BASTARD[\PIPE\atsvc]
+          ncalrpc:[senssvc]
+          ncalrpc:[OLE9138BAD6FA004FE7940600EA215D]
+          ncalrpc:[IUserProfile2]
+
+Protocol: N/A 
+Provider: iphlpsvc.dll 
+UUID    : 552D076A-CB29-4E44-8B6A-D15E59E2C0AF v1.0 IP Transition Configuration endpoint
+Bindings: 
+          ncacn_ip_tcp:10.10.10.9[49154]
+          ncacn_np:\\BASTARD[\PIPE\atsvc]
+          ncalrpc:[senssvc]
+          ncalrpc:[OLE9138BAD6FA004FE7940600EA215D]
+          ncalrpc:[IUserProfile2]
+
+Protocol: N/A 
+Provider: IKEEXT.DLL 
+UUID    : A398E520-D59A-4BDD-AA7A-3C1E0303A511 v1.0 IKE/Authip API
+Bindings: 
+          ncacn_ip_tcp:10.10.10.9[49154]
+          ncacn_np:\\BASTARD[\PIPE\atsvc]
+          ncalrpc:[senssvc]
+          ncalrpc:[OLE9138BAD6FA004FE7940600EA215D]
+          ncalrpc:[IUserProfile2]
+
+Protocol: [MS-TSCH]: Task Scheduler Service Remoting Protocol 
+Provider: schedsvc.dll 
+UUID    : 86D35949-83C9-4044-B424-DB363231FD0C v1.0 
+Bindings: 
+          ncacn_ip_tcp:10.10.10.9[49154]
+          ncacn_np:\\BASTARD[\PIPE\atsvc]
+          ncalrpc:[senssvc]
+          ncalrpc:[OLE9138BAD6FA004FE7940600EA215D]
+          ncalrpc:[IUserProfile2]
+
+Protocol: [MS-TSCH]: Task Scheduler Service Remoting Protocol 
+Provider: taskcomp.dll 
+UUID    : 378E52B0-C0A9-11CF-822D-00AA0051E40F v1.0 
+Bindings: 
+          ncacn_np:\\BASTARD[\PIPE\atsvc]
+          ncalrpc:[senssvc]
+          ncalrpc:[OLE9138BAD6FA004FE7940600EA215D]
+          ncalrpc:[IUserProfile2]
+
+Protocol: [MS-TSCH]: Task Scheduler Service Remoting Protocol 
+Provider: taskcomp.dll 
+UUID    : 1FF70682-0A51-30E8-076D-740BE8CEE98B v1.0 
+Bindings: 
+          ncacn_np:\\BASTARD[\PIPE\atsvc]
+          ncalrpc:[senssvc]
+          ncalrpc:[OLE9138BAD6FA004FE7940600EA215D]
+          ncalrpc:[IUserProfile2]
+
+Protocol: N/A 
+Provider: schedsvc.dll 
+UUID    : 0A74EF1C-41A4-4E06-83AE-DC74FB1CDD53 v1.0 
+Bindings: 
+          ncalrpc:[senssvc]
+          ncalrpc:[OLE9138BAD6FA004FE7940600EA215D]
+          ncalrpc:[IUserProfile2]
+
+Protocol: N/A 
+Provider: gpsvc.dll 
+UUID    : 2EB08E3E-639F-4FBA-97B1-14F878961076 v1.0 
+Bindings: 
+          ncalrpc:[IUserProfile2]
+
+Protocol: N/A 
+Provider: N/A 
+UUID    : 3473DD4D-2E88-4006-9CBA-22570909DD10 v5.1 WinHttp Auto-Proxy Service
+Bindings: 
+          ncalrpc:[LRPC-46ed8565905be1cd1f]
+          ncalrpc:[OLEA53478E426624B7A8DAF914E36E6]
+
+Protocol: N/A 
+Provider: nsisvc.dll 
+UUID    : 7EA70BCF-48AF-4F6A-8968-6A440754D5FA v1.0 NSI server endpoint
+Bindings: 
+          ncalrpc:[LRPC-46ed8565905be1cd1f]
+          ncalrpc:[OLEA53478E426624B7A8DAF914E36E6]
+
+Protocol: N/A 
+Provider: authui.dll 
+UUID    : 24019106-A203-4642-B88D-82DAE9158929 v1.0 
+Bindings: 
+          ncalrpc:[LRPC-0ad1bebbd9ed6f8d4c]
+
+Protocol: N/A 
+Provider: MPSSVC.dll 
+UUID    : 2FB92682-6599-42DC-AE13-BD2CA89BD11C v1.0 Fw APIs
+Bindings: 
+          ncalrpc:[LRPC-84e3c417872873d0cd]
+
+Protocol: N/A 
+Provider: MPSSVC.dll 
+UUID    : 7F9D11BF-7FB9-436B-A812-B2D50C5D4C03 v1.0 Fw APIs
+Bindings: 
+          ncalrpc:[LRPC-84e3c417872873d0cd]
+
+Protocol: N/A 
+Provider: BFE.DLL 
+UUID    : DD490425-5325-4565-B774-7E27D6C09C24 v1.0 Base Firewall Engine API
+Bindings: 
+          ncalrpc:[LRPC-84e3c417872873d0cd]
+
+Protocol: N/A 
+Provider: spoolsv.exe 
+UUID    : 4A452661-8290-4B36-8FBE-7F4093A94978 v1.0 Spooler function endpoint
+Bindings: 
+          ncalrpc:[spoolss]
+
+Protocol: [MS-PAN]: Print System Asynchronous Notification Protocol 
+Provider: spoolsv.exe 
+UUID    : AE33069B-A2A8-46EE-A235-DDFD339BE281 v1.0 Spooler base remote object endpoint
+Bindings: 
+          ncalrpc:[spoolss]
+
+Protocol: [MS-PAN]: Print System Asynchronous Notification Protocol 
+Provider: spoolsv.exe 
+UUID    : 0B6EDBFA-4A24-4FC6-8A23-942B1ECA65D1 v1.0 Spooler function endpoint
+Bindings: 
+          ncalrpc:[spoolss]
+
+Protocol: [MS-SCMR]: Service Control Manager Remote Protocol 
+Provider: services.exe 
+UUID    : 367ABB81-9844-35F1-AD32-98F038001003 v2.0 
+Bindings: 
+          ncacn_ip_tcp:10.10.10.9[49155]
+
+Protocol: [MS-CMPO]: MSDTC Connection Manager: 
+Provider: msdtcprx.dll 
+UUID    : 906B0CE0-C70B-1067-B317-00DD010662DA v1.0 
+Bindings: 
+          ncalrpc:[LRPC-6398bc370af9482668]
+          ncalrpc:[OLE5478305DCBAD4FF585B12C7ADF51]
+          ncalrpc:[LRPC-cd1dab7edcf459afe7]
+          ncalrpc:[LRPC-cd1dab7edcf459afe7]
+          ncalrpc:[LRPC-cd1dab7edcf459afe7]
+          ncalrpc:[LRPC-cd1dab7edcf459afe7]
+
+Protocol: [MS-SAMR]: Security Account Manager (SAM) Remote Protocol 
+Provider: samsrv.dll 
+UUID    : 12345778-1234-ABCD-EF00-0123456789AC v1.0 
+Bindings: 
+          ncacn_ip_tcp:10.10.10.9[49156]
+          ncalrpc:[samss lpc]
+          ncalrpc:[dsrole]
+          ncacn_np:\\BASTARD[\PIPE\protected_storage]
+          ncalrpc:[protected_storage]
+          ncalrpc:[lsasspirpc]
+          ncalrpc:[lsapolicylookup]
+          ncalrpc:[LSARPC_ENDPOINT]
+          ncalrpc:[securityevent]
+          ncalrpc:[audit]
+          ncalrpc:[LRPC-cde428c06009f3b10a]
+          ncacn_np:\\BASTARD[\pipe\lsass]
+
+[*] Received 93 endpoints.

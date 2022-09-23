@@ -1,0 +1,12 @@
+# Nmap 7.92 scan initiated Mon May  2 15:43:57 2022 as: nmap -sUV -v -Pn -oA udp_scan_top1000 10.10.11.136
+Increasing send delay for 10.10.11.136 from 400 to 800 due to 11 out of 11 dropped probes since last increase.
+Nmap scan report for Panda.HTB (10.10.11.136)
+Host is up (0.067s latency).
+Not shown: 999 closed udp ports (port-unreach)
+PORT    STATE SERVICE VERSION
+161/udp open  snmp    SNMPv1 server; net-snmp SNMPv3 server (public)
+Service Info: Host: pandora
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Mon May  2 16:02:02 2022 -- 1 IP address (1 host up) scanned in 1084.98 seconds

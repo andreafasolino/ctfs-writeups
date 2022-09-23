@@ -1,0 +1,57 @@
+# Nmap 7.92 scan initiated Tue May 31 04:32:42 2022 as: nmap -sUV -v -Pn -oA udp_scan_top1000 10.10.11.143
+Increasing send delay for 10.10.11.143 from 50 to 100 due to 11 out of 12 dropped probes since last increase.
+Increasing send delay for 10.10.11.143 from 100 to 200 due to 11 out of 11 dropped probes since last increase.
+Increasing send delay for 10.10.11.143 from 200 to 400 due to 11 out of 11 dropped probes since last increase.
+Increasing send delay for 10.10.11.143 from 400 to 800 due to 11 out of 11 dropped probes since last increase.
+Nmap scan report for 10.10.11.143
+Host is up (0.047s latency).
+Not shown: 956 closed udp ports (port-unreach)
+PORT      STATE         SERVICE        VERSION
+19/udp    open|filtered chargen
+22/udp    open|filtered ssh
+23/udp    open|filtered telnet
+138/udp   open|filtered netbios-dgm
+685/udp   open|filtered mdc-portmapper
+773/udp   open|filtered notify
+965/udp   open|filtered unknown
+1055/udp  open|filtered ansyslmd
+5353/udp  open|filtered zeroconf
+5500/udp  open|filtered securid
+17006/udp open|filtered unknown
+17207/udp open|filtered unknown
+17487/udp open|filtered unknown
+17490/udp open|filtered unknown
+17573/udp open|filtered unknown
+18228/udp open|filtered unknown
+19374/udp open|filtered unknown
+19728/udp open|filtered unknown
+20120/udp open|filtered unknown
+20129/udp open|filtered unknown
+20313/udp open|filtered unknown
+21710/udp open|filtered unknown
+21847/udp open|filtered netspeak-cs
+22045/udp open|filtered unknown
+22123/udp open|filtered unknown
+22739/udp open|filtered unknown
+23040/udp open|filtered unknown
+25709/udp open|filtered unknown
+28641/udp open|filtered unknown
+30263/udp open|filtered unknown
+33866/udp open|filtered unknown
+34577/udp open|filtered unknown
+36945/udp open|filtered unknown
+42434/udp open|filtered unknown
+43967/udp open|filtered unknown
+44185/udp open|filtered unknown
+44253/udp open|filtered unknown
+45818/udp open|filtered unknown
+49180/udp open|filtered unknown
+49193/udp open|filtered unknown
+49204/udp open|filtered unknown
+55043/udp open|filtered unknown
+62677/udp open|filtered unknown
+63420/udp open|filtered unknown
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue May 31 04:52:57 2022 -- 1 IP address (1 host up) scanned in 1215.16 seconds

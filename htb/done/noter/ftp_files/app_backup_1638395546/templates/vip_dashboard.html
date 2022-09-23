@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>Dashboard <small>&#9889</small><small> Welcome {{session.username}}</small></h1>
+  <a class="btn btn-success" href="/add_note"> Add Note</a>
+  <a class="btn btn-success" href="/import_note"> Import Notes</a>
+  <a class="btn btn-success" href="/export_note"> Export Notes</a>
+  <hr>
+  <table class="table table-striped">
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for note in notes %}
+      <tr>
+        <td>{{note.title}}</td>
+        <td>{{note.author}}</td>
+        <td>{{note.create_date}}</td>
+        <td><a href="edit_note/{{note.id}}" class="btn btn-default pull-right">Edit</a></td>
+        <td>
+          <form action="{{url_for('delete_note', id=note.id)}}" method="post">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="submit" value="Delete" class="btn btn-danger">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

@@ -1,0 +1,7 @@
+if (window.performance && window.performance.mark) { window.performance.mark('startLoadBundleInner-view'); }
+// Copyright (C) Microsoft Corporation. All rights reserved.
+define("TfsCommon/Scripts/Navigation/PageService",["require","exports","VSS/Contributions/LocalPageData","VSS/Service"],function(n,t,i,r){function o(){return e.getProject()}Object.defineProperty(t,"__esModule",{value:!0});var u="ms.vss-tfs-web.page-data",f=function(){function n(){}return n.prototype.getProject=function(){var n=i.getData(u)||{};return n.project},n}(),e=r.getLocalService(f);t.getProject=o});
+
+define("TfsCommon/Scripts/ProjectTelemetry",["require","exports","TfsCommon/Scripts/Navigation/PageService","VSS/Telemetry/Services"],function(n,t,i,r){Object.defineProperty(t,"__esModule",{value:!0});r.addTelemetryEventHandler(function(n){var t=i.getProject();t&&(n.properties.dataspaceId=t.id,n.properties.dataspaceType="Project",n.properties.dataspaceVisibility=t.visibility.toString(),n.properties.navigationMode="vertical")})});
+
+if (window.performance && window.performance.mark) { window.performance.mark('endLoadBundleInner-view'); }

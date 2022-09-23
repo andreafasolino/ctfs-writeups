@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Tue May 31 04:17:02 2022 as: nmap -sC -sV -oA service_scan -p 22,80,443 10.10.11.143 -->
+<nmaprun scanner="nmap" args="nmap -sC -sV -oA service_scan -p 22,80,443 10.10.11.143" start="1653985022" startstr="Tue May 31 04:17:02 2022" version="7.92" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="3" services="22,80,443"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="10.10.11.143" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1653985023" endtime="1653985039"><status state="up" reason="echo-reply" reason_ttl="63"/>
+<address addr="10.10.11.143" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="ssh" product="OpenSSH" version="8.0" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.0</cpe></service><script id="ssh-hostkey" output="&#xa;  2048 10:05:ea:50:56:a6:00:cb:1c:9c:93:df:5f:83:e0:64 (RSA)&#xa;  256 58:8c:82:1c:c6:63:2a:83:87:5c:2f:2b:4f:4d:c3:79 (ECDSA)&#xa;  256 31:78:af:d1:3b:c4:2e:9d:60:4e:eb:5d:03:ec:a0:22 (ED25519)"><table>
+<elem key="type">ssh-rsa</elem>
+<elem key="key">AAAAB3NzaC1yc2EAAAADAQABAAABAQDcZzzauRoUMdyj6UcbrSejflBMRBeAdjYb2Fkpkn55uduA3qShJ5SP33uotPwllc3wESbYzlB9bGJVjeGA2l+G99r24cqvAsqBl0bLStal3RiXtjI/ws1E3bHW1+U35bzlInU7AVC9HUW6IbAq+VNlbXLrzBCbIO+l3281i3Q4Y2pzpHm5OlM2mZQ8EGMrWxD4dPFFK0D4jCAKUMMcoro3Z/U7Wpdy+xmDfui3iu9UqAxlu4XcdYJr7Iijfkl62jTNFiltbym1AxcIpgyS2QX1xjFlXId7UrJOJo3c7a0F+B3XaBK5iQjpUfPmh7RLlt6CZklzBZ8wsmHakWpysfXN</elem>
+<elem key="bits">2048</elem>
+<elem key="fingerprint">1005ea5056a600cb1c9c93df5f83e064</elem>
+</table>
+<table>
+<elem key="type">ecdsa-sha2-nistp256</elem>
+<elem key="key">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBE/Xwcq0Gc4YEeRtN3QLduvk/5lezmamLm9PNgrhWDyNfPwAXpHiu7H9urKOhtw9SghxtMM2vMIQAUh/RFYgrxg=</elem>
+<elem key="bits">256</elem>
+<elem key="fingerprint">588c821cc6632a83875c2f2b4f4dc379</elem>
+</table>
+<table>
+<elem key="type">ssh-ed25519</elem>
+<elem key="key">AAAAC3NzaC1lZDI1NTE5AAAAIKdmmhk1vKOrAmcXMPh0XRA5zbzUHt1JBbbWwQpI4pEX</elem>
+<elem key="bits">256</elem>
+<elem key="fingerprint">3178afd13bc42e9d604eeb5d03eca022</elem>
+</table>
+</script></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http" product="Apache httpd" version="2.4.37" extrainfo="(centos) OpenSSL/1.1.1k mod_fcgid/2.3.9" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.37</cpe></service><script id="http-title" output="HTTP Server Test Page powered by CentOS"><elem key="title">HTTP Server Test Page powered by CentOS</elem>
+</script><script id="http-methods" output="&#xa;  Potentially risky methods: TRACE"><table key="Potentially risky methods">
+<elem>TRACE</elem>
+</table>
+</script><script id="http-generator" output="HTML Tidy for HTML5 for Linux version 5.7.28"/><script id="http-server-header" output="Apache/2.4.37 (centos) OpenSSL/1.1.1k mod_fcgid/2.3.9"><elem>Apache/2.4.37 (centos) OpenSSL/1.1.1k mod_fcgid/2.3.9</elem>
+</script></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http" product="Apache httpd" version="2.4.37" extrainfo="(centos) OpenSSL/1.1.1k mod_fcgid/2.3.9" tunnel="ssl" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.37</cpe></service><script id="http-generator" output="HTML Tidy for HTML5 for Linux version 5.7.28"/><script id="http-title" output="HTTP Server Test Page powered by CentOS"><elem key="title">HTTP Server Test Page powered by CentOS</elem>
+</script><script id="http-methods" output="&#xa;  Potentially risky methods: TRACE"><table key="Potentially risky methods">
+<elem>TRACE</elem>
+</table>
+</script><script id="ssl-cert" output="Subject: commonName=localhost.localdomain/organizationName=Unspecified/countryName=US&#xa;Subject Alternative Name: DNS:localhost.localdomain&#xa;Not valid before: 2021-07-03T08:52:34&#xa;Not valid after:  2022-07-08T10:32:34"><table key="subject">
+<elem key="commonName">localhost.localdomain</elem>
+<elem key="countryName">US</elem>
+<elem key="emailAddress">root@localhost.localdomain</elem>
+<elem key="organizationName">Unspecified</elem>
+</table>
+<table key="issuer">
+<elem key="commonName">localhost.localdomain</elem>
+<elem key="countryName">US</elem>
+<elem key="emailAddress">root@localhost.localdomain</elem>
+<elem key="organizationName">Unspecified</elem>
+<elem key="organizationalUnitName">ca-3899279223185377061</elem>
+</table>
+<table key="pubkey">
+<elem key="type">rsa</elem>
+<elem key="bits">2048</elem>
+<elem key="modulus">BD7FDE7D6966F160797D636BFC3CE233714F635C064BB1B390D89D829E0A5AA77317BB9B89B3FA6CB8B8FE89D6404FE4CB9D2DEE9413AD8A157DE919CE870A9D86D02740D60426E1662017613B68B34764FACA43EAF57EA041C3AA373643714B899A5C3EC0BEB0AA920A480FFA92CE2309754CECF664BE353CD6AB422E4AC4F3B4BA7150416FED3E973C6912E7FA44DA13D63B4BF3FC17790582FEDCFD3C7CFB02D3FE58BE0915BAF15B16BC66B8E14E4C492B4F2F3C6F67CB91BB7CFD97A1E0B49D990AAB892A710E76A0D62DCDFBED5A0E42210216C02CF2BEAD9ABD3E651415563D32A8B30448B1C51BD685A53D817308CBD6673C93E98C3AB2BE3BB97BE9</elem>
+<elem key="exponent">65537</elem>
+</table>
+<table key="extensions">
+<table>
+<elem key="name">X509v3 Key Usage</elem>
+<elem key="value">Digital Signature, Key Encipherment</elem>
+<elem key="critical">true</elem>
+</table>
+<table>
+<elem key="name">X509v3 Basic Constraints</elem>
+<elem key="value">CA:FALSE</elem>
+</table>
+<table>
+<elem key="name">X509v3 Subject Alternative Name</elem>
+<elem key="value">DNS:localhost.localdomain</elem>
+</table>
+<table>
+<elem key="name">X509v3 Authority Key Identifier</elem>
+<elem key="value">keyid:10:7C:98:47:29:5B:86:4D:04:86:A8:33:B9:82:17:F6:7E:ED:F7:C0&#xa;</elem>
+</table>
+</table>
+<elem key="sig_algo">sha256WithRSAEncryption</elem>
+<table key="validity">
+<elem key="notBefore">2021-07-03T08:52:34</elem>
+<elem key="notAfter">2022-07-08T10:32:34</elem>
+</table>
+<elem key="md5">579a92bd803cac47d49c5adde44e4f84</elem>
+<elem key="sha1">61a2301f9e5c2603a64300b5e5da5fd5c175f3a9</elem>
+<elem key="pem">-&#45;&#45;&#45;&#45;BEGIN CERTIFICATE-&#45;&#45;&#45;&#45;&#xa;MIIE4DCCAsigAwIBAgIIdryw6eirdUUwDQYJKoZIhvcNAQELBQAwgY8xCzAJBgNV&#xa;BAYTAlVTMRQwEgYDVQQKDAtVbnNwZWNpZmllZDEfMB0GA1UECwwWY2EtMzg5OTI3&#xa;OTIyMzE4NTM3NzA2MTEeMBwGA1UEAwwVbG9jYWxob3N0LmxvY2FsZG9tYWluMSkw&#xa;JwYJKoZIhvcNAQkBFhpyb290QGxvY2FsaG9zdC5sb2NhbGRvbWFpbjAeFw0yMTA3&#xa;MDMwODUyMzRaFw0yMjA3MDgxMDMyMzRaMG4xCzAJBgNVBAYTAlVTMRQwEgYDVQQK&#xa;DAtVbnNwZWNpZmllZDEeMBwGA1UEAwwVbG9jYWxob3N0LmxvY2FsZG9tYWluMSkw&#xa;JwYJKoZIhvcNAQkBFhpyb290QGxvY2FsaG9zdC5sb2NhbGRvbWFpbjCCASIwDQYJ&#xa;KoZIhvcNAQEBBQADggEPADCCAQoCggEBAL1/3n1pZvFgeX1ja/w84jNxT2NcBkux&#xa;s5DYnYKeClqncxe7m4mz+my4uP6J1kBP5MudLe6UE62KFX3pGc6HCp2G0CdA1gQm&#xa;4WYgF2E7aLNHZPrKQ+r1fqBBw6o3NkNxS4maXD7AvrCqkgpID/qSziMJdUzs9mS+&#xa;NTzWq0IuSsTztLpxUEFv7T6XPGkS5/pE2hPWO0vz/Bd5BYL+3P08fPsC0/5YvgkV&#xa;uvFbFrxmuOFOTEkrTy88b2fLkbt8/Zeh4LSdmQqriSpxDnag1i3N++1aDkIhAhbA&#xa;LPK+rZq9PmUUFVY9MqizBEixxRvWhaU9gXMIy9ZnPJPpjDqyvju5e+kCAwEAAaNg&#xa;MF4wDgYDVR0PAQH/BAQDAgWgMAkGA1UdEwQCMAAwIAYDVR0RBBkwF4IVbG9jYWxo&#xa;b3N0LmxvY2FsZG9tYWluMB8GA1UdIwQYMBaAFBB8mEcpW4ZNBIaoM7mCF/Z+7ffA&#xa;MA0GCSqGSIb3DQEBCwUAA4ICAQCw4uQfUe+FtsPdT0eXiLHg/5kXBGn8kfJZ45hP&#xa;gcuwa5JfAQeA3JXx7piTSiMMk0GrWbqbrpX9ZIkwPnZrN+9PV9/SNCEJVTMy+LDQ&#xa;QGsyqwkZpMK8QThzxRvXvnyf3XeEFDL6N4YeEzWz47VNlddeqOBHmrDI5SL+Eibh&#xa;wxNj9UXwhEySUpgMAhU+QtXk40sjgv4Cs3kHvERvpwAfgRA7N38WY+njo/2VlGaT&#xa;qP+UekP42JveOIWhf9p88MUmx2QqtOq/WF7vkBVbAsVs+GGp2SNhCubCCWZeP6qc&#xa;HCX0/ipKZqY6zIvCcfr0wHBQDY9QwlbJcthg9Qox4EH1Sgj/qKPva6cehp/NzsbS&#xa;JL9Ygb1h65Xpy/ZwhQTl+y2s+JxAoMy3k50n+9lzCFBiNzPLsV6vrTXCh7t9Cx07&#xa;9jYqMiQ35cEbQGIaKQqzguPXF5nMvWDBow3Oj7fYFlCdLTpaTjh8FJ37/PrhUWIl&#xa;Li+WW8txrQKqm0/u1A41TI7fBxlUDhk6YFA+gIxX27ntQ0g+lLs8rwGlt/o+e3Xa&#xa;OfcJ7Tl0ovWa+c9lWNju5mgdU+0v4P9bqv4XcIuyE0exv5MleA99uOYE1jlWuKf1&#xa;m9v4myEY3dzgw3IBDmlYpGuDWQmMYx8RVytYN3Z3Z64WglMRjwEWNGy7NfKm7oJ4&#xa;mh/ptg==&#xa;-&#45;&#45;&#45;&#45;END CERTIFICATE-&#45;&#45;&#45;&#45;&#xa;</elem>
+</script><script id="tls-alpn" output="&#xa;  http/1.1"><elem>http/1.1</elem>
+</script><script id="http-server-header" output="Apache/2.4.37 (centos) OpenSSL/1.1.1k mod_fcgid/2.3.9"><elem>Apache/2.4.37 (centos) OpenSSL/1.1.1k mod_fcgid/2.3.9</elem>
+</script><script id="ssl-date" output="TLS randomness does not represent time"></script></port>
+</ports>
+<times srtt="46310" rttvar="19663" to="124962"/>
+</host>
+<runstats><finished time="1653985039" timestr="Tue May 31 04:17:19 2022" summary="Nmap done at Tue May 31 04:17:19 2022; 1 IP address (1 host up) scanned in 16.65 seconds" elapsed="16.65" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

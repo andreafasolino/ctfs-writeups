@@ -1,0 +1,16 @@
+site:hostname           //limit the search to a single site
+filetype:php
+ext:jsp             //programming language 
+-<operator>:<value>         //exclude those results
+intitle:"string"
+"string"            //only show search results qwith these words in the body
+
+
+ESEMPI:
+    site:megacorpone.com filetype:php
+    site:megacorpone.com -filetype:html
+    intitle:"index of" "parent directory"
+
+
+
+https://www.exploit-db.com/google-hacking-database

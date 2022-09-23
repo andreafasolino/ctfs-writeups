@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Sun Jul 10 19:19:54 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan 10.129.38.101 -->
+<nmaprun scanner="nmap" args="nmap -vv -p- -T4 -n -Pn -oA fastscan 10.129.38.101" start="1657473594" startstr="Sun Jul 10 19:19:54 2022" version="7.92" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Connect Scan" time="1657473594"/>
+<taskend task="Connect Scan" time="1657473613" extrainfo="65535 total ports"/>
+<host starttime="1657473594" endtime="1657473613"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.129.38.101" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="65533">
+<extrareasons reason="conn-refused" count="65533" proto="tcp" ports="1-21,23-8079,8081-65535"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="8080"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http-proxy" method="table" conf="3"/></port>
+</ports>
+<times srtt="51028" rttvar="622" to="100000"/>
+</host>
+<runstats><finished time="1657473613" timestr="Sun Jul 10 19:20:13 2022" summary="Nmap done at Sun Jul 10 19:20:13 2022; 1 IP address (1 host up) scanned in 18.41 seconds" elapsed="18.41" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

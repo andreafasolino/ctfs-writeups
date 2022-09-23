@@ -1,0 +1,4 @@
+# Nmap 7.80 scan initiated Sat Nov  2 13:29:17 2019 as: nmap -p1337 -sC -sV -oA nmap/safe_1337 10.10.10.147
+Host: 10.10.10.147 ()	Status: Up
+Host: 10.10.10.147 ()	Ports: 1337/open/tcp//waste?///
+# Nmap done at Sat Nov  2 13:30:53 2019 -- 1 IP address (1 host up) scanned in 96.04 seconds

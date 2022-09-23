@@ -1,0 +1,2 @@
+# Nmap 7.92 scan initiated Wed Jul  6 19:17:01 2022 as: nmap -vv -p- -T4 -n -Pn -oA fastscan 10.10.10.8
+# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)

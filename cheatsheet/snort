@@ -1,0 +1,36 @@
+COMANDI:
+    snort -W    //see all workable interfaces
+    snort -i 4 -v   //start snort on interface 4 of the list, without rules it just let you see the packets
+    snort -i 4 -vd  //verbose with full dump of the packets
+    snort -i 4 -c c:\Snort\etc\snort.conf -T    //-T test snort.conf file to make sure there are no errors
+    snort -i 4 -c c:\Snort\etc\snort.conf -l c:\Snort\log -K ascii
+
+
+
+RULES:
+    rules file : files .rule, every rule file may contain many rules
+    specify folder containing rules in ($RULE_PATH ecc) <snort dir>/etc/snort.conf         //pay attention to version written on top of the file
+    alert icmp any any -> $HOME_NET any (msg:"ICMP test"; sid:1000001; rev:1; classtype:icmp-event;)
+
+        Rule header = alert icmp any any -> $HOME_NET any
+            alert = Rule action (generate an alert when the set condition is met)
+            any = source ip
+            any = source port
+            -> = direction, source to destination
+            $HOME_NET = destination ip (variable from the snort.conf file)
+            any = destination port
+        Rule options = (msg:"ICMP test"; sid:1000001; rev:1; classtype:icmp-event;)
+            msg:"ICMP test" = message included in the alert by snort
+            sid:1000001 = snort rule id, all numers < 1000000 are reserved,
+            rev:1 = revision number (easier  rule maintenance)
+            classtype:icmp-event = category of the rule, icmp-event is one of the predefined snort categories
+    
+    alert tcp 192.168.1.2 anu -> $HOME_NET 21  (msg:"FTP connection attempt"; sid:1000002; rev:1;)
+    alert tcp $HOME_NET 21 -> any any (msg:"FTP failed login"; content:"Login or pwd incorrect"; sid:1000003; rev:1;)
+
+
+VARIABLES:
+    //in snort.conf
+    ipvar HOME_NET 10.0.0.0/16
+    ipvar EXTERNAL_NET !$HOME_NET
+

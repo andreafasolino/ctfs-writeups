@@ -1,0 +1,28 @@
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     https://10.10.11.143/cgi-bin/
+[+] Method:                  GET
+[+] Threads:                 100
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              txt,php,cgi,html
+[+] Timeout:                 10s
+===============================================================
+2022/05/31 04:22:56 Starting gobuster in directory enumeration mode
+===============================================================
+/.htpasswd            (Status: 403) [Size: 199]
+/.htaccess.cgi        (Status: 403) [Size: 199]
+/.htpasswd.cgi        (Status: 403) [Size: 199]
+/.htaccess            (Status: 403) [Size: 199]
+/.htaccess.html       (Status: 403) [Size: 199]
+/.htpasswd.html       (Status: 403) [Size: 199]
+/.htaccess.txt        (Status: 403) [Size: 199]
+/.htpasswd.txt        (Status: 403) [Size: 199]
+/.htaccess.php        (Status: 403) [Size: 199]
+/.htpasswd.php        (Status: 403) [Size: 199]
+===============================================================
+2022/05/31 04:24:12 Finished
+===============================================================

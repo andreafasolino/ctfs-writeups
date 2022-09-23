@@ -1,0 +1,31 @@
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.10.97/
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              php,svg,xml,py,csv,html,txt,htm,js
+[+] Expanded:                true
+[+] No status:               true
+[+] Timeout:                 10s
+===============================================================
+2022/07/05 20:16:06 Starting gobuster in directory enumeration mode
+===============================================================
+http://10.10.10.97/Contact.php          [Size: 0] [--> login.php]
+http://10.10.10.97/DB.php               [Size: 1208]             
+http://10.10.10.97/Home.php             [Size: 0] [--> login.php]
+http://10.10.10.97/Login.php            [Size: 1223]             
+http://10.10.10.97/auth.php             [Size: 1208]             
+http://10.10.10.97/contact.php          [Size: 0] [--> login.php]
+http://10.10.10.97/db.php               [Size: 1208]             
+http://10.10.10.97/home.php             [Size: 0] [--> login.php]
+http://10.10.10.97/login.php            [Size: 1223]             
+http://10.10.10.97/logout.php           [Size: 0] [--> login.php]
+http://10.10.10.97/register.php         [Size: 1569]             
+===============================================================
+2022/07/05 20:31:55 Finished
+===============================================================

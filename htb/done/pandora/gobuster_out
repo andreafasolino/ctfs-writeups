@@ -1,0 +1,26 @@
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://panda.htb/
+[+] Method:                  GET
+[+] Threads:                 100
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Extensions:              txt,php
+[+] Timeout:                 10s
+===============================================================
+2022/05/02 15:33:39 Starting gobuster in directory enumeration mode
+===============================================================
+/.htpasswd            (Status: 403) [Size: 274]
+/.htpasswd.txt        (Status: 403) [Size: 274]
+/.htpasswd.php        (Status: 403) [Size: 274]
+/.htaccess.php        (Status: 403) [Size: 274]
+/.htaccess            (Status: 403) [Size: 274]
+/.htaccess.txt        (Status: 403) [Size: 274]
+/assets               (Status: 301) [Size: 307] [--> http://panda.htb/assets/]
+/server-status        (Status: 403) [Size: 274]                               
+===============================================================
+2022/05/02 15:34:30 Finished
+===============================================================

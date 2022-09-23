@@ -1,0 +1,67 @@
+https://github.com/evilcel3ri/yaCTFpl/blob/aleph/manual.md#post-exploitation
+
+BASIC ENUM WIN COMMANDS:
+    whoami
+    whoami /groups
+    whoami /priv                //check privileges, tutti quelli che compaiono sono privilegi che l'utente ha, Enabled/Disabled indica solo se sono richiesti da processo corrente o no (??)
+    net user            //vedi tutti gli utenti
+    net user <username> //info su un utente
+    hostname
+    systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"System Type"
+    tasklist
+    tasklist /SVC
+    Get-WmiObject win32_service | Select-Object Name, State, Pathname | Where-Object {$_.State -like 'Running'}     //check the ones running in Program Files//powershell for tasklist (list windows serivces)
+    ipconfig /all
+    route print
+    netstat -noa
+    netsh advfirewall show currentprofile
+    netsh advfirewall firewall show rule name=all
+    schtasks /query /fo LIST /v
+    wmic product get name, version, vendor
+    wmic qfe get Caption, Description, HotFixID, InstalledOn
+    Get-ChildItem "C:\Program Files" _recourse | Get-ACL | ?{$_.AccessToString -match "Everyone\sAllow\s\sModify"}      //powershell
+    mountvol
+    Get-WmiObject Win32_PnPSignedDriver | Select-Object DeviceName, DriverVersion, Manufacturer
+    Get-WmiObject Win32_PnPSignedDriver | Select-Object DeviceName, DriverVersion, Manufacturer | Where-Object {$_.Devicename -like "*VMWare*"}
+    icacls <file path>      //check masks and permissions of executables ecc (F=full access, R=read, RX=read and execute, M=modify, W=writeonly)
+    //check info about a service:
+    wmic service where caption="Serviio" get name,caption,state,startmode
+    driverquery /v
+    type USBPcap.inf        //in USBPcap directory
+    wmic logicaldisk get deviceid, volumename, description                  //controlla drive montati
+
+CONTROLLA AlwaysInstallElevated:
+    //se set a 1 vuol dire che chiungque può installare pacchetti con windows installer con elevated privileges
+    reg query HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Installer
+
+
+SUITE ENUM WINDOWS:
+    SysInternalsSuite
+        accesschk.exe -uws "Everyone" "C:\Progam Files
+        sigcheck.exe -a -m C:\Windows\System32\fodhelper.exe
+        procmon.exe
+
+AUTOMATED PRIVESC CHECK:
+    https://github.com/pentestmonkey/windows-privesc-check
+    windows-privesc-check2.exe --dump -G
+
+
+APPLICATION MANIFEST:
+    //apri con sigcheck.exe -a -m C:\Windows\System32\fodhelper.exe
+    //campi importanti:
+        <security> tutte le info di security</security> tra cui <requestedPrivileges>
+        <autoElevate>true</autoElevate>         --> se è true si eleva automaticamente ad high integrity senza alcun prompt all'utente (ovviamente se viuene eseguito da administrator come specificato dal campo <requestedPrivileges>)
+
+
+
+OTHER:
+    - registry entry exploit (es fodhelper.exe)     //HKCU should be accessible to current user
+    - check running services (if there are some user defined running from  Program Files)
+    - unquoted Paths
+    - vulns in system driver os a specific os version
+
+WINDOWS EXPLOIT SUGGESTER:
+      https://github.com/AonCyberLabs/Windows-Exploit-Suggester
+      https://github.com/Pwnistry/Windows-Exploit-Suggester-python3
+      python3 windows_exploit_suggester_p3.py --update
+      python3 windows_exploit_suggester_p3.py --database 2021-11-27-mssb.xls --systeminfo ../htb/oscp_like/grandpa/systeminfo_14

@@ -1,0 +1,71 @@
+# Nmap 7.80 scan initiated Sat Nov  2 13:29:17 2019 as: nmap -p1337 -sC -sV -oA nmap/safe_1337 10.10.10.147
+Nmap scan report for 10.10.10.147
+Host is up (0.16s latency).
+
+PORT     STATE SERVICE VERSION
+1337/tcp open  waste?
+| fingerprint-strings: 
+|   DNSStatusRequestTCP: 
+|     13:30:14 up 1:01, 0 users, load average: 0.11, 0.03, 0.01
+|   DNSVersionBindReqTCP: 
+|     13:30:09 up 1:01, 0 users, load average: 0.12, 0.03, 0.01
+|   GenericLines: 
+|     13:29:56 up 1:01, 0 users, load average: 0.16, 0.03, 0.01
+|     What do you want me to echo back?
+|   GetRequest: 
+|     13:30:02 up 1:01, 0 users, load average: 0.15, 0.03, 0.01
+|     What do you want me to echo back? GET / HTTP/1.0
+|   HTTPOptions: 
+|     13:30:03 up 1:01, 0 users, load average: 0.13, 0.03, 0.01
+|     What do you want me to echo back? OPTIONS / HTTP/1.0
+|   Help: 
+|     13:30:19 up 1:01, 0 users, load average: 0.10, 0.03, 0.01
+|     What do you want me to echo back? HELP
+|   NULL: 
+|     13:29:56 up 1:01, 0 users, load average: 0.16, 0.03, 0.01
+|   RPCCheck: 
+|     13:30:03 up 1:01, 0 users, load average: 0.13, 0.03, 0.01
+|   RTSPRequest: 
+|     13:30:03 up 1:01, 0 users, load average: 0.13, 0.03, 0.01
+|     What do you want me to echo back? OPTIONS / RTSP/1.0
+|   SSLSessionReq: 
+|     13:30:19 up 1:01, 0 users, load average: 0.10, 0.03, 0.01
+|     What do you want me to echo back?
+|   TLSSessionReq, TerminalServerCookie: 
+|     13:30:20 up 1:01, 0 users, load average: 0.10, 0.03, 0.01
+|_    What do you want me to echo back?
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port1337-TCP:V=7.80%I=7%D=11/2%Time=5DBDBCF4%P=x86_64-pc-linux-gnu%r(NU
+SF:LL,3E,"\x2013:29:56\x20up\x20\x201:01,\x20\x200\x20users,\x20\x20load\x
+SF:20average:\x200\.16,\x200\.03,\x200\.01\n")%r(GenericLines,63,"\x2013:2
+SF:9:56\x20up\x20\x201:01,\x20\x200\x20users,\x20\x20load\x20average:\x200
+SF:\.16,\x200\.03,\x200\.01\n\nWhat\x20do\x20you\x20want\x20me\x20to\x20ec
+SF:ho\x20back\?\x20\r\n")%r(GetRequest,71,"\x2013:30:02\x20up\x20\x201:01,
+SF:\x20\x200\x20users,\x20\x20load\x20average:\x200\.15,\x200\.03,\x200\.0
+SF:1\n\nWhat\x20do\x20you\x20want\x20me\x20to\x20echo\x20back\?\x20GET\x20
+SF:/\x20HTTP/1\.0\r\n")%r(HTTPOptions,75,"\x2013:30:03\x20up\x20\x201:01,\
+SF:x20\x200\x20users,\x20\x20load\x20average:\x200\.13,\x200\.03,\x200\.01
+SF:\n\nWhat\x20do\x20you\x20want\x20me\x20to\x20echo\x20back\?\x20OPTIONS\
+SF:x20/\x20HTTP/1\.0\r\n")%r(RTSPRequest,75,"\x2013:30:03\x20up\x20\x201:0
+SF:1,\x20\x200\x20users,\x20\x20load\x20average:\x200\.13,\x200\.03,\x200\
+SF:.01\n\nWhat\x20do\x20you\x20want\x20me\x20to\x20echo\x20back\?\x20OPTIO
+SF:NS\x20/\x20RTSP/1\.0\r\n")%r(RPCCheck,3E,"\x2013:30:03\x20up\x20\x201:0
+SF:1,\x20\x200\x20users,\x20\x20load\x20average:\x200\.13,\x200\.03,\x200\
+SF:.01\n")%r(DNSVersionBindReqTCP,3E,"\x2013:30:09\x20up\x20\x201:01,\x20\
+SF:x200\x20users,\x20\x20load\x20average:\x200\.12,\x200\.03,\x200\.01\n")
+SF:%r(DNSStatusRequestTCP,3E,"\x2013:30:14\x20up\x20\x201:01,\x20\x200\x20
+SF:users,\x20\x20load\x20average:\x200\.11,\x200\.03,\x200\.01\n")%r(Help,
+SF:67,"\x2013:30:19\x20up\x20\x201:01,\x20\x200\x20users,\x20\x20load\x20a
+SF:verage:\x200\.10,\x200\.03,\x200\.01\n\nWhat\x20do\x20you\x20want\x20me
+SF:\x20to\x20echo\x20back\?\x20HELP\r\n")%r(SSLSessionReq,64,"\x2013:30:19
+SF:\x20up\x20\x201:01,\x20\x200\x20users,\x20\x20load\x20average:\x200\.10
+SF:,\x200\.03,\x200\.01\n\nWhat\x20do\x20you\x20want\x20me\x20to\x20echo\x
+SF:20back\?\x20\x16\x03\n")%r(TerminalServerCookie,63,"\x2013:30:20\x20up\
+SF:x20\x201:01,\x20\x200\x20users,\x20\x20load\x20average:\x200\.10,\x200\
+SF:.03,\x200\.01\n\nWhat\x20do\x20you\x20want\x20me\x20to\x20echo\x20back\
+SF:?\x20\x03\n")%r(TLSSessionReq,64,"\x2013:30:20\x20up\x20\x201:01,\x20\x
+SF:200\x20users,\x20\x20load\x20average:\x200\.10,\x200\.03,\x200\.01\n\nW
+SF:hat\x20do\x20you\x20want\x20me\x20to\x20echo\x20back\?\x20\x16\x03\n");
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Nov  2 13:30:53 2019 -- 1 IP address (1 host up) scanned in 96.04 seconds

