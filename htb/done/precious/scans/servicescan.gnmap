@@ -1,0 +1,4 @@
+# Nmap 7.92 scan initiated Thu Dec  8 04:49:54 2022 as: nmap -sC -sV -p 22,80 -oA servicescan 10.10.11.189
+Host: 10.10.11.189 ()	Status: Up
+Host: 10.10.11.189 ()	Ports: 22/open/tcp//ssh//OpenSSH 8.4p1 Debian 5+deb11u1 (protocol 2.0)/, 80/open/tcp//http//nginx 1.18.0/
+# Nmap done at Thu Dec  8 04:50:03 2022 -- 1 IP address (1 host up) scanned in 8.59 seconds
