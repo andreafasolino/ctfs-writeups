@@ -1,0 +1,41 @@
+dirsearch -u http://siteisup.htb/ --deep-recursive            
+
+  _|. _ _  _  _  _ _|_    v0.4.2
+ (_||| _) (/_(_|| (_| )
+
+Extensions: php, aspx, jsp, html, js | HTTP method: GET | Threads: 30 | Wordlist size: 10927
+
+Output File: /home/kali/.dirsearch/reports/siteisup.htb/-_23-01-16_05-17-23.txt
+
+Error Log: /home/kali/.dirsearch/logs/errors-23-01-16_05-17-23.log
+
+Target: http://siteisup.htb/
+
+[05:17:23] Starting: 
+[05:17:25] 403 -  277B  - /.ht_wsr.txt                                     
+[05:17:25] 403 -  277B  - /.htaccess.bak1                                  
+[05:17:25] 403 -  277B  - /.htaccess.sample
+[05:17:25] 403 -  277B  - /.htaccess.save
+[05:17:25] 403 -  277B  - /.htaccess_extra
+[05:17:25] 403 -  277B  - /.htaccess_orig
+[05:17:25] 403 -  277B  - /.htaccessOLD2                                   
+[05:17:25] 403 -  277B  - /.htaccessOLD
+[05:17:25] 403 -  277B  - /.htaccess_sc                                    
+[05:17:25] 403 -  277B  - /.html                                           
+[05:17:25] 403 -  277B  - /.htm
+[05:17:25] 403 -  277B  - /.htpasswd_test
+[05:17:25] 403 -  277B  - /.htpasswds
+[05:17:25] 403 -  277B  - /.httr-oauth                                     
+[05:17:25] 403 -  277B  - /.htaccess.orig                                  
+[05:17:25] 403 -  277B  - /.htaccessBAK
+[05:17:26] 403 -  277B  - /.php                                            
+[05:17:41] 301 -  310B  - /dev  ->  http://siteisup.htb/dev/                
+[05:17:41] 200 -    0B  - /dev/                                             
+[05:17:45] 200 -    1KB - /index.php                                        
+[05:17:45] 200 -    1KB - /index.php/login/     (Added to queue)            
+[05:17:54] 403 -  277B  - /server-status/                                   
+[05:17:54] 403 -  277B  - /server-status                                    
+[05:18:01] Starting: index.php/                                              
+[05:18:02] 404 -  274B  - /index.php/%2e%2e//google.com                    
+                                                                             
+Task Completed

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.93 scan initiated Tue Jan 17 03:26:50 2023 as: nmap -sC -sV -p 22,80,443 -oA servicescan 10.10.11.195 -->
+<nmaprun scanner="nmap" args="nmap -sC -sV -p 22,80,443 -oA servicescan 10.10.11.195" start="1673944010" startstr="Tue Jan 17 03:26:50 2023" version="7.93" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="3" services="22,80,443"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="10.10.11.195" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1673944012" endtime="1673944094"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="10.10.11.195" addrtype="ipv4"/>
+<hostnames>
+<hostname name="broscience.htb" type="PTR"/>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" product="OpenSSH" version="8.4p1 Debian 5+deb11u1" extrainfo="protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.4p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service><script id="ssh-hostkey" output="&#xa;  3072 df17c6bab18222d91db5ebff5d3d2cb7 (RSA)&#xa;  256 3f8a56f8958faeafe3ae7eb880f679d2 (ECDSA)&#xa;  256 3c6575274ae2ef9391374cfdd9d46341 (ED25519)"><table>
+<elem key="key">AAAAB3NzaC1yc2EAAAADAQABAAABgQDB5dEat1MGh3CDDnkl4tdWQcTpdWZYHZj5/Orv3PDjSiQ4dg1i35kknwiZrXLiMsUu/4TigP9Kc3h4M1CS7E3/GprpWxuGmipEucoQuNEtaM0sUa8xobtFxOVF46kS0++ozTd4+zbSLsu73SlLcSuSFalhGnHteHj6/ksSeX642103SMqkkmEu/cbgofkoqQOCYk3Qa42bZq5bjS/auGAlPoAxTjjVtpHnXOKOU7M6gkewD91FB3GAMUdwqR/PJcA5xqGFZm2St9ecSbewCur6pLN5YKnNhvdID4ijWI22gu5pLxHL9XjORMbSUkJbB79VoYJZaNkdOgt+HXR67s9DWI47D6/+pO0dTfQgMFgOCxYheWMDQ2FuyHyGX1CZpMVLAo3sjOvxAqk7eUGutsyBAlYCD4lhSFs6RhSBynahHQah7+Lv5LKRriZe/fQIgrJrQj+tR4Uhz89eWGrXK9bjN22wy7tVkMG/w5dOwo7S3Wi0aTZfd/17D0z7wSdiAiE=</elem>
+<elem key="bits">3072</elem>
+<elem key="type">ssh-rsa</elem>
+<elem key="fingerprint">df17c6bab18222d91db5ebff5d3d2cb7</elem>
+</table>
+<table>
+<elem key="key">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCgM9UKdxFmXRJESXdlb+BSl+K1F0YCkOjSa8l+tgD6Y3mslSfrawZkdfq8NKLZlmOe8uf1ykgXjLWVDQ9NrJBk=</elem>
+<elem key="bits">256</elem>
+<elem key="type">ecdsa-sha2-nistp256</elem>
+<elem key="fingerprint">3f8a56f8958faeafe3ae7eb880f679d2</elem>
+</table>
+<table>
+<elem key="key">AAAAC3NzaC1lZDI1NTE5AAAAIOMwR+IfRojCwiMuM3tZvdD5JCD2MRVum9frUha60bkN</elem>
+<elem key="bits">256</elem>
+<elem key="type">ssh-ed25519</elem>
+<elem key="fingerprint">3c6575274ae2ef9391374cfdd9d46341</elem>
+</table>
+</script></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Apache httpd" version="2.4.54" hostname="broscience.htb" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.54</cpe></service><script id="http-server-header" output="Apache/2.4.54 (Debian)"><elem>Apache/2.4.54 (Debian)</elem>
+</script><script id="http-title" output="Did not follow redirect to https://broscience.htb/"><elem key="redirect_url">https://broscience.htb/</elem>
+</script></port>
+<port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Apache httpd" version="2.4.54" extrainfo="(Debian)" tunnel="ssl" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.54</cpe></service><script id="ssl-date" output="TLS randomness does not represent time"></script><script id="http-server-header" output="Apache/2.4.54 (Debian)"><elem>Apache/2.4.54 (Debian)</elem>
+</script><script id="ssl-cert" output="Subject: commonName=broscience.htb/organizationName=BroScience/countryName=AT&#xa;Not valid before: 2022-07-14T19:48:36&#xa;Not valid after:  2023-07-14T19:48:36"><table key="subject">
+<elem key="commonName">broscience.htb</elem>
+<elem key="countryName">AT</elem>
+<elem key="emailAddress">administrator@broscience.htb</elem>
+<elem key="localityName">Vienna</elem>
+<elem key="organizationName">BroScience</elem>
+</table>
+<table key="issuer">
+<elem key="commonName">broscience.htb</elem>
+<elem key="countryName">AT</elem>
+<elem key="emailAddress">administrator@broscience.htb</elem>
+<elem key="localityName">Vienna</elem>
+<elem key="organizationName">BroScience</elem>
+</table>
+<table key="pubkey">
+<elem key="type">rsa</elem>
+<elem key="bits">4096</elem>
+<elem key="modulus">A7325F613F7BC06AC9153A16828E5A8585268EA72C784A074C0D8263EB714679C9C8B33DCFBA7AB7A8160CD99A3E6A2349415B8659367E66E6705C025571082EAACD3FAF518D4D8FC5720B4B1E87DD002581971F2956389A0497E6BC50EADB8AB6E4BAF24D8701BA12BCA8D9E9D68264A4C871C88C7D9D992DBDBE6C9DC4025A7D3474E084246E6C9F85BB98304979699650092F99B80FB93110966E9660F04D363B9CC05926BA29CDD6D439E310524D10263D7F08A06BCE36B11ED0C5061A24DDF46C14001B40C981ACBA01FFBB701F3673322DF1A45A81CAE4AC2781B5673AB74557C82380A9E552821AB362166E01B19069024DFE581C54BD99932F09B5EEF41065BD2ECAB59BAA3DDA0A0C09F1052B12A2783D27895B4E5B5BFF9A4BB0306ED1E95458F43EB24A7F634CAD169A60585F4575E39A18054F1651B840A9900F6FFBEC6B21A656C29A5FAAEE3543B4B74ED984C8CEF063B5981879D3BFB7611B58CEDC2E78238BEDEDCDE6374E59721AB865D069FA3D8E1BA195EB64B66785B39CAD3398137F45FB47E227936728BA6E5323F2952B65902DBFA848E920A9BAD5A48CABDD8AE9A96D4D9F27A43F07946C2FE7E3FB9266FD7EF501E3189DDA42D5A67FBDC91429060417A2ACDB9F6F8FE299D5FC199A6426CDF991C2F7DA04727E92C717D8321086D6F4D1275F592983C55F0AB5093A34793C579D8D5B70E06FDB</elem>
+<elem key="exponent">65537</elem>
+</table>
+<table key="extensions">
+<table>
+<elem key="name">X509v3 Subject Key Identifier</elem>
+<elem key="value">7C:BC:C5:22:C8:6E:50:5B:21:11:E5:C3:A1:93:6E:2B:68:BF:80:5A</elem>
+</table>
+<table>
+<elem key="name">X509v3 Authority Key Identifier</elem>
+<elem key="value">7C:BC:C5:22:C8:6E:50:5B:21:11:E5:C3:A1:93:6E:2B:68:BF:80:5A</elem>
+</table>
+<table>
+<elem key="name">X509v3 Basic Constraints</elem>
+<elem key="value">CA:TRUE</elem>
+<elem key="critical">true</elem>
+</table>
+</table>
+<elem key="sig_algo">sha256WithRSAEncryption</elem>
+<table key="validity">
+<elem key="notBefore">2022-07-14T19:48:36</elem>
+<elem key="notAfter">2023-07-14T19:48:36</elem>
+</table>
+<elem key="md5">5328ddd62f3429d11d26ae8a68d86e0c</elem>
+<elem key="sha1">20568d0d9e4109cde5a22021fe3f349c40d8d75b</elem>
+<elem key="pem">-&#45;&#45;&#45;&#45;BEGIN CERTIFICATE-&#45;&#45;&#45;&#45;&#xa;MIIF0zCCA7ugAwIBAgIUD+qpK08oB9Kng1mp3mIxnO21+s4wDQYJKoZIhvcNAQEL&#xa;BQAweTELMAkGA1UEBhMCQVQxDzANBgNVBAcMBlZpZW5uYTETMBEGA1UECgwKQnJv&#xa;U2NpZW5jZTEXMBUGA1UEAwwOYnJvc2NpZW5jZS5odGIxKzApBgkqhkiG9w0BCQEW&#xa;HGFkbWluaXN0cmF0b3JAYnJvc2NpZW5jZS5odGIwHhcNMjIwNzE0MTk0ODM2WhcN&#xa;MjMwNzE0MTk0ODM2WjB5MQswCQYDVQQGEwJBVDEPMA0GA1UEBwwGVmllbm5hMRMw&#xa;EQYDVQQKDApCcm9TY2llbmNlMRcwFQYDVQQDDA5icm9zY2llbmNlLmh0YjErMCkG&#xa;CSqGSIb3DQEJARYcYWRtaW5pc3RyYXRvckBicm9zY2llbmNlLmh0YjCCAiIwDQYJ&#xa;KoZIhvcNAQEBBQADggIPADCCAgoCggIBAKcyX2E/e8BqyRU6FoKOWoWFJo6nLHhK&#xa;B0wNgmPrcUZ5ycizPc+6ereoFgzZmj5qI0lBW4ZZNn5m5nBcAlVxCC6qzT+vUY1N&#xa;j8VyC0seh90AJYGXHylWOJoEl+a8UOrbirbkuvJNhwG6Eryo2enWgmSkyHHIjH2d&#xa;mS29vmydxAJafTR04IQkbmyfhbuYMEl5aZZQCS+ZuA+5MRCWbpZg8E02O5zAWSa6&#xa;Kc3W1DnjEFJNECY9fwiga842sR7QxQYaJN30bBQAG0DJgay6Af+7cB82czIt8aRa&#xa;gcrkrCeBtWc6t0VXyCOAqeVSghqzYhZuAbGQaQJN/lgcVL2Zky8Jte70EGW9Lsq1&#xa;m6o92goMCfEFKxKieD0niVtOW1v/mkuwMG7R6VRY9D6ySn9jTK0WmmBYX0V145oY&#xa;BU8WUbhAqZAPb/vsayGmVsKaX6ruNUO0t07ZhMjO8GO1mBh507+3YRtYztwueCOL&#xa;7e3N5jdOWXIauGXQafo9jhuhletktmeFs5ytM5gTf0X7R+Ink2coum5TI/KVK2WQ&#xa;Lb+oSOkgqbrVpIyr3YrpqW1NnyekPweUbC/n4/uSZv1+9QHjGJ3aQtWmf73JFCkG&#xa;BBeirNufb4/imdX8GZpkJs35kcL32gRyfpLHF9gyEIbW9NEnX1kpg8VfCrUJOjR5&#xa;PFedjVtw4G/bAgMBAAGjUzBRMB0GA1UdDgQWBBR8vMUiyG5QWyER5cOhk24raL+A&#xa;WjAfBgNVHSMEGDAWgBR8vMUiyG5QWyER5cOhk24raL+AWjAPBgNVHRMBAf8EBTAD&#xa;AQH/MA0GCSqGSIb3DQEBCwUAA4ICAQCjEIzE+EpLeuGgCY18AREB4t2xSwqiYgqC&#xa;H+gRoSbQ64xpNrbjOLBeyB4b1FotYdquKiaiFs7P1taY7hQiyHGFk4HOJlhyBnRK&#xa;atjKt6ZE24yWgsGikGx0D57SYTeJwhqafYRnNuqNPCvnvhO1zQjMTl03T30PvSeb&#xa;TDfcgd3rzG72w4S/zL59Vr4kr9Js01LpjDgt2Kyd5zW4RZKHA+RdIE+ePJXZaTwj&#xa;+Ko8QzNKwt3qDlOXAV5MiqUfKPHyg6Rzq8i5bKNMpwU1UxYGpE64T0t+IfhiOX/O&#xa;r/dW59nLXoHTGhqwAStFCzCqu+6Jfod2wFb+9Ty5rctVIpHw2XMEKfC8DSewvCc6&#xa;QjMMMCRc2vpkc/YHberK+VYb8eVf4GcKzq6ns341jZ0FAwNEpB6tY6eeGovOLeeO&#xa;P5ONg9XAO8EipKj/tJhmIZ2G6GHKh1Enj7zg1DoGCMttLeaC5lMzaxAWdwUplaBm&#xa;w/+0dzFuuJL+XlxQIrVpGpmJOmBvPq/WvzU6ZFi4UwbHkow5EVvUPvW2GmTVecpx&#xa;Or1X3z3W5aGvj1tH2OcqY5WTcgDNoBtFc3tob8xNd7KB88DQfNbSHuFShKymwAVK&#xa;bcb0jeUT6YRF6NEmoLu80xyrro+Ejt1fLd3WE6q4+BXvhdj62OPtt5ue2rEhycgc&#xa;dfC1SCd82A==&#xa;-&#45;&#45;&#45;&#45;END CERTIFICATE-&#45;&#45;&#45;&#45;&#xa;</elem>
+</script><script id="http-cookie-flags" output="&#xa;  /: &#xa;    PHPSESSID: &#xa;      httponly flag not set"><table key="/">
+<table key="PHPSESSID">
+<elem>httponly flag not set</elem>
+</table>
+</table>
+</script><script id="tls-alpn" output="&#xa;  http/1.1"><elem>http/1.1</elem>
+</script><script id="http-title" output="BroScience : Home"><elem key="title">BroScience : Home</elem>
+</script></port>
+</ports>
+<times srtt="850977" rttvar="388935" to="2406717"/>
+</host>
+<runstats><finished time="1673944094" timestr="Tue Jan 17 03:28:14 2023" summary="Nmap done at Tue Jan 17 03:28:14 2023; 1 IP address (1 host up) scanned in 84.07 seconds" elapsed="84.07" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

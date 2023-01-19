@@ -1,0 +1,20 @@
+# Nmap 7.93 scan initiated Wed Jan 18 04:37:02 2023 as: nmap -vv -T4 -p- -oA fastscan 10.10.11.193
+Warning: 10.10.11.193 giving up on port because retransmission cap hit (6).
+Nmap scan report for 10.10.11.193
+Host is up, received syn-ack (0.13s latency).
+Scanned at 2023-01-18 04:37:02 EST for 47s
+Not shown: 65525 closed tcp ports (conn-refused)
+PORT      STATE    SERVICE REASON
+22/tcp    open     ssh     syn-ack
+80/tcp    open     http    syn-ack
+9268/tcp  filtered unknown no-response
+10337/tcp filtered unknown no-response
+14535/tcp filtered unknown no-response
+36257/tcp filtered unknown no-response
+41060/tcp filtered unknown no-response
+53252/tcp filtered unknown no-response
+61008/tcp filtered unknown no-response
+65518/tcp filtered unknown no-response
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Wed Jan 18 04:37:49 2023 -- 1 IP address (1 host up) scanned in 47.14 seconds

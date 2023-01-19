@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.93 scan initiated Fri Jan 13 03:28:18 2023 as: nmap -sC -sV -p 21,22,80 -Pn -oA servicescan 10.10.11.186 -->
+<nmaprun scanner="nmap" args="nmap -sC -sV -p 21,22,80 -Pn -oA servicescan 10.10.11.186" start="1673598498" startstr="Fri Jan 13 03:28:18 2023" version="7.93" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="3" services="21-22,80"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1673598499" endtime="1673598708"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.10.11.186" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="21"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="ftp" servicefp="SF-Port21-TCP:V=7.93%I=7%D=1/13%Time=63C1162E%P=x86_64-pc-linux-gnu%r(GenericLines,8F,&quot;220\x20ProFTPD\x20Server\x20\(Debian\)\x20\[::ffff:10\.10\.11\.186\]\r\n500\x20Invalid\x20command:\x20try\x20being\x20more\x20creative\r\n500\x20Invalid\x20command:\x20try\x20being\x20more\x20creative\r\n&quot;);" method="table" conf="3"/><script id="fingerprint-strings" output="&#xa;  GenericLines: &#xa;    220 ProFTPD Server (Debian) [::ffff:10.10.11.186]&#xa;    Invalid command: try being more creative&#xa;    Invalid command: try being more creative"><elem key="GenericLines">&#xa;    220 ProFTPD Server (Debian) [::ffff:10.10.11.186]&#xa;    Invalid command: try being more creative&#xa;    Invalid command: try being more creative</elem>
+</script></port>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="ssh" product="OpenSSH" version="8.4p1 Debian 5+deb11u1" extrainfo="protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.4p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service><script id="ssh-hostkey" output="&#xa;  3072 c4b44617d2102d8fec1dc927fecd79ee (RSA)&#xa;  256 2aea2fcb23e8c529409cab866dcd4411 (ECDSA)&#xa;  256 fd78c0b0e22016fa050debd83f12a4ab (ED25519)"><table>
+<elem key="bits">3072</elem>
+<elem key="key">AAAAB3NzaC1yc2EAAAADAQABAAABgQDPp9LmBKMOuXu2ZOpw8JorL5ah0sU0kIBXvJB8LX26rpbOhw+1MPdhx6ptZzXwQ8wkQc88xu5h+oB8NGkeHLYhvRqtZmvkTpOsyJiMm+0Udbg+IJCENPiKGSC5J+0tt4QPj92xtTe/f7WV4hbBLDQust46D1xVJVOCNfaloIC40BtWoMWIoEFWnk7U3kwXcM5336LuUnhm69XApDB4y/dt5CgXFoWlDQi45WLLQGbanCNAlT9XwyPnpIyqQdF7mRJ5yRXUOXGeGmoO9+JALVQIEJ/7Ljxts6QuV633wFefpxnmvTu7XX9W8vxUcmInIEIQCmunR5YH4ZgWRclT+6rzwRQw1DH1z/ZYui5Bjn82neoJunhweTJXQcotBp8glpvq3X/rQgZASSyYrOJghBlNVZDqPzp4vBC78gn6TyZyuJXhDxw+lHxF82IMT2fatp240InLVvoWrTWlXlEyPiHraKC0okOVtul6T0VRxsuT+QsyU7pdNFkn2wDVvC25AW8=</elem>
+<elem key="type">ssh-rsa</elem>
+<elem key="fingerprint">c4b44617d2102d8fec1dc927fecd79ee</elem>
+</table>
+<table>
+<elem key="bits">256</elem>
+<elem key="key">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB1ZmNogWBUF8MwkNsezebQ+0/yPq7RX3/j9s4Qh8jbGlmvAcN0Z/aIBrzbEuTRf3/cHehtaNf9qrF2ehQAeM94=</elem>
+<elem key="type">ecdsa-sha2-nistp256</elem>
+<elem key="fingerprint">2aea2fcb23e8c529409cab866dcd4411</elem>
+</table>
+<table>
+<elem key="bits">256</elem>
+<elem key="key">AAAAC3NzaC1lZDI1NTE5AAAAIOP4kxBr9kumAjfplon8fXJpuqhdMJy2rpd3FM7+mGw2</elem>
+<elem key="type">ssh-ed25519</elem>
+<elem key="fingerprint">fd78c0b0e22016fa050debd83f12a4ab</elem>
+</table>
+</script></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="http" product="nginx" version="1.18.0" method="probed" conf="10"><cpe>cpe:/a:igor_sysoev:nginx:1.18.0</cpe></service><script id="http-title" output="Did not follow redirect to http://metapress.htb/"><elem key="redirect_url">http://metapress.htb/</elem>
+</script><script id="http-server-header" output="nginx/1.18.0"><elem>nginx/1.18.0</elem>
+</script></port>
+</ports>
+<times srtt="56689" rttvar="31906" to="184313"/>
+</host>
+<runstats><finished time="1673598708" timestr="Fri Jan 13 03:31:48 2023" summary="Nmap done at Fri Jan 13 03:31:48 2023; 1 IP address (1 host up) scanned in 210.10 seconds" elapsed="210.10" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

@@ -1,0 +1,20 @@
+Target: https://broscience.htb/
+Total requests: 100000
+==================================================================
+ID    Response   Lines      Word         Chars          Request    
+==================================================================
+31449:  C=404      9 L	      31 W	    306 Ch	  "badashengzhenrenbaijialedubo"
+37212:  C=400     10 L	      35 W	    322 Ch	  "*"
+49750:  C=200     18 L	      82 W	   1389 Ch	  "huangguandailiwanghg5655"
+49774:  C=200     18 L	      82 W	   1384 Ch	  "guizuguojiyulecheng"
+49758:  C=200     18 L	      82 W	   1370 Ch	  "hilda"
+49776:  C=200     18 L	      82 W	   1380 Ch	  "gubaoyouxiguize"
+49773:  C=200     18 L	      82 W	   1386 Ch	  "guizuyulechengwangzhi"
+49775:  C=200     18 L	      82 W	   1371 Ch	  "guinea"
+49772:  C=200     18 L	      82 W	   1380 Ch	  "guojiaomendupan"
+86676:  C=200     18 L	      82 W	   1391 Ch	  "ouzhoubeisansibisaishijian"
+
+Total time: 0
+Processed Requests: 100000
+Filtered Requests: 99990
+Requests/sec.: 0

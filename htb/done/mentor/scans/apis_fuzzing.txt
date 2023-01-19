@@ -1,0 +1,15 @@
+Target: http://api.mentorquotes.htb/FUZZ
+Total requests: 220560
+==================================================================
+ID    Response   Lines      Word         Chars          Request    
+==================================================================
+00090:  C=200     30 L	      62 W	    969 Ch	  "docs"
+00202:  C=307      0 L	       0 W	      0 Ch	  "users"
+00259:  C=307      0 L	       0 W	      0 Ch	  "admin"
+00687:  C=307      0 L	       0 W	      0 Ch	  "quotes"
+10386:  C=200     27 L	      52 W	    772 Ch	  "redoc"
+
+Total time: 0
+Processed Requests: 66496
+Filtered Requests: 66491
+Requests/sec.: 0

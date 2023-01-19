@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.93 scan initiated Tue Jan 10 10:33:14 2023 as: nmap -p- -T4 -vv -oA fastscan 10.10.11.180 -->
+<nmaprun scanner="nmap" args="nmap -p- -T4 -vv -oA fastscan 10.10.11.180" start="1673364794" startstr="Tue Jan 10 10:33:14 2023" version="7.93" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="2"/>
+<debugging level="0"/>
+<taskbegin task="Ping Scan" time="1673364794"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="10.10.11.180" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<taskend task="Ping Scan" time="1673364794" extrainfo="1 total hosts"/>
+<taskbegin task="Parallel DNS resolution of 1 host." time="1673364794"/>
+<taskend task="Parallel DNS resolution of 1 host." time="1673364794"/>
+<taskbegin task="Connect Scan" time="1673364794"/>
+<taskend task="Connect Scan" time="1673364818" extrainfo="65535 total ports"/>
+<host starttime="1673364794" endtime="1673364818"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="10.10.11.180" addrtype="ipv4"/>
+<hostnames>
+<hostname name="10.10.11.180" type="PTR"/>
+</hostnames>
+<ports><extraports state="closed" count="65532">
+<extrareasons reason="conn-refused" count="65532" proto="tcp" ports="1-21,23-79,81-9092,9094-65535"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" method="table" conf="3"/></port>
+<port protocol="tcp" portid="9093"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="copycat" method="table" conf="3"/></port>
+</ports>
+<times srtt="39198" rttvar="817" to="100000"/>
+</host>
+<runstats><finished time="1673364818" timestr="Tue Jan 10 10:33:38 2023" summary="Nmap done at Tue Jan 10 10:33:38 2023; 1 IP address (1 host up) scanned in 23.93 seconds" elapsed="23.93" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

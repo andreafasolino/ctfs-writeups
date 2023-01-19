@@ -1,0 +1,60 @@
+dirsearch -u http://siteisup.htb/dev/                 
+
+  _|. _ _  _  _  _ _|_    v0.4.2
+ (_||| _) (/_(_|| (_| )
+
+Extensions: php, aspx, jsp, html, js | HTTP method: GET | Threads: 30 | Wordlist size: 10927
+
+Output File: /home/kali/.dirsearch/reports/siteisup.htb/-dev-_23-01-16_05-20-01.txt
+
+Error Log: /home/kali/.dirsearch/logs/errors-23-01-16_05-20-01.log
+
+Target: http://siteisup.htb/dev/
+
+[05:20:01] Starting: 
+[05:20:03] 301 -  315B  - /dev/.git  ->  http://siteisup.htb/dev/.git/     
+[05:20:03] 200 -  772B  - /dev/.git/branches/                              
+[05:20:03] 200 -    3KB - /dev/.git/
+[05:20:03] 200 -  298B  - /dev/.git/config                                 
+[05:20:03] 200 -   21B  - /dev/.git/HEAD                                   
+[05:20:03] 200 -    4KB - /dev/.git/hooks/
+[05:20:03] 200 -  959B  - /dev/.git/info/                                  
+[05:20:03] 200 -    1KB - /dev/.git/logs/                                  
+[05:20:03] 200 -  521B  - /dev/.git/index                                  
+[05:20:03] 200 -  240B  - /dev/.git/info/exclude
+[05:20:03] 200 -  179B  - /dev/.git/logs/HEAD
+[05:20:03] 200 -   73B  - /dev/.git/description                            
+[05:20:03] 301 -  331B  - /dev/.git/logs/refs/heads  ->  http://siteisup.htb/dev/.git/logs/refs/heads/
+[05:20:03] 301 -  325B  - /dev/.git/logs/refs  ->  http://siteisup.htb/dev/.git/logs/refs/
+[05:20:03] 301 -  333B  - /dev/.git/logs/refs/remotes  ->  http://siteisup.htb/dev/.git/logs/refs/remotes/
+[05:20:03] 301 -  340B  - /dev/.git/logs/refs/remotes/origin  ->  http://siteisup.htb/dev/.git/logs/refs/remotes/origin/
+[05:20:03] 200 -    1KB - /dev/.git/refs/                                  
+[05:20:03] 200 -  179B  - /dev/.git/logs/refs/remotes/origin/HEAD
+[05:20:03] 301 -  326B  - /dev/.git/refs/heads  ->  http://siteisup.htb/dev/.git/refs/heads/
+[05:20:03] 200 -    1KB - /dev/.git/objects/
+[05:20:03] 200 -  112B  - /dev/.git/packed-refs
+[05:20:03] 301 -  335B  - /dev/.git/refs/remotes/origin  ->  http://siteisup.htb/dev/.git/refs/remotes/origin/
+[05:20:03] 301 -  328B  - /dev/.git/refs/remotes  ->  http://siteisup.htb/dev/.git/refs/remotes/
+[05:20:03] 301 -  325B  - /dev/.git/refs/tags  ->  http://siteisup.htb/dev/.git/refs/tags/
+[05:20:03] 200 -   30B  - /dev/.git/refs/remotes/origin/HEAD               
+[05:20:03] 403 -  277B  - /dev/.ht_wsr.txt                                 
+[05:20:03] 403 -  277B  - /dev/.htaccess.bak1                              
+[05:20:03] 403 -  277B  - /dev/.htaccessBAK
+[05:20:03] 403 -  277B  - /dev/.htaccess.save
+[05:20:03] 403 -  277B  - /dev/.htaccess.sample
+[05:20:03] 403 -  277B  - /dev/.htaccessOLD
+[05:20:03] 403 -  277B  - /dev/.htaccess_extra                             
+[05:20:03] 403 -  277B  - /dev/.htaccess_sc
+[05:20:03] 403 -  277B  - /dev/.htaccess.orig
+[05:20:03] 403 -  277B  - /dev/.htaccessOLD2
+[05:20:03] 403 -  277B  - /dev/.html
+[05:20:03] 403 -  277B  - /dev/.htm
+[05:20:03] 403 -  277B  - /dev/.htpasswds
+[05:20:03] 403 -  277B  - /dev/.htpasswd_test
+[05:20:03] 403 -  277B  - /dev/.httr-oauth
+[05:20:03] 403 -  277B  - /dev/.htaccess_orig                              
+[05:20:04] 403 -  277B  - /dev/.php                                        
+[05:20:23] 200 -    0B  - /dev/index.php                                    
+[05:20:23] 200 -    0B  - /dev/index.php/login/                             
+                                                                             
+Task Completed                   

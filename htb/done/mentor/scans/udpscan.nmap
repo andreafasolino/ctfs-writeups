@@ -1,0 +1,9 @@
+# Nmap 7.93 scan initiated Wed Jan 18 08:31:24 2023 as: nmap -sU -oA udpscan 10.10.11.193
+Nmap scan report for mentorquotes.htb (10.10.11.193)
+Host is up (0.068s latency).
+Not shown: 998 closed udp ports (port-unreach)
+PORT    STATE         SERVICE
+68/udp  open|filtered dhcpc
+161/udp open          snmp
+
+# Nmap done at Wed Jan 18 08:49:29 2023 -- 1 IP address (1 host up) scanned in 1085.07 seconds

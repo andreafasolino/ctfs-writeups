@@ -1,0 +1,12 @@
+Target: http://siteisup.htb/
+Total requests: 100000
+==================================================================
+ID    Response   Lines      Word         Chars          Request    
+==================================================================
+00022:  C=403      9 L	      28 W	    281 Ch	  "dev"
+37212:  C=400     10 L	      35 W	    301 Ch	  "*"
+
+Total time: 0
+Processed Requests: 100000
+Filtered Requests: 99998
+Requests/sec.: 0

