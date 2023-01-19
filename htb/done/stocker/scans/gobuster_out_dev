@@ -1,0 +1,9 @@
+/login               [32m (Status: 200)[0m [Size: 2667]
+/static              [36m (Status: 301)[0m [Size: 179][34m [--> /static/][0m
+/Login               [32m (Status: 200)[0m [Size: 2667]
+/logout              [36m (Status: 302)[0m [Size: 28][34m [--> /login][0m
+/stock               [36m (Status: 302)[0m [Size: 48][34m [--> /login?error=auth-required][0m
+/Logout              [36m (Status: 302)[0m [Size: 28][34m [--> /login][0m
+/Static              [36m (Status: 301)[0m [Size: 179][34m [--> /Static/][0m
+/LogIn               [32m (Status: 200)[0m [Size: 2667]
+/LOGIN               [32m (Status: 200)[0m [Size: 2667]

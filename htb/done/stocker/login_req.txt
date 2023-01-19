@@ -1,0 +1,15 @@
+POST /login HTTP/1.1
+Host: dev.stocker.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 35
+Origin: http://dev.stocker.htb
+Connection: close
+Referer: http://dev.stocker.htb/login
+Cookie: connect.sid=s%3A99cjle1SigdZ8hoTbCurfp1naFmTpc-F.cpByk2n6pY0TlvauDWWOaNMYlOAg%2BBsfCUevDmgpfjI
+Upgrade-Insecure-Requests: 1
+
+username=username&password=password

@@ -1,0 +1,9 @@
+# Nmap 7.93 scan initiated Thu Jan 19 05:24:34 2023 as: nmap -p- -Pn -T4 -oA fastascan 10.10.11.196
+Nmap scan report for 10.10.11.196 (10.10.11.196)
+Host is up (0.038s latency).
+Not shown: 65533 closed tcp ports (conn-refused)
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+# Nmap done at Thu Jan 19 05:24:50 2023 -- 1 IP address (1 host up) scanned in 15.21 seconds
