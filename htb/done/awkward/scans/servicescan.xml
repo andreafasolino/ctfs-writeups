@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.93 scan initiated Fri Jan 20 04:53:45 2023 as: nmap -sC -sV -p 22,80 -Pn -oA servicescan 10.10.11.185 -->
+<nmaprun scanner="nmap" args="nmap -sC -sV -p 22,80 -Pn -oA servicescan 10.10.11.185" start="1674208425" startstr="Fri Jan 20 04:53:45 2023" version="7.93" xmloutputversion="1.05">
+<scaninfo type="connect" protocol="tcp" numservices="2" services="22,80"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1674208425" endtime="1674208437"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.10.11.185" addrtype="ipv4"/>
+<hostnames>
+<hostname name="10.10.11.185" type="PTR"/>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" product="OpenSSH" version="8.9p1 Ubuntu 3" extrainfo="Ubuntu Linux; protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.9p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service><script id="ssh-hostkey" output="&#xa;  256 7254afbaf6e2835941b7cd611c2f418b (ECDSA)&#xa;  256 59365bba3c7821e326b37d23605aec38 (ED25519)"><table>
+<elem key="key">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCMaN1wQtPg5uk2w3xD0d0ND6JQgzw40PoqCSBDGB7Q0/f5lQSGU2eSTw4uCdL99hdM/+Uv84ffp2tNkCXyV8l8=</elem>
+<elem key="type">ecdsa-sha2-nistp256</elem>
+<elem key="bits">256</elem>
+<elem key="fingerprint">7254afbaf6e2835941b7cd611c2f418b</elem>
+</table>
+<table>
+<elem key="key">AAAAC3NzaC1lZDI1NTE5AAAAIFsq9sSC1uhq5CBWylh+yiC7jz4tuegMj/4FVTp6bzZy</elem>
+<elem key="type">ssh-ed25519</elem>
+<elem key="bits">256</elem>
+<elem key="fingerprint">59365bba3c7821e326b37d23605aec38</elem>
+</table>
+</script></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="nginx" version="1.18.0" extrainfo="Ubuntu" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:igor_sysoev:nginx:1.18.0</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service><script id="http-title" output="Site doesn&apos;t have a title (text/html)."></script><script id="http-server-header" output="nginx/1.18.0 (Ubuntu)"><elem>nginx/1.18.0 (Ubuntu)</elem>
+</script></port>
+</ports>
+<times srtt="40892" rttvar="30972" to="164780"/>
+</host>
+<runstats><finished time="1674208437" timestr="Fri Jan 20 04:53:57 2023" summary="Nmap done at Fri Jan 20 04:53:57 2023; 1 IP address (1 host up) scanned in 11.78 seconds" elapsed="11.78" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

