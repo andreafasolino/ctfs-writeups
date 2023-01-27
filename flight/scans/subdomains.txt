@@ -1,0 +1,33 @@
+Target: http://flight.htb/
+Total requests: 100000
+==================================================================
+ID    Response   Lines      Word         Chars          Request    
+==================================================================
+00972:  C=200     90 L	     412 W	   3996 Ch	  "school"
+03336:  C=404      9 L	      33 W	    302 Ch	  "gate2"
+03343:  C=200     14 L	      42 W	    588 Ch	  "p01718h5pjk"
+03342:  C=200     14 L	      42 W	    582 Ch	  "whois"
+03340:  C=200      0 L	       0 W	      0 Ch	  "img5"
+03339:  C=200      0 L	       0 W	      0 Ch	  "ip126"
+03338:  C=200      0 L	       0 W	      0 Ch	  "ip182"
+03341:  C=200     15 L	      54 W	    794 Ch	  "altair"
+22163:  C=403      9 L	      30 W	    314 Ch	  "fengyunzhiboba"
+27014:  C=404      9 L	      33 W	    316 Ch	  "zhenqianqipaipingce"
+27013:  C=404      9 L	      33 W	    319 Ch	  "zhenrenyulewangkexinma"
+31968:  C=404      9 L	      33 W	    303 Ch	  "mta217"
+31967:  C=404      9 L	      33 W	    303 Ch	  "mta228"
+31966:  C=404      9 L	      33 W	    303 Ch	  "mta249"
+37212:  C=400     10 L	      37 W	    326 Ch	  "*"
+38837:  C=200     15 L	      54 W	    815 Ch	  "baijialeduchangruhechoushui"
+38836:  C=200     15 L	      54 W	    814 Ch	  "baijialefanbeiwanfabaoying"
+51513:  C=403      9 L	      30 W	    306 Ch	  "morton"
+65178:  C=404      9 L	      33 W	    304 Ch	  "thermal"
+65184:  C=404      9 L	      33 W	    312 Ch	  "taizhouzuqiubao"
+65180:  C=404      9 L	      33 W	    300 Ch	  "tcr"
+77956:  C=404      9 L	      33 W	    303 Ch	  "ppp241"
+90592:  C=403      9 L	      30 W	    306 Ch	  "syntax"
+
+Total time: 0
+Processed Requests: 100000
+Filtered Requests: 99977
+Requests/sec.: 0

