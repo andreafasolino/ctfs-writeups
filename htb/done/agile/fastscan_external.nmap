@@ -1,0 +1,44 @@
+# Nmap 7.93 scan initiated Mon Jun 19 11:23:54 2023 as: nmap -vv -p- -T4 -n -Pn -oA fastscan_external 10.10.11.203
+Increasing send delay for 10.10.11.203 from 0 to 5 due to 83 out of 207 dropped probes since last increase.
+Warning: 10.10.11.203 giving up on port because retransmission cap hit (6).
+Nmap scan report for 10.10.11.203
+Host is up, received user-set (0.17s latency).
+Scanned at 2023-06-19 11:23:54 EDT for 861s
+Not shown: 65502 closed tcp ports (conn-refused)
+PORT      STATE    SERVICE        REASON
+22/tcp    open     ssh            syn-ack
+80/tcp    open     http           syn-ack
+7271/tcp  filtered unknown        no-response
+9462/tcp  filtered unknown        no-response
+16291/tcp filtered unknown        no-response
+16761/tcp filtered unknown        no-response
+17004/tcp filtered unknown        no-response
+17860/tcp filtered unknown        no-response
+19778/tcp filtered unknown        no-response
+22576/tcp filtered unknown        no-response
+24171/tcp filtered unknown        no-response
+25120/tcp filtered unknown        no-response
+26957/tcp filtered unknown        no-response
+32772/tcp filtered sometimes-rpc7 no-response
+33151/tcp filtered unknown        no-response
+33923/tcp filtered unknown        no-response
+36238/tcp filtered unknown        no-response
+40206/tcp filtered unknown        no-response
+44818/tcp filtered EtherNetIP-2   no-response
+45035/tcp filtered unknown        no-response
+45367/tcp filtered unknown        no-response
+46697/tcp filtered unknown        no-response
+47592/tcp filtered unknown        no-response
+49911/tcp filtered unknown        no-response
+51870/tcp filtered unknown        no-response
+54382/tcp filtered unknown        no-response
+55064/tcp filtered unknown        no-response
+57039/tcp filtered unknown        no-response
+57453/tcp filtered unknown        no-response
+58176/tcp filtered unknown        no-response
+58333/tcp filtered unknown        no-response
+58728/tcp filtered unknown        no-response
+62022/tcp filtered unknown        no-response
+
+Read data files from: /usr/bin/../share/nmap
+# Nmap done at Mon Jun 19 11:38:15 2023 -- 1 IP address (1 host up) scanned in 860.51 seconds

