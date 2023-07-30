@@ -1,0 +1,52 @@
+200      GET     2018l    10020w    95609c http://snoopy.htb/assets/vendor/bootstrap-icons/bootstrap-icons.css
+301      GET        7l       12w      178c http://snoopy.htb/assets => http://snoopy.htb/assets/
+200      GET       85l      210w     2734c http://snoopy.htb/assets/vendor/php-email-form/validate.js
+301      GET        7l       12w      178c http://snoopy.htb/forms => http://snoopy.htb/forms/
+200      GET        7l       27w     1738c http://snoopy.htb/assets/img/apple-touch-icon.png
+200      GET        1l      233w    13749c http://snoopy.htb/assets/vendor/glightbox/css/glightbox.min.css
+301      GET        7l       12w      178c http://snoopy.htb/assets/img => http://snoopy.htb/assets/img/
+200      GET        1l      625w    55880c http://snoopy.htb/assets/vendor/glightbox/js/glightbox.min.js
+403      GET        7l       10w      162c http://snoopy.htb/assets/img/blog/
+403      GET        7l       10w      162c http://snoopy.htb/assets/img/
+301      GET        7l       12w      178c http://snoopy.htb/assets/img/blog => http://snoopy.htb/assets/img/blog/
+301      GET        7l       12w      178c http://snoopy.htb/assets/css => http://snoopy.htb/assets/css/
+200      GET       13l      171w    16493c http://snoopy.htb/assets/vendor/swiper/swiper-bundle.min.css
+301      GET        7l       12w      178c http://snoopy.htb/assets/img/testimonials => http://snoopy.htb/assets/img/testimonials/
+403      GET        7l       10w      162c http://snoopy.htb/assets/vendor/aos/
+403      GET        7l       10w      162c http://snoopy.htb/assets/vendor/bootstrap/
+301      GET        7l       12w      178c http://snoopy.htb/assets/js => http://snoopy.htb/assets/js/
+200      GET        7l     2189w   194901c http://snoopy.htb/assets/vendor/bootstrap/css/bootstrap.min.css
+301      GET        7l       12w      178c http://snoopy.htb/assets/img/team => http://snoopy.htb/assets/img/team/
+200      GET      321l     1864w    90549c http://snoopy.htb/assets/img/blog/blog-4.jpg
+200      GET        1l      218w    26053c http://snoopy.htb/assets/vendor/aos/aos.css
+200      GET     2204l     4482w    41430c http://snoopy.htb/assets/css/main.css
+403      GET        7l       10w      162c http://snoopy.htb/assets/vendor/php-email-form/
+403      GET        7l       10w      162c http://snoopy.htb/assets/vendor/remixicon/
+301      GET        7l       12w      178c http://snoopy.htb/assets/vendor/bootstrap/css => http://snoopy.htb/assets/vendor/bootstrap/css/
+301      GET        7l       12w      178c http://snoopy.htb/assets/vendor => http://snoopy.htb/assets/vendor/
+200      GET    43878l   263277w 11363570c http://snoopy.htb/download
+200      GET        9l       23w      491c http://snoopy.htb/assets/img/favicon.png
+301      GET        7l       12w      178c http://snoopy.htb/assets/vendor/bootstrap/js => http://snoopy.htb/assets/vendor/bootstrap/js/
+200      GET      365l     1261w    16614c http://snoopy.htb/about.html
+200      GET     2317l    11522w   110438c http://snoopy.htb/assets/vendor/remixicon/remixicon.css
+200      GET      887l     4998w   231447c http://snoopy.htb/assets/img/why-us-bg.jpg
+200      GET      243l      708w    10248c http://snoopy.htb/contact.html
+403      GET        7l       10w      162c http://snoopy.htb/assets/vendor/isotope-layout/
+200      GET        7l     1222w    80420c http://snoopy.htb/assets/vendor/bootstrap/js/bootstrap.bundle.min.js
+200      GET      203l     1462w    70413c http://snoopy.htb/assets/img/blog/blog-1.jpg
+200      GET      480l     1818w    23418c http://snoopy.htb/index.html
+200      GET       14l     1684w   143706c http://snoopy.htb/assets/vendor/swiper/swiper-bundle.min.js
+200      GET      500l     2644w   124803c http://snoopy.htb/assets/img/blog/blog-2.jpg
+200      GET      198l      419w     5314c http://snoopy.htb/assets/js/main.js
+403      GET        7l       10w      162c http://snoopy.htb/assets/vendor/swiper/
+200      GET      324l     1976w    90577c http://snoopy.htb/assets/img/blog/blog-3.jpg
+200      GET      268l      727w    11115c http://snoopy.htb/team.html
+200      GET       12l      557w    35445c http://snoopy.htb/assets/vendor/isotope-layout/isotope.pkgd.min.js
+200      GET        1l      313w    14690c http://snoopy.htb/assets/vendor/aos/aos.js
+403      GET        7l       10w      162c http://snoopy.htb/assets/vendor/glightbox/
+200      GET     1610l     9585w   436212c http://snoopy.htb/assets/img/iphone.png
+200      GET      480l     1818w    23418c http://snoopy.htb/
+403      GET        7l       10w      162c http://snoopy.htb/assets/vendor/bootstrap-icons/
+301      GET        7l       12w      178c http://snoopy.htb/assets/vendor/glightbox/css => http://snoopy.htb/assets/vendor/glightbox/css/
+301      GET        7l       12w      178c http://snoopy.htb/assets/vendor/glightbox/js => http://snoopy.htb/assets/vendor/glightbox/js/
+301      GET        7l       12w      178c http://snoopy.htb/assets/vendor/bootstrap-icons/fonts => http://snoopy.htb/assets/vendor/bootstrap-icons/fonts/

